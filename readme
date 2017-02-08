@@ -16,3 +16,4 @@ Main abilities:
  - Drawing simple figures by point-to-point method;
  - Typing text and raster images at billboards (labels);
  - Loading meshes from Wavefront OBJ format.
+ - Order sorting for transparent objects.
