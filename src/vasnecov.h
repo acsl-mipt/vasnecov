@@ -1,14 +1,20 @@
 #ifndef VASNECOV_H
 #define VASNECOV_H
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #include "vasnecovscene.h"
 #include "version.h"
 
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 QString showVasnecovVersion();
 Vasnecov::Version vasnecovVersion();
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #endif // VASNECOV_H

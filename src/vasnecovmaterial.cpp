@@ -1,6 +1,8 @@
 #include "vasnecovmaterial.h"
 #include "vasnecovpipeline.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 /*!
  \brief
@@ -10,17 +12,17 @@
  \param pipeline
 */
 VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
-								   VasnecovPipeline *pipeline,
-								   const GLstring &name) :
-	Vasnecov::CoreObject(mutex, pipeline, name),
-	m_textureD(raw_wasUpdated, TextureD, 0),
-	m_textureN(raw_wasUpdated, TextureN, 0),
+                                   VasnecovPipeline *pipeline,
+                                   const GLstring &name) :
+    Vasnecov::CoreObject(mutex, pipeline, name),
+    m_textureD(raw_wasUpdated, TextureD, 0),
+    m_textureN(raw_wasUpdated, TextureN, 0),
 
-	m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
-	m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
-	m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
-	m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
-	m_shininess(raw_wasUpdated, Shininess, 0)
+    m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
+    m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
+    m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
+    m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
+    m_shininess(raw_wasUpdated, Shininess, 0)
 {
 //	QColor c;
 
@@ -41,19 +43,19 @@ VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
  \param textureN
 */
 VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
-								   VasnecovPipeline *pipeline,
-								   VasnecovTexture *textureD,
-								   VasnecovTexture *textureN,
-								   const GLstring &name) :
-	Vasnecov::CoreObject(mutex, pipeline, name),
-	m_textureD(raw_wasUpdated, TextureD, textureD),
-	m_textureN(raw_wasUpdated, TextureN, textureN),
+                                   VasnecovPipeline *pipeline,
+                                   VasnecovTexture *textureD,
+                                   VasnecovTexture *textureN,
+                                   const GLstring &name) :
+    Vasnecov::CoreObject(mutex, pipeline, name),
+    m_textureD(raw_wasUpdated, TextureD, textureD),
+    m_textureN(raw_wasUpdated, TextureN, textureN),
 
-	m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
-	m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
-	m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
-	m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
-	m_shininess(raw_wasUpdated, Shininess, 0)
+    m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
+    m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
+    m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
+    m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
+    m_shininess(raw_wasUpdated, Shininess, 0)
 {
 }
 
@@ -65,9 +67,9 @@ VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
 */
 void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_textureD.set(textureD);
+    m_textureD.set(textureD);
 }
 
 /*!
@@ -78,10 +80,10 @@ void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 */
 VasnecovTexture *VasnecovMaterial::textureD() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	VasnecovTexture *texture(m_textureD.raw());
-	return texture;
+    VasnecovTexture *texture(m_textureD.raw());
+    return texture;
 }
 
 /*!
@@ -92,9 +94,9 @@ VasnecovTexture *VasnecovMaterial::textureD() const
 */
 void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_textureN.set(textureN);
+    m_textureN.set(textureN);
 }
 
 /*!
@@ -105,10 +107,10 @@ void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 */
 VasnecovTexture *VasnecovMaterial::textureN() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	VasnecovTexture *texture(m_textureN.raw());
-	return texture;
+    VasnecovTexture *texture(m_textureN.raw());
+    return texture;
 }
 
 /*!
@@ -119,9 +121,9 @@ VasnecovTexture *VasnecovMaterial::textureN() const
 */
 void VasnecovMaterial::setAmbientColor(const QColor &color)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_ambientColor.set(color);
+    m_ambientColor.set(color);
 }
 
 /*!
@@ -132,9 +134,9 @@ void VasnecovMaterial::setAmbientColor(const QColor &color)
 */
 void VasnecovMaterial::setDiffuseColor(const QColor &color)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_diffuseColor.set(color);
+    m_diffuseColor.set(color);
 }
 
 /*!
@@ -145,9 +147,9 @@ void VasnecovMaterial::setDiffuseColor(const QColor &color)
 */
 void VasnecovMaterial::setSpecularColor(const QColor &color)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_specularColor.set(color);
+    m_specularColor.set(color);
 }
 
 /*!
@@ -158,9 +160,9 @@ void VasnecovMaterial::setSpecularColor(const QColor &color)
 */
 void VasnecovMaterial::setEmissionColor(const QColor &color)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_emissionColor.set(color);
+    m_emissionColor.set(color);
 }
 
 /*!
@@ -171,9 +173,9 @@ void VasnecovMaterial::setEmissionColor(const QColor &color)
 */
 void VasnecovMaterial::setShininess(GLfloat shininess)
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	m_shininess.set(shininess);
+    m_shininess.set(shininess);
 }
 
 /*!
@@ -184,10 +186,10 @@ void VasnecovMaterial::setShininess(GLfloat shininess)
 */
 QColor VasnecovMaterial::ambientColor() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	QColor color(m_ambientColor.raw());
-	return color;
+    QColor color(m_ambientColor.raw());
+    return color;
 }
 /*!
  \brief
@@ -197,10 +199,10 @@ QColor VasnecovMaterial::ambientColor() const
 */
 QColor VasnecovMaterial::diffuseColor() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	QColor color(m_diffuseColor.raw());
-	return color;
+    QColor color(m_diffuseColor.raw());
+    return color;
 }
 /*!
  \brief
@@ -210,10 +212,10 @@ QColor VasnecovMaterial::diffuseColor() const
 */
 QColor VasnecovMaterial::specularColor() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	QColor color(m_specularColor.raw());
-	return color;
+    QColor color(m_specularColor.raw());
+    return color;
 }
 /*!
  \brief
@@ -223,10 +225,10 @@ QColor VasnecovMaterial::specularColor() const
 */
 QColor VasnecovMaterial::emissionColor() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	QColor color(m_emissionColor.raw());
-	return color;
+    QColor color(m_emissionColor.raw());
+    return color;
 }
 /*!
  \brief
@@ -236,10 +238,10 @@ QColor VasnecovMaterial::emissionColor() const
 */
 GLfloat VasnecovMaterial::shininess() const
 {
-	QMutexLocker locker(mtx_data);
+    QMutexLocker locker(mtx_data);
 
-	GLfloat shininess(m_shininess.raw());
-	return shininess;
+    GLfloat shininess(m_shininess.raw());
+    return shininess;
 }
 
 /*!
@@ -250,8 +252,8 @@ GLfloat VasnecovMaterial::shininess() const
 */
 void VasnecovMaterial::designerSetAmbientAndDiffuseColor(const QColor &color)
 {
-	m_ambientColor.set(color);
-	m_diffuseColor.set(color);
+    m_ambientColor.set(color);
+    m_diffuseColor.set(color);
 }
 
 /*!
@@ -262,26 +264,26 @@ void VasnecovMaterial::designerSetAmbientAndDiffuseColor(const QColor &color)
 */
 GLenum VasnecovMaterial::renderUpdateData()
 {
-	GLenum updated(raw_wasUpdated);
+    GLenum updated(raw_wasUpdated);
 
-	if(raw_wasUpdated)
-	{
-		pure_pipeline->setSomethingWasUpdated();
+    if(raw_wasUpdated)
+    {
+        pure_pipeline->setSomethingWasUpdated();
 
-		// Копирование сырых данных в основные
-		m_textureD.update();
-		m_textureN.update();
+        // Копирование сырых данных в основные
+        m_textureD.update();
+        m_textureN.update();
 
-		m_ambientColor.update();
-		m_diffuseColor.update();
-		m_specularColor.update();
-		m_emissionColor.update();
-		m_shininess.update();
+        m_ambientColor.update();
+        m_diffuseColor.update();
+        m_specularColor.update();
+        m_emissionColor.update();
+        m_shininess.update();
 
-		Vasnecov::CoreObject::renderUpdateData();
-	}
+        Vasnecov::CoreObject::renderUpdateData();
+    }
 
-	return updated;
+    return updated;
 }
 
 /*!
@@ -291,20 +293,22 @@ GLenum VasnecovMaterial::renderUpdateData()
 */
 void VasnecovMaterial::renderDraw()
 {
-	pure_pipeline->setMaterialColors(m_ambientColor.pure(),
-									 m_diffuseColor.pure(),
-									 m_specularColor.pure(),
-									 m_emissionColor.pure(),
-									 m_shininess.pure());
+    pure_pipeline->setMaterialColors(m_ambientColor.pure(),
+                                     m_diffuseColor.pure(),
+                                     m_specularColor.pure(),
+                                     m_emissionColor.pure(),
+                                     m_shininess.pure());
 
-	if(m_textureD.pure())
-	{
-		pure_pipeline->enableTexture2D(m_textureD.pure()->id());
-	}
-	else
-	{
-		pure_pipeline->disableTexture2D();
-	}
+    if(m_textureD.pure())
+    {
+        pure_pipeline->enableTexture2D(m_textureD.pure()->id());
+    }
+    else
+    {
+        pure_pipeline->disableTexture2D();
+    }
 }
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif

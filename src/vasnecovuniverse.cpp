@@ -2,9 +2,14 @@
 #include <QFile>
 #include <QDir>
 #include <QDirIterator>
+#ifdef _MSC_VER
+    #include <windows.h>
+#endif
 #include <GL/glu.h>
 #include "vasnecovmesh.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 /*!
    \class VasnecovUniverse
@@ -57,10 +62,12 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
     {
         m_loadingImage1 = m_loadingImage1.mirrored(0, 1);
     }
+#ifndef _MSC_VER
     if(clock_gettime(CLOCK_MONOTONIC, &m_loadingImageTimer) < 0)
     {
         Vasnecov::problem("Проблемы с таймером картинки загрузки");
     }
+#endif
 }
 
 /*!
@@ -1016,10 +1023,12 @@ QString VasnecovUniverse::info(GLuint type)
             m_techRenderer.update();
             res = m_techRenderer.pure();
             break;
+#ifndef _MSC_VER
         case GL_SHADING_LANGUAGE_VERSION:
             m_techSL.update();
             res = m_techSL.pure();
             break;
+#endif
         case GL_EXTENSIONS:
             m_techExtensions.update();
             res = m_techExtensions.pure();
@@ -1059,8 +1068,9 @@ void VasnecovUniverse::renderInitialize()
 qDebug("%s",reinterpret_cast<const char *>(glGetString(GL_VERSION)));
     m_techRenderer.set(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
     m_techVersion.set(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+#ifndef _MSC_VER
     m_techSL.set(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-
+#endif
     m_techExtensions.set(exts);
 }
 
@@ -1535,6 +1545,7 @@ void VasnecovUniverse::renderDrawLoadingImage()
         timespec tm;
         int diff(0); // миллисекунды
 
+#ifndef _MSC_VER
         clock_gettime(CLOCK_MONOTONIC, &tm);
 
         diff = (tm.tv_sec - m_loadingImageTimer.tv_sec)*1e3 + (tm.tv_nsec - m_loadingImageTimer.tv_nsec)*1e-6;
@@ -1551,7 +1562,7 @@ void VasnecovUniverse::renderDrawLoadingImage()
         {
             image = &m_loadingImage0;
         }
-
+#endif
         if(image && !image->isNull())
         {
             glRasterPos2i(0.5*m_width - image->width()*0.5,
@@ -1635,4 +1646,6 @@ Vasnecov::UniverseAttributes::~UniverseAttributes()
 }
 
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif

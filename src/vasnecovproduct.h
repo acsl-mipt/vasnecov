@@ -2,9 +2,13 @@
 #ifndef VASNECOVPRODUCT_H
 #define VASNECOVPRODUCT_H
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #include "vasnecovelement.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 class VasnecovMaterial;
 class VasnecovMesh;
@@ -226,5 +230,7 @@ inline const std::vector<VasnecovProduct *> *VasnecovProduct::renderChildren() c
 	return &m_children.pure();
 }
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #endif // VASNECOVPRODUCT_H

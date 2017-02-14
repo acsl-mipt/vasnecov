@@ -3,10 +3,14 @@
 #ifndef VASNECOV_WORLD_H
 #define VASNECOV_WORLD_H
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #include "elementlist.h"
 #include "vasnecovlamp.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 class VasnecovProduct;
 class VasnecovLabel;
@@ -14,228 +18,230 @@ class VasnecovFigure;
 
 namespace Vasnecov
 {
-	const GLsizei cfg_worldWidthMin = 16;
-	const GLsizei cfg_worldHeightMin = 16;
-	const GLsizei cfg_worldWidthMax = 2048;
-	const GLsizei cfg_worldHeightMax = 2048;
+    const GLsizei cfg_worldWidthMin = 16;
+    const GLsizei cfg_worldHeightMin = 16;
+    const GLsizei cfg_worldWidthMax = 2048;
+    const GLsizei cfg_worldHeightMax = 2048;
 }
 
 class VasnecovWorld : public Vasnecov::CoreObject
 {
-	// Список контейнеров списков
-	class WorldElementList : public Vasnecov::ElementList<Vasnecov::ElementBox>
-	{};
+    // Список контейнеров списков
+    class WorldElementList : public Vasnecov::ElementList<Vasnecov::ElementBox>
+    {};
 
 
 public:
-	VasnecovWorld(QMutex *mutex,
-				  VasnecovPipeline *pipeline,
-				  GLint mx, GLint my,
-				  GLsizei width, GLsizei height,
-				  const GLstring &name = GLstring());
-	~VasnecovWorld();
+    VasnecovWorld(QMutex *mutex,
+                  VasnecovPipeline *pipeline,
+                  GLint mx, GLint my,
+                  GLsizei width, GLsizei height,
+                  const GLstring &name = GLstring());
+    ~VasnecovWorld();
 
 public:
-	void setDrawingType(Vasnecov::PolygonDrawingTypes type);
-	GLboolean setProjection(Vasnecov::WorldTypes type);
-	GLboolean setWindow(GLint x, GLint y, GLsizei width, GLsizei height);
-	GLboolean setParameters(Vasnecov::WorldParameters parameters);
-	Vasnecov::WorldParameters worldParameters() const;
-	Vasnecov::WorldTypes projection() const;
+    void setDrawingType(Vasnecov::PolygonDrawingTypes type);
+    GLboolean setProjection(Vasnecov::WorldTypes type);
+    GLboolean setWindow(GLint x, GLint y, GLsizei width, GLsizei height);
+    GLboolean setParameters(Vasnecov::WorldParameters parameters);
+    Vasnecov::WorldParameters worldParameters() const;
+    Vasnecov::WorldTypes projection() const;
 
-	void setDepth();
-	void unsetDepth();
-	GLboolean depth() const;
-	void switchDepth();
+    void setDepth();
+    void unsetDepth();
+    GLboolean depth() const;
+    void switchDepth();
 
-	void setLight();
-	void unsetLight();
-	GLboolean light() const;
-	void switchLight();
+    void setLight();
+    void unsetLight();
+    GLboolean light() const;
+    void switchLight();
 
-	GLboolean setPerspective(GLfloat angle, GLfloat frontBorder, GLfloat backBorder); // Задать характеристики перспективной проекции
-	Vasnecov::Perspective perspective() const;
-	Vasnecov::Ortho ortho() const;
+    GLboolean setPerspective(GLfloat angle, GLfloat frontBorder, GLfloat backBorder); // Задать характеристики перспективной проекции
+    Vasnecov::Perspective perspective() const;
+    Vasnecov::Ortho ortho() const;
 
-	// TODO: add camera (operator) position with angles (quaternions) & use setCameraAngles in local CS
-	void setCamera(const Vasnecov::Camera &camera);
-	// Задать положение камеры
-	void setCameraPosition(const QVector3D &position);
-	void setCameraPosition(GLfloat x, GLfloat y, GLfloat z);
-	// Задать точку, в которую смотрит камера
-	void setCameraTarget(const QVector3D &target);
-	void setCameraTarget(GLfloat x, GLfloat y, GLfloat z);
-	// Задать углы направления взгляда камеры
-	void setCameraAngles(GLfloat yaw, GLfloat pitch);
-	void setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll); // с креном камеры
-	// Перемещение камеры
-	void flyCamera(const QVector3D &step);
-	void flyCamera(GLfloat x, GLfloat y, GLfloat z);
-	void moveCamera(const QVector3D &step);
-	void moveCamera(GLfloat x, GLfloat y, GLfloat z);
-	// Вращение камеры
-	void rotateCamera(GLfloat yaw, GLfloat pitch);
-	void rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll);
-	// Задать крен камеры
-	void setCameraRoll(GLfloat roll);
-	void tiltCamera(GLfloat roll);
+    // TODO: add camera (operator) position with angles (quaternions) & use setCameraAngles in local CS
+    void setCamera(const Vasnecov::Camera &camera);
+    // Задать положение камеры
+    void setCameraPosition(const QVector3D &position);
+    void setCameraPosition(GLfloat x, GLfloat y, GLfloat z);
+    // Задать точку, в которую смотрит камера
+    void setCameraTarget(const QVector3D &target);
+    void setCameraTarget(GLfloat x, GLfloat y, GLfloat z);
+    // Задать углы направления взгляда камеры
+    void setCameraAngles(GLfloat yaw, GLfloat pitch);
+    void setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll); // с креном камеры
+    // Перемещение камеры
+    void flyCamera(const QVector3D &step);
+    void flyCamera(GLfloat x, GLfloat y, GLfloat z);
+    void moveCamera(const QVector3D &step);
+    void moveCamera(GLfloat x, GLfloat y, GLfloat z);
+    // Вращение камеры
+    void rotateCamera(GLfloat yaw, GLfloat pitch);
+    void rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll);
+    // Задать крен камеры
+    void setCameraRoll(GLfloat roll);
+    void tiltCamera(GLfloat roll);
 
-	Vasnecov::Camera camera() const;
-
-protected:
-	// Списки содержимого
-	VasnecovLamp    *designerFindElement(VasnecovLamp *lamp) const;
-	VasnecovProduct *designerFindElement(VasnecovProduct *product) const;
-	VasnecovFigure  *designerFindElement(VasnecovFigure *figure) const;
-	VasnecovLabel	*designerFindElement(VasnecovLabel *label) const;
-
-	// Добавление новых элементов в списки
-	GLboolean designerAddElement(VasnecovLamp *lamp, GLboolean check = false);
-	GLboolean designerAddElement(VasnecovProduct *product, GLboolean check = false);
-	GLboolean designerAddElement(VasnecovFigure *figure, GLboolean check = false);
-	GLboolean designerAddElement(VasnecovLabel *label, GLboolean check = false);
-
-	GLboolean designerRemoveElement(VasnecovLamp *lamp);
-	GLboolean designerRemoveElement(VasnecovProduct *product);
-	GLboolean designerRemoveElement(VasnecovFigure *figure);
-	GLboolean designerRemoveElement(VasnecovLabel *label);
-
-	void designerUpdateOrtho();
+    Vasnecov::Camera camera() const;
 
 protected:
-	// Вызовы из рендерера
-	GLenum renderUpdateData();
-	void renderDraw();
+    // Списки содержимого
+    VasnecovLamp    *designerFindElement(VasnecovLamp *lamp) const;
+    VasnecovProduct *designerFindElement(VasnecovProduct *product) const;
+    VasnecovFigure  *designerFindElement(VasnecovFigure *figure) const;
+    VasnecovLabel	*designerFindElement(VasnecovLabel *label) const;
 
-	void renderSwitchLamps() const;
-	VasnecovPipeline::CameraAttributes renderCalculateCamera() const;
+    // Добавление новых элементов в списки
+    GLboolean designerAddElement(VasnecovLamp *lamp, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovProduct *product, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovFigure *figure, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovLabel *label, GLboolean check = false);
 
-	const Vasnecov::WorldParameters &renderWorldParameters() const;
-	const Vasnecov::Perspective &renderPerspective() const;
-	const Vasnecov::Ortho &renderOrtho() const;
-	const Vasnecov::Camera &renderCamera() const;
+    GLboolean designerRemoveElement(VasnecovLamp *lamp);
+    GLboolean designerRemoveElement(VasnecovProduct *product);
+    GLboolean designerRemoveElement(VasnecovFigure *figure);
+    GLboolean designerRemoveElement(VasnecovLabel *label);
 
-	template <typename T>
-	static void renderDrawElement(T *element)
-	{
-		if(element)
-		{
-			element->renderDraw();
-		}
-	}
+    void designerUpdateOrtho();
 
 protected:
-	Vasnecov::MutualData<Vasnecov::WorldParameters> m_parameters; // Характеристики мира
-	Vasnecov::MutualData<Vasnecov::Perspective> m_perspective; // Характеристики вида при перспективной проекции
-	Vasnecov::MutualData<Vasnecov::Ortho> m_ortho; // Характеристики вида при ортогональной проекции
-	Vasnecov::MutualData<Vasnecov::Camera> m_camera; // камера мира
+    // Вызовы из рендерера
+    GLenum renderUpdateData();
+    void renderDraw();
 
-	Vasnecov::LightModel m_lightModel;
-	WorldElementList m_elements;
+    void renderSwitchLamps() const;
+    VasnecovPipeline::CameraAttributes renderCalculateCamera() const;
 
-	friend class VasnecovUniverse;
+    const Vasnecov::WorldParameters &renderWorldParameters() const;
+    const Vasnecov::Perspective &renderPerspective() const;
+    const Vasnecov::Ortho &renderOrtho() const;
+    const Vasnecov::Camera &renderCamera() const;
 
-	enum Updated
-	{
-		Products		= 0x0010,
-		Figures			= 0x0020,
-		Labels			= 0x0040,
-		Lamps			= 0x0080,
-		Parameters		= 0x0100,
-		Perspective		= 0x0200,
-		Ortho			= 0x0400,
-		Cameras			= 0x0800,
-		Flags			= 0x1000
-	};
+    template <typename T>
+    static void renderDrawElement(T *element)
+    {
+        if(element)
+        {
+            element->renderDraw();
+        }
+    }
+
+protected:
+    Vasnecov::MutualData<Vasnecov::WorldParameters> m_parameters; // Характеристики мира
+    Vasnecov::MutualData<Vasnecov::Perspective> m_perspective; // Характеристики вида при перспективной проекции
+    Vasnecov::MutualData<Vasnecov::Ortho> m_ortho; // Характеристики вида при ортогональной проекции
+    Vasnecov::MutualData<Vasnecov::Camera> m_camera; // камера мира
+
+    Vasnecov::LightModel m_lightModel;
+    WorldElementList m_elements;
+
+    friend class VasnecovUniverse;
+
+    enum Updated
+    {
+        Products		= 0x0010,
+        Figures			= 0x0020,
+        Labels			= 0x0040,
+        Lamps			= 0x0080,
+        Parameters		= 0x0100,
+        Perspective		= 0x0200,
+        Ortho			= 0x0400,
+        Cameras			= 0x0800,
+        Flags			= 0x1000
+    };
 
 private:
-	Q_DISABLE_COPY(VasnecovWorld)
+    Q_DISABLE_COPY(VasnecovWorld)
 };
 
 inline VasnecovLamp *VasnecovWorld::designerFindElement(VasnecovLamp *lamp) const
 {
-	return m_elements.findRawElement(lamp);
+    return m_elements.findRawElement(lamp);
 }
 inline VasnecovProduct *VasnecovWorld::designerFindElement(VasnecovProduct *product) const
 {
-	return m_elements.findRawElement(product);
+    return m_elements.findRawElement(product);
 }
 inline VasnecovFigure *VasnecovWorld::designerFindElement(VasnecovFigure *figure) const
 {
-	return m_elements.findRawElement(figure);
+    return m_elements.findRawElement(figure);
 }
 inline VasnecovLabel *VasnecovWorld::designerFindElement(VasnecovLabel *label) const
 {
-	return m_elements.findRawElement(label);
+    return m_elements.findRawElement(label);
 }
 
 inline GLboolean VasnecovWorld::designerAddElement(VasnecovLamp *lamp, GLboolean check)
 {
-	return m_elements.addElement(lamp, check);
+    return m_elements.addElement(lamp, check);
 }
 inline GLboolean VasnecovWorld::designerAddElement(VasnecovProduct *product, GLboolean check)
 {
-	return m_elements.addElement(product, check);
+    return m_elements.addElement(product, check);
 }
 inline GLboolean VasnecovWorld::designerAddElement(VasnecovFigure *figure, GLboolean check)
 {
-	return m_elements.addElement(figure, check);
+    return m_elements.addElement(figure, check);
 }
 inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel *label, GLboolean check)
 {
-	return m_elements.addElement(label, check);
+    return m_elements.addElement(label, check);
 }
 
 inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLamp *lamp)
 {
-	return m_elements.removeElement(lamp);
+    return m_elements.removeElement(lamp);
 }
 inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovProduct *product)
 {
-	return m_elements.removeElement(product);
+    return m_elements.removeElement(product);
 }
 inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovFigure *figure)
 {
-	return m_elements.removeElement(figure);
+    return m_elements.removeElement(figure);
 }
 inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel *label)
 {
-	return m_elements.removeElement(label);
+    return m_elements.removeElement(label);
 }
 
 inline void VasnecovWorld::renderSwitchLamps() const
 {
-	if(m_parameters.pure().light)
-	{
-		pure_pipeline->enableLamps();
-	}
-	else
-	{
-		pure_pipeline->disableLamps();
-	}
+    if(m_parameters.pure().light)
+    {
+        pure_pipeline->enableLamps();
+    }
+    else
+    {
+        pure_pipeline->disableLamps();
+    }
 }
 
 
 
 inline const Vasnecov::WorldParameters &VasnecovWorld::renderWorldParameters() const
 {
-	return m_parameters.pure();
+    return m_parameters.pure();
 }
 
 inline const Vasnecov::Perspective &VasnecovWorld::renderPerspective() const
 {
-	return m_perspective.pure();
+    return m_perspective.pure();
 }
 
 inline const Vasnecov::Ortho &VasnecovWorld::renderOrtho() const
 {
-	return m_ortho.pure();
+    return m_ortho.pure();
 }
 
 inline const Vasnecov::Camera &VasnecovWorld::renderCamera() const
 {
-	return m_camera.pure();
+    return m_camera.pure();
 }
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #endif // VASNECOV_WORLD_H

@@ -12,6 +12,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(VASNECOV_SOURCES
+    src/configuration.h
+    src/coreobject.h
+    src/elementlist.h
+    src/types.h
     src/technologist.cpp
     src/vasnecov.cpp
     src/vasnecovelement.cpp
@@ -27,16 +31,24 @@ set(VASNECOV_SOURCES
     src/vasnecovtexture.cpp
     src/vasnecovuniverse.cpp
     src/vasnecovworld.cpp
+    src/version.h
     )
 
 add_library(Vasnecov STATIC ${VASNECOV_SOURCES} resources.qrc)
 
 if(NOT MSVC)
     target_compile_options(Vasnecov PUBLIC -std=c++11)
-    target_compile_options(Vasnecov PRIVATE -Wall -Wextra -Wno-unused-parameter -Woverloaded-virtual)
+    target_compile_options(Vasnecov PRIVATE -Wall -Wextra -Wno-unused-parameter -Woverloaded-virtual -Weffc++)
 endif()
 
 qt5_use_modules(Vasnecov Core OpenGL Gui Widgets)
-target_link_libraries(Vasnecov GL GLU)
+
+if(NOT MSVC)
+    target_link_libraries(Vasnecov GL GLU)
+else()
+    target_link_libraries(Vasnecov OpenGL32 GLU32)
+endif()
+
+
 
 

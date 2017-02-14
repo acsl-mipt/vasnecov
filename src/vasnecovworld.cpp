@@ -5,7 +5,9 @@
 #include "vasnecovlabel.h"
 #include "vasnecovfigure.h"
 #include "configuration.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 /*!
  \brief
@@ -956,4 +958,6 @@ VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
 }
 
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif

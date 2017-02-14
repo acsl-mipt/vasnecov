@@ -3,10 +3,14 @@
 #ifndef VASNECOVMESH_H
 #define VASNECOVMESH_H
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #include <vector>
 #include "configuration.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 class VasnecovPipeline;
 
@@ -103,5 +107,7 @@ inline QVector3D VasnecovMesh :: cm() const
 	return m_cm;
 }
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #endif // VASNECOVMESH_H

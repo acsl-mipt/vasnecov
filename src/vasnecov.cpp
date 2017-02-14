@@ -1,5 +1,7 @@
 #include "vasnecov.h"
-#pragma GCC diagnostic warning "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic warning "-Weffc++"
+#endif
 
 /*!
  \mainpage Статическая библиотека простенького 3D движка.
@@ -39,7 +41,7 @@ Vasnecov::Version vVersion;
 */
 QString showVasnecovVersion()
 {
-	return vVersion.versionText;
+    return vVersion.versionText;
 }
 /*!
  \brief Выдает номер версии библиотеки.
@@ -48,7 +50,9 @@ QString showVasnecovVersion()
 */
 Vasnecov::Version vasnecovVersion()
 {
-	return vVersion;
+    return vVersion;
 }
 
-#pragma GCC diagnostic ignored "-Weffc++"
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
