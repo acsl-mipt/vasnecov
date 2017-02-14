@@ -80,8 +80,10 @@ void VasnecovPipeline::initialize(QGLContext *context)
 
     glEnable(GL_BLEND); // Включение прозрачности (смешивания)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Альфа-прозрачность
+#ifndef _MSC_VER
     glBlendEquation(GL_FUNC_ADD);
 //	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+#endif
 
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);

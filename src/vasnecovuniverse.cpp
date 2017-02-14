@@ -1567,7 +1567,7 @@ void VasnecovUniverse::renderDrawLoadingImage()
         {
             glRasterPos2i(0.5*m_width - image->width()*0.5,
                           0.5*m_height - image->height()*0.5);
-            glDrawPixels(image->width(), image->height(), GL_BGRA, GL_UNSIGNED_BYTE, image->bits());
+            glDrawPixels(image->width(), image->height(), GL_BGRA_EXT, GL_UNSIGNED_BYTE, image->bits());
         }
     }
 }
