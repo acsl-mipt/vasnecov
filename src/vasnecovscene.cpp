@@ -11,10 +11,10 @@
  \param parent
 */
 VasnecovScene::VasnecovScene(QObject *parent) :
-	QGraphicsScene(parent),
-	m_width(0),
-	m_height(0),
-	m_universe(0)
+    QGraphicsScene(parent),
+    m_width(0),
+    m_height(0),
+    m_universe(0)
 {
 }
 
@@ -27,13 +27,13 @@ VasnecovScene::VasnecovScene(QObject *parent) :
 */
 void VasnecovScene::drawBackground(QPainter *painter, const QRectF &)
 {
-	m_width = painter->device()->width();
-	m_height = painter->device()->height();
-	painter->beginNativePainting();
-	if(m_universe)
-	{
-		m_universe->renderDrawAll(m_width, m_height);
-	}
+    m_width = painter->device()->width();
+    m_height = painter->device()->height();
+    painter->beginNativePainting();
+    if(m_universe)
+    {
+        m_universe->renderDrawAll(m_width, m_height);
+    }
 }
 
 /*!
@@ -44,11 +44,11 @@ void VasnecovScene::drawBackground(QPainter *painter, const QRectF &)
 */
 void VasnecovScene::setUniverse(VasnecovUniverse *universe)
 {
-	if(universe)
-	{
-		m_universe = universe;
-		m_universe->renderInitialize();
-	}
+    if(universe)
+    {
+        m_universe = universe;
+        m_universe->renderInitialize();
+    }
 }
 
 #ifndef _MSC_VER

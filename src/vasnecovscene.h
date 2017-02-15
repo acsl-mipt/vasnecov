@@ -18,23 +18,24 @@ class VasnecovScene : public QGraphicsScene
 
 public:
     explicit VasnecovScene(QObject *parent = 0);
-    virtual void drawBackground(QPainter *painter, const QRectF &);
     VasnecovUniverse *universe() const;
-
-signals:
 
 public slots:
     virtual void setUniverse(VasnecovUniverse * universe);
     virtual bool removeUniverse();
 
 protected:
+    virtual void drawBackground(QPainter *painter, const QRectF &);
+    GLsizei windowWidth()  {return m_width;}
+    GLsizei windowHeight() {return m_height;}
+
+private:
     // Геометрия окна
     GLsizei m_width;
     GLsizei m_height;
 
     VasnecovUniverse *m_universe;
 
-private:
     Q_DISABLE_COPY(VasnecovScene)
 };
 
