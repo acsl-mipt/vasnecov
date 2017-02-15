@@ -477,13 +477,16 @@ void VasnecovMesh::calculateBox()
     GLuint vm = m_vertices.size();
 
     // Определение ограничивающих боксов и центра "масс"
-    m_borderBoxVertices[0].setX(m_vertices[0].x());
-    m_borderBoxVertices[0].setY(m_vertices[0].y());
-    m_borderBoxVertices[0].setZ(m_vertices[0].z());
+    if(vm > 0)
+    {
+        m_borderBoxVertices[0].setX(m_vertices[0].x());
+        m_borderBoxVertices[0].setY(m_vertices[0].y());
+        m_borderBoxVertices[0].setZ(m_vertices[0].z());
 
-    m_borderBoxVertices[6].setX(m_vertices[0].x());
-    m_borderBoxVertices[6].setY(m_vertices[0].y());
-    m_borderBoxVertices[6].setZ(m_vertices[0].z());
+        m_borderBoxVertices[6].setX(m_vertices[0].x());
+        m_borderBoxVertices[6].setY(m_vertices[0].y());
+        m_borderBoxVertices[6].setZ(m_vertices[0].z());
+    }
 
 
     for(GLuint i = 0; i < vm; ++i)
