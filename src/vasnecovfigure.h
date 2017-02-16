@@ -37,6 +37,11 @@ class VasnecovFigure : public VasnecovElement
             return m_optimize;
         }
 
+        GLuint rawVerticesSize() const
+        {
+            return raw_vertices.size();
+        }
+
         void set(const std::vector <QVector3D> &points)
         {
             // Заливка в сырые данные с удалением дубликатов точек
@@ -333,6 +338,7 @@ public:
 
     void setPoints(const std::vector<QVector3D> &points);
     void clearPoints();
+    GLuint pointsAmount() const;
 
     void addFirstPoint(const QVector3D &point);
     void removeFirstPoint();

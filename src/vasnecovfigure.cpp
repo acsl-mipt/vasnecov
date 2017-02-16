@@ -80,6 +80,13 @@ void VasnecovFigure::clearPoints()
     m_points.clear();
 }
 
+GLuint VasnecovFigure::pointsAmount() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return m_points.rawVerticesSize();
+}
+
 void VasnecovFigure::addFirstPoint(const QVector3D &point)
 {
     QMutexLocker locker(mtx_data);
