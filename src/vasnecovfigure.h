@@ -365,7 +365,15 @@ public:
     void setOptimization(GLboolean optimize);
     GLboolean optimization() const;
 
+    // Making some simple figures
+    void createCircle(GLfloat r, const QColor &color = QColor(), GLuint factor = 64); // Circle at horizontal plane
+    void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
+    void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
+    void createSquareGrid(GLfloat width, GLfloat height, const QColor &color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
+
 protected:
+    GLboolean designerSetType(VasnecovFigure::Types type);
+
     GLenum renderUpdateData();
     void renderDraw();
 

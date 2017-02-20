@@ -117,31 +117,7 @@ GLboolean VasnecovFigure::setType(VasnecovFigure::Types type)
 {
     QMutexLocker locker(mtx_data);
 
-    switch(type)
-    {
-        case TypePolyline:
-            m_type.set(VasnecovPipeline::PolyLine);
-            return true;
-        case TypePolylineLoop:
-            m_type.set(VasnecovPipeline::LoopLine);
-            return true;
-        case TypePolygons:
-            m_type.set(VasnecovPipeline::FanTriangle);
-            m_lighting.set(true);
-            return true;
-        case TypeLines:
-            m_type.set(VasnecovPipeline::Lines);
-            return true;
-        case TypePoints:
-            m_type.set(VasnecovPipeline::Points);
-            return true;
-        case TypeTriangles:
-            m_type.set(VasnecovPipeline::Triangles);
-            m_lighting.set(true);
-            return true;
-        default:
-            return false;
-    }
+    return designerSetType(type);
 }
 
 VasnecovFigure::Types VasnecovFigure::type() const
@@ -206,6 +182,225 @@ GLboolean VasnecovFigure::optimization() const
     QMutexLocker locker(mtx_data);
 
     return m_points.optimization();
+}
+
+void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
+{
+    if(r > 0.0 && factor > 0)
+    {
+        QMutexLocker locker(mtx_data);
+
+        designerSetType(VasnecovFigure::TypePolylineLoop);
+
+        if(color.isValid())
+        {
+            m_color.set(color);
+        }
+
+        std::vector<QVector3D> circ;
+        circ.reserve(factor);
+
+        QVector3D kt;
+        for(GLuint i = 0; i < factor; ++i)
+        {
+            float angle(2*M_PI*i/factor);
+            kt.setX(r*cos(angle));
+            kt.setY(r*sin(angle));
+            circ.push_back(kt);
+        }
+        m_points.set(circ);
+    }
+}
+
+void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color, GLuint factor)
+{
+    if(r > 0.0 && spanAngle != 0.0 && factor > 0)
+    {
+        QMutexLocker locker(mtx_data);
+
+        designerSetType(VasnecovFigure::TypePolyline);
+
+        if(color.isValid())
+        {
+            m_color.set(color);
+        }
+
+        startAngle *= c_degToRad;
+        spanAngle *= c_degToRad;
+
+        std::vector<QVector3D> circ;
+        GLfloat endAngle = startAngle + spanAngle;
+        GLuint steps(abs(factor * spanAngle / (2*M_PI)));
+        if(steps == 0)
+        {
+            // Получается слишком маленький отрезок, поэтому он просто рисуется по двум точкам
+            steps = 1;
+        }
+        GLfloat pointAngle(0.0);
+
+        circ.reserve(steps + 1);
+
+        QVector3D kt;
+        for(GLuint i = 0; i < steps; ++i)
+        {
+            if(spanAngle > 0)
+            {
+                pointAngle = 2*M_PI*i/factor;
+            }
+            else
+            {
+                pointAngle = -2*M_PI*i/factor;
+            }
+            kt.setX(r*cos(pointAngle));
+            kt.setY(r*sin(pointAngle));
+            circ.push_back(kt);
+        }
+
+        kt.setX(r*cos(endAngle));
+        kt.setY(r*sin(endAngle));
+        circ.push_back(kt);
+
+        m_points.set(circ);
+    }
+}
+
+void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color, GLuint factor)
+{
+    if(r > 0.0 && spanAngle != 0.0 && factor > 0)
+    {
+        QMutexLocker locker(mtx_data);
+
+        designerSetType(VasnecovFigure::TypePolygons);
+
+        if(color.isValid())
+        {
+            m_color.set(color);
+        }
+
+        startAngle *= c_degToRad;
+        spanAngle *= c_degToRad;
+
+        std::vector<QVector3D> circ;
+        GLfloat endAngle = startAngle + spanAngle;
+        GLuint steps(abs(factor * spanAngle / (2*M_PI)));
+        if(steps == 0)
+        {
+            // Получается слишком маленький отрезок, поэтому он просто рисуется по двум точкам
+            steps = 1;
+        }
+        GLfloat pointAngle(0.0);
+
+        circ.reserve(1 + steps + 1);
+        circ.push_back(QVector3D(0, 0, 0)); // Начальная позиция в центре круга
+
+        QVector3D kt;
+        for(GLuint i = 0; i < steps; ++i)
+        {
+            if(spanAngle > 0)
+            {
+                pointAngle = 2*M_PI*i/factor;
+            }
+            else
+            {
+                pointAngle = -2*M_PI*i/factor;
+            }
+            kt.setX(r*cos(pointAngle));
+            kt.setY(r*sin(pointAngle));
+            circ.push_back(kt);
+        }
+
+        kt.setX(r*cos(endAngle));
+        kt.setY(r*sin(endAngle));
+        circ.push_back(kt);
+
+        m_points.set(circ);
+    }
+}
+
+void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColor &color, GLuint horizontals, GLuint verticals)
+{
+    if(horizontals || verticals)
+    {
+        QMutexLocker locker(mtx_data);
+
+        designerSetType(VasnecovFigure::TypeLines);
+
+        if(color.isValid())
+        {
+            m_color.set(color);
+        }
+
+        std::vector<QVector3D> points;
+        points.reserve((horizontals + verticals) * 2);
+
+        if(horizontals)
+        {
+            GLfloat step((horizontals > 1) ? height/(horizontals - 1) : 0.0f);
+
+            QVector3D p1(- width / 2.0f,
+                         (horizontals > 1) ? - height / 2.0f : 0.0f,
+                         0.0f);
+            QVector3D p2( width / 2.0f, p1.y(), 0.0f);
+
+            for(GLuint i = 0; i < horizontals; ++i)
+            {
+                points.push_back(p1);
+                points.push_back(p2);
+
+                p1.setY(p1.y() + step);
+                p2.setY(p1.y());
+            }
+        }
+        if(verticals)
+        {
+            GLfloat step((verticals > 1) ? width/(verticals - 1) : 0.0f);
+
+            QVector3D p1((verticals > 1) ? - width / 2.0f : 0.0f,
+                         - height / 2.0f,
+                         0.0f);
+            QVector3D p2(p1.x(), height / 2.0f, 0.0f);
+
+            for(GLuint i = 0; i < verticals; ++i)
+            {
+                points.push_back(p1);
+                points.push_back(p2);
+
+                p1.setX(p1.x() + step);
+                p2.setX(p1.x());
+            }
+        }
+
+        m_points.set(points);
+    }
+}
+
+GLboolean VasnecovFigure::designerSetType(VasnecovFigure::Types type)
+{
+    switch(type)
+    {
+        case TypePolyline:
+            m_type.set(VasnecovPipeline::PolyLine);
+            return true;
+        case TypePolylineLoop:
+            m_type.set(VasnecovPipeline::LoopLine);
+            return true;
+        case TypePolygons:
+            m_type.set(VasnecovPipeline::FanTriangle);
+            m_lighting.set(true);
+            return true;
+        case TypeLines:
+            m_type.set(VasnecovPipeline::Lines);
+            return true;
+        case TypePoints:
+            m_type.set(VasnecovPipeline::Points);
+            return true;
+        case TypeTriangles:
+            m_type.set(VasnecovPipeline::Triangles);
+            m_lighting.set(true);
+            return true;
+        default:
+            return false;
+    }
 }
 
 GLenum VasnecovFigure::renderUpdateData()
