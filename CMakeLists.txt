@@ -12,27 +12,37 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(VASNECOV_SOURCES
-    src/configuration.h
-    src/coreobject.h
-    src/elementlist.h
-    src/types.h
-    src/technologist.cpp
-    src/vasnecov.cpp
-    src/vasnecovelement.cpp
-    src/vasnecovfigure.cpp
-    src/vasnecovlabel.cpp
-    src/vasnecovlamp.cpp
-    src/vasnecovmaterial.cpp
-    src/vasnecovmatrix4x4.cpp
-    src/vasnecovmesh.cpp
-    src/vasnecovpipeline.cpp
-    src/vasnecovproduct.cpp
-    src/vasnecovscene.cpp
-    src/vasnecovtexture.cpp
-    src/vasnecovuniverse.cpp
-    src/vasnecovworld.cpp
-    src/version.h
+    src/libVasnecov/configuration.h
+    src/libVasnecov/coreobject.h
+    src/libVasnecov/elementlist.h
+    src/libVasnecov/types.h
+    src/libVasnecov/technologist.cpp
+    src/libVasnecov/vasnecov.cpp
+    src/libVasnecov/vasnecovelement.cpp
+    src/libVasnecov/vasnecovfigure.cpp
+    src/libVasnecov/vasnecovlabel.cpp
+    src/libVasnecov/vasnecovlamp.cpp
+    src/libVasnecov/vasnecovmaterial.cpp
+    src/libVasnecov/vasnecovmatrix4x4.cpp
+    src/libVasnecov/vasnecovmesh.cpp
+    src/libVasnecov/vasnecovpipeline.cpp
+    src/libVasnecov/vasnecovproduct.cpp
+    src/libVasnecov/vasnecovscene.cpp
+    src/libVasnecov/vasnecovtexture.cpp
+    src/libVasnecov/vasnecovuniverse.cpp
+    src/libVasnecov/vasnecovworld.cpp
+    src/libVasnecov/version.h
+    src/Vasnecov
     )
+
+get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)
+if(HAS_PARENT_SCOPE)
+    set(VASNECOV_INCLUDE_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_BINARY_DIR}/src
+        PARENT_SCOPE
+    )
+endif()
 
 add_library(Vasnecov STATIC ${VASNECOV_SOURCES} resources.qrc)
 
@@ -48,7 +58,3 @@ if(NOT MSVC)
 else()
     target_link_libraries(Vasnecov OpenGL32 GLU32)
 endif()
-
-
-
-
