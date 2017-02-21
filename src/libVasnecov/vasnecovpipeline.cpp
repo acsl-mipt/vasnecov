@@ -250,7 +250,7 @@ QVector4D VasnecovPipeline::projectPoint(const GLmatrix &MV, const QVector3D &po
     QVector4D pos = m_P * MV * wPoint;
 
     // Приведение вектора к нормализованным координатам
-    if(fabs(pos.w()) != 1.0f)
+    if(std::abs(pos.w()) != 1.0f)
     {
         GLfloat div = 1.0f/pos.w();
         pos.setX(pos.x()*div);

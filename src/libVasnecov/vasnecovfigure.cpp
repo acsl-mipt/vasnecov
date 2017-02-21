@@ -230,7 +230,7 @@ void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
 
         std::vector<QVector3D> circ;
         GLfloat endAngle = startAngle + spanAngle;
-        GLuint steps(abs(factor * spanAngle / (2*M_PI)));
+        GLuint steps(std::abs(static_cast<float>(factor) * spanAngle / (2.0f*M_PI)));
         if(steps == 0)
         {
             // Получается слишком маленький отрезок, поэтому он просто рисуется по двум точкам
@@ -282,7 +282,7 @@ void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
 
         std::vector<QVector3D> circ;
         GLfloat endAngle = startAngle + spanAngle;
-        GLuint steps(abs(factor * spanAngle / (2*M_PI)));
+        GLuint steps(std::abs(static_cast<float>(factor) * spanAngle / (2.0f*M_PI)));
         if(steps == 0)
         {
             // Получается слишком маленький отрезок, поэтому он просто рисуется по двум точкам
