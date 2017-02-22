@@ -11,14 +11,13 @@
 
 namespace Vasnecov
 {
-    // TODO: make normal loging
-    int panic(const GLstring &text_problemy1, const GLstring &text_problemy2 = ""); // Функция сообщения и архивирования критических ошибок
-    int panic(const GLstring &text_problemy1, int nomer_oshibki); // Функция сообщения и архивирования критических ошибок
-    int panic(const GLstring &text_problemy1, float chislo); // Функция сообщения и архивирования критических ошибок
+    int panic(const GLstring &problemText1, const GLstring &problemText2 = ""); // Функция сообщения и архивирования критических ошибок
+    int panic(const GLstring &problemText1, int errorCode); // Функция сообщения и архивирования критических ошибок
+    int panic(const GLstring &problemText1, float value); // Функция сообщения и архивирования критических ошибок
 
-    int problem(const GLstring &text_problemy1, const GLstring &text_problemy2 = ""); // Функция сообщения и архивирования системных ошибок
-    int problem(const GLstring &text_problemy1, int nomer_oshibki); // Функция сообщения и архивирования системных ошибок
-    int problem(const GLstring &text_problemy1, float chislo); // Функция сообщения и архивирования системных ошибок
+    int problem(const GLstring &problemText1, const GLstring &problemText2 = ""); // Функция сообщения и архивирования системных ошибок
+    int problem(const GLstring &problemText1, int errorCode); // Функция сообщения и архивирования системных ошибок
+    int problem(const GLstring &problemText1, float value); // Функция сообщения и архивирования системных ошибок
 
     float trimAngle(float deg);
 }

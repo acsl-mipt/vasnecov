@@ -7,6 +7,8 @@ find_package(Qt5OpenGL  REQUIRED)
 find_package(Qt5Gui     REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
+add_subdirectory(thirdparty/bmcl)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -52,6 +54,8 @@ if(NOT MSVC)
 endif()
 
 qt5_use_modules(Vasnecov Core OpenGL Gui Widgets)
+
+target_link_libraries(Vasnecov bmcl)
 
 if(NOT MSVC)
     target_link_libraries(Vasnecov GL GLU)
