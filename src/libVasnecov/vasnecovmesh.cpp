@@ -89,17 +89,17 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
         const qint64 maxLineSize = 512;
         QByteArray line = objFile.readLine(maxLineSize);
 
+        // Добавление для переноса строк
+        while(line.endsWith('\\'))
+        {
+            line.chop(1);
+            line.append(objFile.readLine(maxLineSize));
+        }
+
+        line = line.simplified();
+
         if(!line.isEmpty())
         {
-            // Добавление для переноса строк
-            while(line.endsWith('\\'))
-            {
-                line.chop(1);
-                line.append(objFile.readLine(maxLineSize));
-            }
-
-            line = line.simplified();
-
             QString textLine;
             QVector<QStringRef> parts;
 
@@ -109,49 +109,52 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
                 case '#': // Комментарий
                     break;
                 case 'v': // Вершины: v, vt, vn, vp
-                    switch(line.at(1))
+                    if(line.size() > 2) // 'v' + ' ' + data
                     {
-                        case ' ': // Вершины "v"
-                            textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
-                            parts = textLine.splitRef(' ');
+                        switch(line.at(1))
+                        {
+                            case ' ': // Вершины "v"
+                                textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
+                                parts = textLine.splitRef(' ');
 
-                            if(parts.size() >= 3)
-                            {
-                                rawVertices.push_back(QVector3D(parts.at(0).toFloat(),
-                                                                parts.at(1).toFloat(),
-                                                                parts.at(2).toFloat()));
-                            }
-                            break;
-                        case 't': // Текстуры "vt", поддержка только плоских (двухмерных) текстурных координат
-                            textLine = QString::fromLatin1(line.constData() + 3, line.size() - 3);
-                            parts = textLine.splitRef(' ');
+                                if(parts.size() >= 3)
+                                {
+                                    rawVertices.push_back(QVector3D(parts.at(0).toFloat(),
+                                                                    parts.at(1).toFloat(),
+                                                                    parts.at(2).toFloat()));
+                                }
+                                break;
+                            case 't': // Текстуры "vt", поддержка только плоских (двухмерных) текстурных координат
+                                textLine = QString::fromLatin1(line.constData() + 3, line.size() - 3);
+                                parts = textLine.splitRef(' ');
 
-                            if(parts.size() >= 2)
-                            {
-                                rawTextures.push_back(QVector2D(parts.at(0).toFloat(),
-                                                               -parts.at(1).toFloat())); // из-за того, что текстура читается кверху ногами. На досуге разобраться!
-                            }
-                            break;
-                        case 'n': // Нормали "vn"
-                            textLine = QString::fromLatin1(line.constData() + 3, line.size() - 3);
-                            parts = textLine.splitRef(' ');
+                                if(parts.size() >= 2)
+                                {
+                                    rawTextures.push_back(QVector2D(parts.at(0).toFloat(),
+                                                                   -parts.at(1).toFloat())); // из-за того, что текстура читается кверху ногами. На досуге разобраться!
+                                }
+                                break;
+                            case 'n': // Нормали "vn"
+                                textLine = QString::fromLatin1(line.constData() + 3, line.size() - 3);
+                                parts = textLine.splitRef(' ');
 
-                            if(parts.size() >= 3)
-                            {
-                                rawNormals.push_back(QVector3D(parts.at(0).toFloat(),
-                                                               parts.at(1).toFloat(),
-                                                               parts.at(2).toFloat()));
-                            }
-                            break;
-                        case 'p':
-                        default:
-                            break;
+                                if(parts.size() >= 3)
+                                {
+                                    rawNormals.push_back(QVector3D(parts.at(0).toFloat(),
+                                                                   parts.at(1).toFloat(),
+                                                                   parts.at(2).toFloat()));
+                                }
+                                break;
+                            case 'p':
+                            default:
+                                break;
+                        }
                     }
                     break;
                 case 'f': // Полигоны (поддерживаются только треугольники, остальное не читается; отрицательные индексы не учитываются)
-                    if(line.at(1) == ' ')
+                    if(line.size() > 2 && line.at(1) == ' ')
                     {
-                        // Разбивается на 3 строки, анализируется по количеству слешей, заменяются слеши на пробелы, а из потока в уинты.
+                        // Разбивается на 3 строки, анализируется по количеству слешей
                         textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
                         parts = textLine.splitRef(' ');
 
@@ -159,7 +162,7 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
                         if(parts.size() == amount)
                         {
                             TrianglesIndices cIndex;
-                            GLboolean correct(true);
+                            bool correct(true);
 
                             // Перебор узлов треугольника
                             for(int i = 0; i < amount; ++i)
@@ -168,7 +171,7 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
 
                                 if(blocks.size() == 3) // "v/t/n" or "v//n"
                                 {
-                                    // Индексы obj-файла начинатся с единицы, поэтому вычитаем
+                                    // Индексы obj-файла начинаются с единицы, поэтому вычитаем
                                     cIndex.vertices[i] = blocks.at(0).toUInt() - 1;
 
                                     if(!blocks.at(1).isEmpty())
