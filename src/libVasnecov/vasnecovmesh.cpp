@@ -1,5 +1,7 @@
 #include "vasnecovmesh.h"
 #include <QVector2D>
+#include <QFile>
+#include <QVector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -62,6 +64,7 @@ GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
  \param readFromMTL
  \return GLboolean
 */
+
 GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
 {
     m_meshPath = path;
@@ -72,207 +75,167 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
     std::vector <QVector3D> rawNormals; // Координаты нормалей
     std::vector <QVector2D> rawTextures; // Координаты текстур
 
-    std::ifstream objFile(m_meshPath.c_str());
-    if(!objFile)
+    QFile objFile(QString::fromStdString(path));
+    if(!objFile.open(QIODevice::ReadOnly))
     {
         Vasnecov::problem("Не удалось открыть файл модели: " + m_meshPath);
         return 0;
     }
 
-    char ch;
-    GLstring textLine;
-
     // Возможно, полезным будет добавить reserve() в вектора точек. Но для этого нужно дважды парсить файл для определения размера списков.
-    while(objFile.get(ch))
+    while(!objFile.atEnd())
     {
-        std::stringstream tlStream; // Поток строки
-        QVector3D cPoint; // -/- для точки в 3Д
-        QVector2D cTPos; // -/- для точки в 2Д
+        // "Object files can be in ASCII format (.obj)" - на это и рассчитываем
+        const qint64 maxLineSize = 512;
+        QByteArray line = objFile.readLine(maxLineSize);
 
-        // Прогон на определение типа строки
-        switch(ch)
+        if(!line.isEmpty())
         {
-            case '#': // Комментарий
-                getline(objFile, textLine);
-                break;
-            case 'v': // Вершины
-                objFile.get(ch);
-                GLfloat v;
+            // Добавление для переноса строк
+            while(line.endsWith('\\'))
+            {
+                line.chop(1);
+                line.append(objFile.readLine(maxLineSize));
+            }
 
-                switch(ch)
-                {
-                    case ' ': // Вершины "v"
-                    case '\t':
-                        cPoint.setX(0);
-                        cPoint.setY(0);
-                        cPoint.setZ(0);
+            line = line.simplified();
 
-                        getline(objFile, textLine);
-                        tlStream << textLine;
+            QString textLine;
+            QVector<QStringRef> parts;
 
-                        tlStream >> v;
-                        cPoint.setX(v);
-                        tlStream >> v;
-                        cPoint.setY(v);
-                        tlStream >> v;
-                        cPoint.setZ(v);
-
-                        rawVertices.push_back(cPoint);
-                        break;
-                    case 't': // Текстуры "vt", поддержка только плоских (двухмерных) текстурных координат
-                        cTPos.setX(0);
-                        cTPos.setY(0);
-
-                        getline(objFile, textLine);
-                        tlStream << textLine;
-
-                        tlStream >> v;
-                        cTPos.setX(v);
-                        tlStream >> v;
-                        cTPos.setY(-v); // из-за того, что текстура читается кверху ногами. На досуге разобраться!
-
-                        rawTextures.push_back(cTPos);
-                        break;
-                    case 'n': // Нормали "vn"
-                        cPoint.setX(0);
-                        cPoint.setY(0);
-                        cPoint.setZ(0);
-
-                        getline(objFile, textLine);
-                        tlStream << textLine;
-
-                        tlStream >> v;
-                        cPoint.setX(v);
-                        tlStream >> v;
-                        cPoint.setY(v);
-                        tlStream >> v;
-                        cPoint.setZ(v);
-
-                        rawNormals.push_back(cPoint);
-                        break;
-                    default:
-                        getline(objFile, textLine);
-                        break;
-                }
-                break;
-            case 'f': // Полигоны (поддерживаются только треугольники, остальное не читается; отрицательные индексы не учитываются)
-                objFile.get(ch);
-                if(ch == ' ' || ch == '\t') // Алгоритм, наверно, идиотский! Наличие кучи разной удобности плюшек STL оказало своё черное влияние :) В смысле, через сканф это всё делается куда проще...
-                {
-                    TrianglesIndices cIndex;
-
-                    getline(objFile, textLine);
-
-                    // Разбивается на 3 строки, анализируется по количеству слешей, заменяются слеши на пробелы, потом в поток, а из потока в уинты.
-                    tlStream << textLine;
-
-                    GLuint singleSlash, doubleSlash; // Количество слешей и двойных слешей
-                    size_t res; // Поисковая позиция
-
-                    // Перебор узлов треугольника
-                    for(GLuint i = 0; i < 3; ++i)
+            // Прогон на определение типа строки
+            switch(line.at(0))
+            {
+                case '#': // Комментарий
+                    break;
+                case 'v': // Вершины: v, vt, vn, vp
+                    switch(line.at(1))
                     {
-                        GLstring fLine;
-                        std::stringstream fStream;
+                        case ' ': // Вершины "v"
+                            textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
+                            parts = textLine.splitRef(' ');
 
-                        tlStream >> fLine;
+                            if(parts.size() >= 3)
+                            {
+                                rawVertices.push_back(QVector3D(parts.at(0).toFloat(),
+                                                                parts.at(1).toFloat(),
+                                                                parts.at(2).toFloat()));
+                            }
+                            break;
+                        case 't': // Текстуры "vt", поддержка только плоских (двухмерных) текстурных координат
+                            textLine = QString::fromLatin1(line.constData() + 3, line.size() - 3);
+                            parts = textLine.splitRef(' ');
 
-                        if(!fLine.empty())
+                            if(parts.size() >= 2)
+                            {
+                                rawTextures.push_back(QVector2D(parts.at(0).toFloat(),
+                                                               -parts.at(1).toFloat())); // из-за того, что текстура читается кверху ногами. На досуге разобраться!
+                            }
+                            break;
+                        case 'n': // Нормали "vn"
+                            textLine = QString::fromLatin1(line.constData() + 3, line.size() - 3);
+                            parts = textLine.splitRef(' ');
+
+                            if(parts.size() >= 3)
+                            {
+                                rawNormals.push_back(QVector3D(parts.at(0).toFloat(),
+                                                               parts.at(1).toFloat(),
+                                                               parts.at(2).toFloat()));
+                            }
+                            break;
+                        case 'p':
+                        default:
+                            break;
+                    }
+                    break;
+                case 'f': // Полигоны (поддерживаются только треугольники, остальное не читается; отрицательные индексы не учитываются)
+                    if(line.at(1) == ' ')
+                    {
+                        // Разбивается на 3 строки, анализируется по количеству слешей, заменяются слеши на пробелы, а из потока в уинты.
+                        textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
+                        parts = textLine.splitRef(' ');
+
+                        const int amount(3); // Треугольники
+                        if(parts.size() == amount)
                         {
-                            for(singleSlash = 0, res = 0; (res=fLine.find("/", res+1)) != GLstring::npos; ++singleSlash);
-                            for(doubleSlash = 0, res = 0; (res=fLine.find("//", res+1)) != GLstring::npos; ++doubleSlash);
+                            TrianglesIndices cIndex;
+                            GLboolean correct(true);
 
-                            if(singleSlash == 0 && doubleSlash == 0) // "v"
+                            // Перебор узлов треугольника
+                            for(int i = 0; i < amount; ++i)
                             {
-                                fStream << fLine;
-                                fStream >> cIndex.vertices[i];
+                                QVector<QStringRef> blocks = parts.at(i).split('/');
 
-                                cIndex.vertices[i]--;
+                                if(blocks.size() == 3) // "v/t/n" or "v//n"
+                                {
+                                    // Индексы obj-файла начинатся с единицы, поэтому вычитаем
+                                    cIndex.vertices[i] = blocks.at(0).toUInt() - 1;
+
+                                    if(!blocks.at(1).isEmpty())
+                                        cIndex.textures[i] = blocks.at(1).toUInt() - 1;
+
+                                    cIndex.normals[i]  = blocks.at(2).toUInt() - 1;
+                                }
+                                else if(blocks.size() == 2) // "v/t"
+                                {
+                                    cIndex.vertices[i] = blocks.at(0).toUInt() - 1;
+                                    cIndex.textures[i] = blocks.at(1).toUInt() - 1;
+                                }
+                                else if(blocks.size() == 1) // "v"
+                                {
+                                    cIndex.vertices[i] = blocks.at(0).toUInt() - 1;
+                                }
+                                else
+                                {
+                                    correct = false;
+                                    break;
+                                }
                             }
-                            else if(singleSlash == 1 && doubleSlash == 0) // "v/t"
-                            {
-                                std::replace(fLine.begin(), fLine.end(), '/', ' ');
-                                fStream << fLine;
-                                fStream >> cIndex.vertices[i];
-                                fStream >> cIndex.textures[i];
 
-                                cIndex.vertices[i]--;
-                                cIndex.textures[i]--;
-                            }
-                            else if(singleSlash == 2 && doubleSlash == 1) // "v//n"
-                            {
-                                std::replace(fLine.begin(), fLine.end(), '/', ' ');
-                                fStream << fLine;
-                                fStream >> cIndex.vertices[i];
-                                fStream >> cIndex.normals[i];
+                            if(correct)
+                                rawIndices.push_back(cIndex);
+                        }
+                    }
+                    break;
+                case 'm': // Библиотека материалов (mtllib), группы (mg)
+                    break;
+                case 'u': // Указатель на материал (usemtl)
+                    {
+                        if(readFromMTL)
+                        {
+                            textLine = QString::fromLatin1(line.constData(), line.size());
+                            parts = textLine.splitRef(' ');
 
-                                cIndex.vertices[i]--;
-                                cIndex.normals[i]--;
-                            }
-                            else if(singleSlash == 2 && doubleSlash == 0) // "v/t/n"
+                            if(parts.size() == 2)
                             {
-                                std::replace(fLine.begin(), fLine.end(), '/', ' ');
-                                fStream << fLine;
-                                fStream >> cIndex.vertices[i];
-                                fStream >> cIndex.textures[i];
-                                fStream >> cIndex.normals[i];
-
-                                cIndex.vertices[i]--;
-                                cIndex.textures[i]--;
-                                cIndex.normals[i]--;
+                                if(parts.at(0) == "usemtl")
+                                {
+                                    // исключение материала с именем (null) - где-то используется для обозначения отсутствующих материалов.
+                                    if(parts.at(1) != "(null)")
+                                    {
+//        								m_textureD = parts.at(1);
+                                        m_hasTexture = 1;
+                                    }
+                                }
+                                else if(m_name != "")
+                                {
+//            						m_textureD = m_name;
+                                    m_hasTexture = 1;
+                                }
                             }
                         }
                     }
-
-                    rawIndices.push_back(cIndex);
-                }
-                break;
-            case 'm': // Библиотека материалов (mtllib)
-                getline(objFile, textLine);
-                break;
-            case 'u': // Указатель на материал (usemtl)
-                {
-                    getline(objFile, textLine);
-                    if(readFromMTL)
-                    {
-                        size_t pos_prob;
-                        pos_prob = textLine.find_first_of(" "); // Отделение текста по пробелу
-                        if(pos_prob != GLstring::npos)
-                        {
-                            size_t pos_null;
-                            pos_null = textLine.find("(null)"); // исключение материала с именем (null) - где-то используется для обозначения отсутствующих материалов.
-                            if(pos_null == GLstring::npos)
-                            {
-//								m_textureD = stroka.substr(pos_prob+1, GLstring::npos);
-                                m_hasTexture = 1;
-                            }
-                        }
-                    }
-                    else if(m_name != "")
-                    {
-//						m_textureD = m_name;
-                        m_hasTexture = 1;
-                    }
-                }
-                break;
-            case 'g': // Группа
-                getline(objFile, textLine);
-                break;
-            case 's': // Группирование по сглаживанию
-                getline(objFile, textLine);
-                break;
-            default: // Всё остальное в мусор
-                getline(objFile, textLine);
-                break;
+                    break;
+                case 'g': // Группа
+                    break;
+                case 's': // Группирование по сглаживанию
+                    break;
+                default: // Всё остальное в мусор
+                    break;
+            }
         }
     }
 
-    if(!objFile.eof())
-    {
-        Vasnecov::problem("Ошибка чтения файла модели: " + m_meshPath);
-        objFile.close();
-        return 0;
-    }
     objFile.close();
 
     // Проверка на наличие индексов
@@ -379,7 +342,7 @@ void VasnecovMesh::drawModel()
         {
             texts = &m_textures;
         }
-
+// TODO: add reading/drawing lines from obj (like VFigure)
         m_pipeline->drawElements(VasnecovPipeline::Triangles,
                                  &m_indices,
                                  &m_vertices,

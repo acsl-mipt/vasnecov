@@ -16,9 +16,7 @@ namespace Vasnecov
     const GLsizei cfg_displayHeightDefault = 320;
 
     const GLstring cfg_shareDir = "/usr/local/share/";
-    const GLstring cfg_libraryName = "libVasnecov";
     const GLboolean cfg_showLoadingImage = 1; // Отображать табличку загрузки
-    const GLstring cfg_loadingImageFile = "loading.png";
     const int cfg_loadingImagePause = 150;
 
     const GLstring cfg_dirTextures = "stuff/textures/";

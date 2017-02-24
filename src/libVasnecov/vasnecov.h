@@ -5,6 +5,7 @@
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 #include "vasnecovscene.h"
+#include "vasnecovuniverse.h"
 #include "version.h"
 
 #ifndef _MSC_VER

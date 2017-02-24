@@ -1,4 +1,5 @@
 #include "vasnecovscene.h"
+#include "vasnecovuniverse.h"
 #include <QPainter>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"

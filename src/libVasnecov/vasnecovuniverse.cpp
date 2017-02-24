@@ -7,6 +7,7 @@
 #endif
 #include <GL/glu.h>
 #include "vasnecovmesh.h"
+#include "bmcl/Logging.h"
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
@@ -1065,7 +1066,8 @@ void VasnecovUniverse::renderInitialize()
     exts = exts.replace(" ", "\n");
 
     QMutexLocker locker(&mtx_data);
-qDebug("%s",reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+
+    BMCL_INFO() << "OpenGL " << reinterpret_cast<const char *>(glGetString(GL_VERSION));
     m_techRenderer.set(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
     m_techVersion.set(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 #ifndef _MSC_VER

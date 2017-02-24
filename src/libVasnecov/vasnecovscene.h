@@ -6,11 +6,21 @@
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 #include <QGraphicsScene>
-#include "vasnecovuniverse.h"
+#include <GL/gl.h>
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
+
+class VasnecovUniverse;
+class VasnecovWorld;
+
+class VasnecovLamp;
+class VasnecovProduct;
+class VasnecovFigure;
+class VasnecovLabel;
+class VasnecovMaterial;
+class VasnecovTexture;
 
 class VasnecovScene : public QGraphicsScene
 {
@@ -21,7 +31,7 @@ public:
     VasnecovUniverse *universe() const;
 
 public slots:
-    virtual void setUniverse(VasnecovUniverse * universe);
+    virtual void setUniverse(VasnecovUniverse *universe);
     virtual bool removeUniverse();
 
 protected:

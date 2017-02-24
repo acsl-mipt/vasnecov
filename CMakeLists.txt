@@ -35,6 +35,9 @@ set(VASNECOV_SOURCES
     src/libVasnecov/vasnecovworld.cpp
     src/libVasnecov/version.h
     src/Vasnecov
+    src/VasnecovUniverse
+    src/VasnecovScene
+    src/VasnecovProduct
     )
 
 get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)

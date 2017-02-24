@@ -79,7 +79,7 @@ private:
 class VasnecovElement : public VasnecovAbstractElement
 {
 public:
-    VasnecovElement(QMutex * mutex, VasnecovPipeline *pipeline, const GLstring &name = "");
+    VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name = "");
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами)
