@@ -6,7 +6,6 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "vasnecovpipeline.h"
 #include "technologist.h"
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
@@ -21,6 +20,7 @@
 */
 VasnecovMesh::VasnecovMesh(const GLstring &meshPath, VasnecovPipeline *pipeline, const GLstring &name) :
     m_pipeline(pipeline),
+    m_type(VasnecovPipeline::Points),
     m_name(name),
     m_isHidden(true),
     m_meshPath(meshPath),
@@ -68,9 +68,11 @@ GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
 GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
 {
     m_meshPath = path;
+    m_type = VasnecovPipeline::Points;
 
     // Списки для данных в грубом виде
     std::vector <TrianglesIndices> rawIndices; // Набор индексов для всего подряд
+    std::vector <LinesIndices> rawLinesIndices; // Набор индексов для отрисовки линий
     std::vector <QVector3D> rawVertices; // Координаты вершин
     std::vector <QVector3D> rawNormals; // Координаты нормалей
     std::vector <QVector2D> rawTextures; // Координаты текстур
@@ -158,14 +160,13 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
                         textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
                         parts = textLine.splitRef(' ');
 
-                        const int amount(3); // Треугольники
-                        if(parts.size() == amount)
+                        if(static_cast<GLuint>(parts.size()) == TrianglesIndices::amount)
                         {
                             TrianglesIndices cIndex;
                             bool correct(true);
 
                             // Перебор узлов треугольника
-                            for(int i = 0; i < amount; ++i)
+                            for(uint i = 0; i < TrianglesIndices::amount; ++i)
                             {
                                 QVector<QStringRef> blocks = parts.at(i).split('/');
 
@@ -196,7 +197,75 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
                             }
 
                             if(correct)
+                            {
                                 rawIndices.push_back(cIndex);
+                                if(m_type != VasnecovPipeline::Triangles)
+                                {
+                                    m_type = VasnecovPipeline::Triangles;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'l': // Отрисовка линиями, если не заданы полигоны
+                    if(line.size() > 2 && line.at(1) == ' ')
+                    {
+                        if(m_type != VasnecovPipeline::Triangles)
+                        {
+                            textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
+                            parts = textLine.splitRef(' ');
+
+                            GLuint actSize = static_cast<GLuint>(parts.size());
+                            // Линия может состоять из 2 точек (Blender)
+                            // А может из нескольких. Тогда приводим одну линию к нескольким, состоящим из 2 точек.
+                            if(actSize >= LinesIndices::amount)
+                            {
+                                LinesIndices cIndex;
+                                bool correct(true);
+
+                                // Перебор узлов треугольника
+                                for(uint i = 0, li = 0; i < actSize; ++i)
+                                {
+                                    QVector<QStringRef> blocks = parts.at(i).split('/');
+
+                                    if(blocks.size() == 2) // "v/t"
+                                    {
+                                        cIndex.vertices[li] = blocks.at(0).toUInt() - 1;
+                                        cIndex.textures[li] = blocks.at(1).toUInt() - 1;
+                                    }
+                                    else if(blocks.size() == 1) // "v"
+                                    {
+                                        cIndex.vertices[li] = blocks.at(0).toUInt() - 1;
+                                    }
+                                    else
+                                    {
+                                        correct = false;
+                                        break;
+                                    }
+
+                                    // После первого прохода для всех остальных
+                                    if(li != 1)
+                                    {
+                                        li = 1;
+                                    }
+                                    // Для всех последующих точек
+                                    if(i > 0)
+                                    {
+                                        rawLinesIndices.push_back(cIndex);
+
+                                        cIndex.vertices[0] = cIndex.vertices[li];
+                                        cIndex.textures[0] = cIndex.textures[li];
+                                    }
+                                }
+
+                                if(correct)
+                                {
+                                    if(m_type != VasnecovPipeline::Lines)
+                                    {
+                                        m_type = VasnecovPipeline::Lines;
+                                    }
+                                }
+                            }
                         }
                     }
                     break;
@@ -245,7 +314,9 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
     GLuint vm = rawVertices.size();
     GLuint nm = rawNormals.size();
     GLuint tm = rawTextures.size();
-    GLuint im = rawIndices.size();
+    GLuint indCount = rawIndices.size();
+    if(m_type == VasnecovPipeline::Lines)
+        indCount = rawLinesIndices.size();
 
     if(vm == 0)
     {
@@ -257,25 +328,48 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
 
     int fails(0);
 
-    for(GLuint i = 0; i < im; ++i)
+    if(m_type == VasnecovPipeline::Lines)
     {
-        for(GLuint j = 0; j < 3; ++j)
+        for(GLuint i = 0; i < indCount; ++i)
         {
-            GLuint vi = rawIndices[i].vertices[j];
-            GLuint ni = rawIndices[i].normals[j];
-            GLuint ti = rawIndices[i].textures[j];
+            for(GLuint j = 0; j < LinesIndices::amount; ++j)
+            {
+                GLuint vi = rawLinesIndices[i].vertices[j];
+                GLuint ti = rawLinesIndices[i].textures[j];
 
-            if(vi >= vm && vm != 0)
-            {
-                fails++;
+                if(vi >= vm && vm != 0)
+                {
+                    fails++;
+                }
+                if(ti >= tm && tm != 0)
+                {
+                    fails++;
+                }
             }
-            if(ni >= nm && nm != 0)
+        }
+    }
+    else
+    {
+        for(GLuint i = 0; i < indCount; ++i)
+        {
+            for(GLuint j = 0; j < TrianglesIndices::amount; ++j)
             {
-                fails++;
-            }
-            if(ti >= tm && tm != 0)
-            {
-                fails++;
+                GLuint vi = rawIndices[i].vertices[j];
+                GLuint ni = rawIndices[i].normals[j];
+                GLuint ti = rawIndices[i].textures[j];
+
+                if(vi >= vm && vm != 0)
+                {
+                    fails++;
+                }
+                if(ni >= nm && nm != 0)
+                {
+                    fails++;
+                }
+                if(ti >= tm && tm != 0)
+                {
+                    fails++;
+                }
             }
         }
     }
@@ -289,28 +383,51 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
     }
 
     // Приведение данных к нормальному виду (пригодному для отрисовки по общему индексу)
-    m_indices.reserve(rawIndices.size());
+    m_indices.reserve(indCount);
 
-    for(GLuint i = 0; i < rawIndices.size(); ++i)
+    if(m_type == VasnecovPipeline::Lines)
     {
-        for(GLuint j = 0; j < 3; ++j)
+        for(GLuint i = 0; i < indCount; ++i)
         {
-            GLuint vi = rawIndices[i].vertices[j];
-            GLuint ni = rawIndices[i].normals[j];
-            GLuint ti = rawIndices[i].textures[j];
-
-            m_vertices.push_back(rawVertices[vi]);
-
-            if(nm)
+            for(GLuint j = 0; j < LinesIndices::amount; ++j)
             {
-                m_normals.push_back(rawNormals[ni]);
-            }
-            if(tm)
-            {
-                m_textures.push_back(rawTextures[ti]);
-            }
+                GLuint vi = rawLinesIndices[i].vertices[j];
+                GLuint ti = rawLinesIndices[i].textures[j];
 
-            m_indices.push_back(m_vertices.size()-1);
+                m_vertices.push_back(rawVertices[vi]);
+
+                if(tm)
+                {
+                    m_textures.push_back(rawTextures[ti]);
+                }
+
+                m_indices.push_back(m_vertices.size()-1);
+            }
+        }
+    }
+    else
+    {
+        for(GLuint i = 0; i < indCount; ++i)
+        {
+            for(GLuint j = 0; j < TrianglesIndices::amount; ++j)
+            {
+                GLuint vi = rawIndices[i].vertices[j];
+                GLuint ni = rawIndices[i].normals[j];
+                GLuint ti = rawIndices[i].textures[j];
+
+                m_vertices.push_back(rawVertices[vi]);
+
+                if(nm)
+                {
+                    m_normals.push_back(rawNormals[ni]);
+                }
+                if(tm)
+                {
+                    m_textures.push_back(rawTextures[ti]);
+                }
+
+                m_indices.push_back(m_vertices.size()-1);
+            }
         }
     }
 
@@ -345,8 +462,8 @@ void VasnecovMesh::drawModel()
         {
             texts = &m_textures;
         }
-// TODO: add reading/drawing lines from obj (like VFigure)
-        m_pipeline->drawElements(VasnecovPipeline::Triangles,
+
+        m_pipeline->drawElements(m_type,
                                  &m_indices,
                                  &m_vertices,
                                  norms,
