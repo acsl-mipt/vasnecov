@@ -1,5 +1,7 @@
 #include "vasnecovfigure.h"
 #include "technologist.h"
+#include <QFile>
+#include <QSize>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
@@ -28,6 +30,124 @@ VasnecovFigure::VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const 
 */
 VasnecovFigure::~VasnecovFigure()
 {
+}
+
+std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const GLstring &fileName)
+{
+    std::vector<QVector3D> points;
+
+    QFile objFile(QString::fromStdString(fileName));
+
+    if(objFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        std::vector<QVector3D> verticies;
+        std::vector<QSize> indicies;
+        const qint64 maxLineSize = 512;
+
+        while(!objFile.atEnd())
+        {
+            QByteArray line = objFile.readLine(maxLineSize);
+
+            // Добавление для переноса строк
+            while(line.endsWith('\\'))
+            {
+                line.chop(1);
+                line.append(objFile.readLine(maxLineSize));
+            }
+
+            line = line.simplified();
+
+            if(line.size() >= 2)
+            {
+                QString textLine;
+                QVector<QStringRef> parts;
+
+                if(line.at(0) == 'v' && line.at(1) == ' ')
+                {
+                    textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
+                    parts = textLine.splitRef(' ');
+
+                    if(parts.size() >= 3)
+                    {
+                        verticies.push_back(QVector3D(parts.at(0).toFloat(),
+                                                      parts.at(1).toFloat(),
+                                                      parts.at(2).toFloat()));
+                    }
+                }
+                else if(line.at(0) == 'l' && line.at(1) == ' ')
+                {
+                    textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
+                    parts = textLine.splitRef(' ');
+
+                    GLuint actSize = static_cast<GLuint>(parts.size());
+                    // Линия может состоять из 2 точек (Blender)
+                    // А может из нескольких. Тогда приводим одну линию к нескольким, состоящим из 2 точек.
+                    if(actSize >= 2)
+                    {
+                        GLuint vertices[2];
+
+                        // Перебор узлов треугольника
+                        for(uint i = 0, li = 0; i < actSize; ++i)
+                        {
+                            QVector<QStringRef> blocks = parts.at(i).split('/');
+
+                            if(blocks.size() == 1) // "v"
+                            {
+                                vertices[li] = blocks.at(0).toUInt() - 1;
+                            }
+                            else
+                            {
+                                break;
+                            }
+
+                            // После первого прохода для всех остальных
+                            if(li != 1)
+                            {
+                                li = 1;
+                            }
+                            // Для всех последующих точек
+                            if(i > 0)
+                            {
+                                indicies.push_back(QSize(vertices[0], vertices[1]));
+
+                                vertices[0] = vertices[li];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int fails(0);
+
+        points.reserve(indicies.size() * 2);
+        for(uint i = 0; i < indicies.size(); ++i)
+        {
+            uint first = static_cast<uint>(indicies.at(i).width());
+            uint last  = static_cast<uint>(indicies.at(i).height());
+
+            if(first < verticies.size() && last < verticies.size())
+            {
+                points.push_back(verticies.at(first));
+                points.push_back(verticies.at(last));
+            }
+            else
+            {
+                ++fails;
+            }
+        }
+
+        if(fails > 0)
+        {
+            Vasnecov::problem("Некорректные данные геометрии: " + fileName + ", битых индексов: ", fails);
+        }
+    }
+    else
+    {
+        Vasnecov::problem("Не удалось открыть файл геометрии: " + fileName);
+    }
+
+    return points;
 }
 
 /*!
@@ -372,6 +492,20 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
 
         m_points.set(points);
     }
+}
+
+void VasnecovFigure::createMeshFromFile(const GLstring &fileName, const QColor &color)
+{
+    QMutexLocker locker(mtx_data);
+
+    designerSetType(VasnecovFigure::TypeLines);
+
+    if(color.isValid())
+    {
+        m_color.set(color);
+    }
+
+    m_points.set(readPointsFromObj(fileName));
 }
 
 GLboolean VasnecovFigure::designerSetType(VasnecovFigure::Types type)

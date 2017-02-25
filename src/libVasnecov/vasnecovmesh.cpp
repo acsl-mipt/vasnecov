@@ -78,17 +78,18 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
     std::vector <QVector2D> rawTextures; // Координаты текстур
 
     QFile objFile(QString::fromStdString(path));
-    if(!objFile.open(QIODevice::ReadOnly))
+    if(!objFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         Vasnecov::problem("Не удалось открыть файл модели: " + m_meshPath);
         return 0;
     }
 
     // Возможно, полезным будет добавить reserve() в вектора точек. Но для этого нужно дважды парсить файл для определения размера списков.
+    const qint64 maxLineSize = 512;
+
     while(!objFile.atEnd())
     {
         // "Object files can be in ASCII format (.obj)" - на это и рассчитываем
-        const qint64 maxLineSize = 512;
         QByteArray line = objFile.readLine(maxLineSize);
 
         // Добавление для переноса строк
@@ -339,11 +340,11 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
 
                 if(vi >= vm && vm != 0)
                 {
-                    fails++;
+                    ++fails;
                 }
                 if(ti >= tm && tm != 0)
                 {
-                    fails++;
+                    ++fails;
                 }
             }
         }
@@ -360,15 +361,15 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
 
                 if(vi >= vm && vm != 0)
                 {
-                    fails++;
+                    ++fails;
                 }
                 if(ni >= nm && nm != 0)
                 {
-                    fails++;
+                    ++fails;
                 }
                 if(ti >= tm && tm != 0)
                 {
-                    fails++;
+                    ++fails;
                 }
             }
         }

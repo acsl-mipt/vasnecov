@@ -336,6 +336,8 @@ public:
     VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name = GLstring());
     ~VasnecovFigure();
 
+    static std::vector<QVector3D> readPointsFromObj(const GLstring &fileName);
+
     void setPoints(const std::vector<QVector3D> &points);
     void clearPoints();
     GLuint pointsAmount() const;
@@ -370,6 +372,7 @@ public:
     void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
     void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
     void createSquareGrid(GLfloat width, GLfloat height, const QColor &color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
+    void createMeshFromFile(const GLstring &fileName, const QColor &color = QColor());
 
 protected:
     GLboolean designerSetType(VasnecovFigure::Types type);
