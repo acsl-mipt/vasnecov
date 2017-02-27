@@ -17,21 +17,36 @@ set(VASNECOV_SOURCES
     src/libVasnecov/configuration.h
     src/libVasnecov/coreobject.h
     src/libVasnecov/elementlist.h
-    src/libVasnecov/types.h
+    src/libVasnecov/technologist.h
     src/libVasnecov/technologist.cpp
+    src/libVasnecov/types.h
+    src/libVasnecov/vasnecov.h
     src/libVasnecov/vasnecov.cpp
+    src/libVasnecov/vasnecovelement.h
     src/libVasnecov/vasnecovelement.cpp
+    src/libVasnecov/vasnecovfigure.h
     src/libVasnecov/vasnecovfigure.cpp
+    src/libVasnecov/vasnecovlabel.h
     src/libVasnecov/vasnecovlabel.cpp
+    src/libVasnecov/vasnecovlamp.h
     src/libVasnecov/vasnecovlamp.cpp
+    src/libVasnecov/vasnecovmaterial.h
     src/libVasnecov/vasnecovmaterial.cpp
+    src/libVasnecov/vasnecovmatrix4x4.h
     src/libVasnecov/vasnecovmatrix4x4.cpp
+    src/libVasnecov/vasnecovmesh.h
     src/libVasnecov/vasnecovmesh.cpp
+    src/libVasnecov/vasnecovpipeline.h
     src/libVasnecov/vasnecovpipeline.cpp
+    src/libVasnecov/vasnecovproduct.h
     src/libVasnecov/vasnecovproduct.cpp
+    src/libVasnecov/vasnecovscene.h
     src/libVasnecov/vasnecovscene.cpp
+    src/libVasnecov/vasnecovtexture.h
     src/libVasnecov/vasnecovtexture.cpp
+    src/libVasnecov/vasnecovuniverse.h
     src/libVasnecov/vasnecovuniverse.cpp
+    src/libVasnecov/vasnecovworld.h
     src/libVasnecov/vasnecovworld.cpp
     src/libVasnecov/version.h
     src/Vasnecov
