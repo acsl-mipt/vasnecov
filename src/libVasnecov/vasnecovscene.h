@@ -6,8 +6,7 @@
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 #include <QGraphicsScene>
-#include <GL/gl.h>
-
+#include "types.h"
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
