@@ -304,6 +304,40 @@ GLboolean VasnecovFigure::optimization() const
     return m_points.optimization();
 }
 
+void VasnecovFigure::createLine(GLfloat length, const QColor &color)
+{
+    if(length > 0.0)
+    {
+        QMutexLocker locker(mtx_data);
+
+        designerSetType(VasnecovFigure::TypeLines);
+
+        if(color.isValid())
+        {
+            m_color.set(color);
+        }
+
+        m_points.set(std::vector<QVector3D>{QVector3D(0.0, 0.0, 0.0), QVector3D(length, 0.0, 0.0)});
+    }
+}
+
+void VasnecovFigure::createLine(const QVector3D &first, const QVector3D &second, const QColor &color)
+{
+    if(first != second)
+    {
+        QMutexLocker locker(mtx_data);
+
+        designerSetType(VasnecovFigure::TypeLines);
+
+        if(color.isValid())
+        {
+            m_color.set(color);
+        }
+
+        m_points.set(std::vector<QVector3D>{first, second});
+    }
+}
+
 void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
 {
     if(r > 0.0 && factor > 0)
