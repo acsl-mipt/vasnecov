@@ -5,6 +5,8 @@
 #include "vasnecovlabel.h"
 #include "vasnecovfigure.h"
 #include "configuration.h"
+#include <QSize>
+#include <QRect>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
@@ -569,6 +571,56 @@ Vasnecov::WorldTypes VasnecovWorld::projection() const
 
     Vasnecov::WorldTypes projection(m_parameters.raw().projection);
     return projection;
+}
+
+GLint VasnecovWorld::x() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return m_parameters.raw().x;
+}
+
+GLint VasnecovWorld::y() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return m_parameters.raw().y;
+}
+
+GLsizei VasnecovWorld::width() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return m_parameters.raw().width;
+}
+
+GLsizei VasnecovWorld::height() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return m_parameters.raw().height;
+}
+
+QSize VasnecovWorld::size() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return QSize(m_parameters.raw().width, m_parameters.raw().height);
+}
+/*!
+ \brief
+
+ \fn VasnecovWorld::window
+ \return QRect прямоугольник окна, где x, y - координата левой нижней точки (в отличие от Qt)
+*/
+QRect VasnecovWorld::window() const
+{
+    QMutexLocker locker(mtx_data);
+
+    return QRect(m_parameters.raw().x,
+                 m_parameters.raw().y,
+                 m_parameters.raw().width,
+                 m_parameters.raw().height);
 }
 /*!
  \brief

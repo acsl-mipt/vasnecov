@@ -16,6 +16,9 @@ class VasnecovProduct;
 class VasnecovLabel;
 class VasnecovFigure;
 
+class QSize;
+class QRect;
+
 namespace Vasnecov
 {
     const GLsizei cfg_worldWidthMin = 16;
@@ -46,6 +49,13 @@ public:
     GLboolean setParameters(Vasnecov::WorldParameters parameters);
     Vasnecov::WorldParameters worldParameters() const;
     Vasnecov::WorldTypes projection() const;
+
+    GLint x() const;
+    GLint y() const;
+    GLsizei width() const;
+    GLsizei height() const;
+    QSize size() const;
+    QRect window() const; // x, y - left bottom point
 
     void setDepth();
     void unsetDepth();
