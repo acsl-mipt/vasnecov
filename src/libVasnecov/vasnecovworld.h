@@ -96,6 +96,9 @@ public:
 
     Vasnecov::Camera camera() const;
 
+    Vasnecov::Line unprojectPointToLine(const QPointF &point);
+    Vasnecov::Line unprojectPointToLine(float x, float y);
+
 protected:
     // Списки содержимого
     VasnecovLamp    *designerFindElement(VasnecovLamp *lamp) const;
@@ -138,11 +141,12 @@ protected:
         }
     }
 
-protected:
+private:
     Vasnecov::MutualData<Vasnecov::WorldParameters> m_parameters; // Характеристики мира
     Vasnecov::MutualData<Vasnecov::Perspective> m_perspective; // Характеристики вида при перспективной проекции
     Vasnecov::MutualData<Vasnecov::Ortho> m_ortho; // Характеристики вида при ортогональной проекции
     Vasnecov::MutualData<Vasnecov::Camera> m_camera; // камера мира
+    Vasnecov::MutualData<VasnecovMatrix4x4> m_projectionMatrix;
 
     Vasnecov::LightModel m_lightModel;
     WorldElementList m_elements;
@@ -159,7 +163,8 @@ protected:
         Perspective		= 0x0200,
         Ortho			= 0x0400,
         Cameras			= 0x0800,
-        Flags			= 0x1000
+        Flags			= 0x1000,
+        Matrix          = 0x2000
     };
 
 private:

@@ -338,6 +338,14 @@ void VasnecovFigure::createLine(const QVector3D &first, const QVector3D &second,
     }
 }
 
+void VasnecovFigure::createLine(const Vasnecov::Line &line, const QColor &color)
+{
+    if(!line.isNull())
+    {
+        return createLine(line.p1(), line.p2(), color);
+    }
+}
+
 void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
 {
     if(r > 0.0 && factor > 0)

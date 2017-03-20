@@ -70,6 +70,11 @@ namespace Vasnecov
             m_wasUpdated |= m_flag;
             return m_raw;
         }
+        T &editablePure()
+        {
+            m_wasUpdated |= m_flag;
+            return m_pure;
+        }
 
         const T &pure() const
         {

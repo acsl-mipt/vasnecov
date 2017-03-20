@@ -208,6 +208,51 @@ namespace Vasnecov
                    roll == other.roll;
         }
     };
+
+    class Line
+    {
+    public:
+        Line()
+            : m_p1(), m_p2()
+        {}
+        Line(const QVector3D &p1, const QVector3D &p2)
+            : m_p1(p1), m_p2(p2)
+        {}
+
+        bool isNull() const {return m_p1 == m_p2;}
+        bool isEmpty() const {return m_p1.isNull() && m_p2.isNull();}
+        QVector3D p1() const {return m_p1;}
+        QVector3D p2() const {return m_p2;}
+
+        float x1() const {return m_p1.x();}
+        float y1() const {return m_p1.y();}
+        float z1() const {return m_p1.z();}
+
+        float x2() const {return m_p1.x();}
+        float y2() const {return m_p1.y();}
+        float z2() const {return m_p1.z();}
+
+        float length() const {return m_p1.distanceToPoint(m_p2);}
+        QVector3D direction() const {return QVector3D(m_p2 - m_p1).normalized();}
+
+        void setP1(const QVector3D &p1) {m_p1 = p1;}
+        void setP2(const QVector3D &p2) {m_p2 = p2;}
+        void setPoints(const QVector3D &p1, const QVector3D &p2) {m_p1 = p1; m_p2 = p2;}
+
+        bool operator!=(const Line& other) const
+        {
+            return m_p1 != other.m_p1 ||
+                   m_p2 != other.m_p2;
+        }
+        bool operator==(const Line& other) const
+        {
+            return m_p1 == other.m_p1 &&
+                   m_p2 == other.m_p2;
+        }
+
+    private:
+        QVector3D m_p1, m_p2;
+    };
 }
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"

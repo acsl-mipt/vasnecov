@@ -32,6 +32,7 @@ VasnecovWorld::VasnecovWorld(QMutex *mutex,
     m_perspective(raw_wasUpdated, Perspective),
     m_ortho(raw_wasUpdated, Ortho),
     m_camera(raw_wasUpdated, Cameras),
+    m_projectionMatrix(raw_wasUpdated, Matrix),
     m_lightModel(),
 
     m_elements()
@@ -71,7 +72,7 @@ void VasnecovWorld::designerUpdateOrtho()
 
     if(dist == 0)
     {
-        dist = 1.0;
+        dist = 1.0f;
     }
 
     Vasnecov::Ortho ortho;
@@ -329,6 +330,9 @@ GLenum VasnecovWorld::renderUpdateData()
         m_ortho.update();
         m_camera.update();
 
+        // Matrix is only one object edited by renderer and readed by designer
+        m_projectionMatrix.synchronizeRaw();
+
         Vasnecov::CoreObject::renderUpdateData();
     }
     return updated;
@@ -361,6 +365,8 @@ void VasnecovWorld::renderDraw()
         {
             pure_pipeline->setOrtho(m_ortho.pure(), renderCalculateCamera());
         }
+
+        m_projectionMatrix.editablePure() = pure_pipeline->matrixP();
 
         // Моделирование
         // Обработка источников света
@@ -708,6 +714,48 @@ Vasnecov::Camera VasnecovWorld::camera() const
 
     Vasnecov::Camera camera(m_camera.raw());
     return camera;
+}
+
+Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QPointF &point)
+{
+    return unprojectPointToLine(point.x(), point.y());
+}
+
+Vasnecov::Line VasnecovWorld::unprojectPointToLine(float x, float y)
+{
+    QMutexLocker locker(mtx_data);
+
+    if(x >= m_parameters.raw().x &&
+       y >= m_parameters.raw().y &&
+       x <= (m_parameters.raw().x + m_parameters.raw().width) &&
+       y <= (m_parameters.raw().y + m_parameters.raw().height) &&
+       m_parameters.raw().width > 0.0f &&
+       m_parameters.raw().height > 0.0f)
+    {
+        // Поскольку камера умножается только на проективную матрицу, то матрица модели-вида здесь не нужна
+        VasnecovMatrix4x4 matInverted = m_projectionMatrix.raw().inverted();
+
+        // z [0; 1]
+        QVector4D viewVector((x - m_parameters.raw().x) * 2.0f / m_parameters.raw().width - 1.0f,
+                             (y - m_parameters.raw().y) * 2.0f / m_parameters.raw().height - 1.0f,
+                             -1.0f,
+                             1.0f);
+
+        QVector4D point1 = matInverted * viewVector;
+        if(qFuzzyIsNull(point1.w()))
+            point1.setW(1.0f);
+        point1 /= point1.w();
+
+        viewVector.setZ(1.0f);
+        QVector4D point2 = matInverted * viewVector;
+        if(qFuzzyIsNull(point2.w()))
+            point2.setW(1.0f);
+        point2 /= point2.w();
+
+        return Vasnecov::Line(point1.toVector3D(), point2.toVector3D());
+    }
+
+    return Vasnecov::Line();
 }
 
 /*!

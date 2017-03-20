@@ -370,6 +370,7 @@ public:
     // Making some simple figures
     void createLine(GLfloat length, const QColor &color = QColor());
     void createLine(const QVector3D &first, const QVector3D &second, const QColor &color = QColor());
+    void createLine(const Vasnecov::Line &line, const QColor &color = QColor());
     void createCircle(GLfloat r, const QColor &color = QColor(), GLuint factor = 64); // Circle at horizontal plane
     void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
     void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
