@@ -550,6 +550,20 @@ void VasnecovFigure::createMeshFromFile(const GLstring &fileName, const QColor &
     m_points.set(readPointsFromObj(fileName));
 }
 
+void VasnecovFigure::createMeshFromPoints(const std::vector<QVector3D> &points, const QColor &color)
+{
+    QMutexLocker locker(mtx_data);
+
+    designerSetType(VasnecovFigure::TypeLines);
+
+    if(color.isValid())
+    {
+        m_color.set(color);
+    }
+
+    m_points.set(points);
+}
+
 GLboolean VasnecovFigure::designerSetType(VasnecovFigure::Types type)
 {
     switch(type)
