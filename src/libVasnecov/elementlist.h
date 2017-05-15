@@ -117,7 +117,7 @@ namespace Vasnecov
     template <typename T>
     GLuint ElementBox<T>::rawCount() const
     {
-        return m_pure.size();
+        return (GLuint)m_pure.size();
     }
 
     template <typename T>

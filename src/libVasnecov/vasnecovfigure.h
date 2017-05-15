@@ -39,7 +39,7 @@ class VasnecovFigure : public VasnecovElement
 
         GLuint rawVerticesSize() const
         {
-            return raw_vertices.size();
+            return (GLuint)raw_vertices.size();
         }
 
         void set(const std::vector <QVector3D> &points)
@@ -65,7 +65,7 @@ class VasnecovFigure : public VasnecovElement
                         else
                         {
                             raw_vertices.push_back(points[i]);
-                            raw_indices.push_back(raw_vertices.size() - 1);
+                            raw_indices.push_back((GLuint)raw_vertices.size() - 1);
                         }
                     }
                 }
@@ -108,13 +108,13 @@ class VasnecovFigure : public VasnecovElement
                         else
                         {
                             raw_vertices.push_back(point);
-                            raw_indices.push_back(raw_vertices.size() - 1);
+                            raw_indices.push_back((GLuint)raw_vertices.size() - 1);
                         }
                     }
                     else
                     {
                         raw_vertices.push_back(point);
-                        raw_indices.push_back(raw_vertices.size() - 1);
+                        raw_indices.push_back((GLuint)raw_vertices.size() - 1);
                     }
 
                     prepareUpdate();
@@ -123,7 +123,7 @@ class VasnecovFigure : public VasnecovElement
             else
             {
                 raw_vertices.push_back(point);
-                raw_indices.push_back(raw_vertices.size() - 1);
+                raw_indices.push_back((GLuint)raw_vertices.size() - 1);
 
                 prepareUpdate();
             }
@@ -176,13 +176,13 @@ class VasnecovFigure : public VasnecovElement
                         else
                         {
                             raw_vertices.push_back(point);
-                            raw_indices.insert(raw_indices.begin(), raw_vertices.size() - 1);
+                            raw_indices.insert(raw_indices.begin(), (GLuint)raw_vertices.size() - 1);
                         }
                     }
                     else
                     {
                         raw_vertices.push_back(point);
-                        raw_indices.insert(raw_indices.begin(), raw_vertices.size() - 1);
+                        raw_indices.insert(raw_indices.begin(), (GLuint)raw_vertices.size() - 1);
                     }
 
                     prepareUpdate();
@@ -191,7 +191,7 @@ class VasnecovFigure : public VasnecovElement
             else
             {
                 raw_vertices.push_back(point);
-                raw_indices.insert(raw_indices.begin(), raw_vertices.size() - 1);
+                raw_indices.insert(raw_indices.begin(), (GLuint)raw_vertices.size() - 1);
 
                 prepareUpdate();
             }

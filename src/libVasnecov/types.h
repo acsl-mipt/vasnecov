@@ -19,10 +19,10 @@
 typedef std::string GLstring;
 typedef VasnecovMatrix4x4 GLmatrix;
 
-const float M_2PI(M_PI*2);
+const float M_2PI = (float)(M_PI*2.0f);
 
-const float c_radToDeg = 180/M_PI; // Радианы в градусы
-const float c_degToRad = M_PI/180; // Градусы в радианы
+const float c_radToDeg = (float)(180.0f/M_PI); // Радианы в градусы
+const float c_degToRad = (float)(M_PI/180.0f); // Градусы в радианы
 
 class VasnecovElement;
 class VasnecovMaterial;
@@ -190,9 +190,9 @@ namespace Vasnecov
         GLfloat roll;
 
         Camera() :
-            position(0.0, 0.0, 1.85),
+            position(0.0f, 0.0f, 1.85f),
             target(),
-            roll(0)
+            roll(0.0f)
         {
         }
         bool operator!=(const Camera& other) const
