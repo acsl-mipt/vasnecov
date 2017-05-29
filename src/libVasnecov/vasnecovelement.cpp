@@ -35,7 +35,7 @@
 
  \sa VasnecovPipeline
 */
-VasnecovAbstractElement::VasnecovAbstractElement(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name) :
+VasnecovAbstractElement::VasnecovAbstractElement(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name) :
     Vasnecov::CoreObject(mutex, pipeline, name),
     raw_coordinates(),
     raw_angles(),
@@ -321,7 +321,7 @@ void VasnecovAbstractElement::attachToElement(const VasnecovAbstractElement *ele
 void VasnecovAbstractElement::designerUpdateMatrixMs()
 {
     // Сначала вращение по оси Z, далее - X-Y.
-    GLmatrix newMatrix;
+    QMatrix4x4 newMatrix;
     newMatrix.translate(raw_coordinates);
 
     QQuaternion qRot;
@@ -364,7 +364,7 @@ GLenum VasnecovAbstractElement::renderUpdateData()
  \param pipeline
  \param name
 */
-VasnecovElement::VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name) :
+VasnecovElement::VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name) :
     VasnecovAbstractElement(mutex, pipeline, name),
     m_color(raw_wasUpdated, Color, QColor(255, 255, 255, 255)),
     m_scale(raw_wasUpdated, Scale, 1.0f),
@@ -560,7 +560,7 @@ bool VasnecovElement::renderCompareByDirectDistance(VasnecovElement *first, Vasn
 
 void VasnecovElement::designerUpdateMatrixMs()
 {
-    GLmatrix newMatrix;
+    QMatrix4x4 newMatrix;
     newMatrix.translate(raw_coordinates);
 
     QQuaternion qRot;

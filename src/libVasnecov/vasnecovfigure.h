@@ -342,10 +342,10 @@ public:
     };
 
 public:
-    VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name = GLstring());
+    VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name = std::string());
     ~VasnecovFigure();
 
-    static std::vector<QVector3D> readPointsFromObj(const GLstring &fileName);
+    static std::vector<QVector3D> readPointsFromObj(const std::string &fileName);
 
     void setPoints(const std::vector<QVector3D> &points);
     void clearPoints();
@@ -384,7 +384,7 @@ public:
     void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
     void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
     void createSquareGrid(GLfloat width, GLfloat height, const QColor &color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
-    void createMeshFromFile(const GLstring &fileName, const QColor &color = QColor());
+    void createMeshFromFile(const std::string &fileName, const QColor &color = QColor());
     void createMeshFromPoints(const std::vector<QVector3D> &points, const QColor &color = QColor());
 
 protected:

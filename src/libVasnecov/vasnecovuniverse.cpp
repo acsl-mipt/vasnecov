@@ -127,7 +127,7 @@ VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width,
  \param type тип источника света
  \return VasnecovLamp указатель на созданный источник
 */
-VasnecovLamp *VasnecovUniverse::addLamp(const GLstring &name, VasnecovWorld *world, VasnecovLamp::LampTypes type)
+VasnecovLamp *VasnecovUniverse::addLamp(const std::string &name, VasnecovWorld *world, VasnecovLamp::LampTypes type)
 {
     if(!world)
     {
@@ -225,7 +225,7 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
  \param parent
  \return VasnecovProduct
 */
-VasnecovProduct *VasnecovUniverse::addAssembly(const GLstring &name, VasnecovWorld *world, VasnecovProduct *parent)
+VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, VasnecovWorld *world, VasnecovProduct *parent)
 {
     if(!world)
     {
@@ -286,7 +286,7 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const GLstring &name, VasnecovWor
  \param parent
  \return VasnecovProduct
 */
-VasnecovProduct *VasnecovUniverse::addPart(const GLstring &name, VasnecovWorld *world, const GLstring &meshName, VasnecovProduct *parent)
+VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorld *world, const std::string &meshName, VasnecovProduct *parent)
 {
     return addPart(name, world, meshName, 0, parent);
 }
@@ -301,7 +301,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const GLstring &name, VasnecovWorld *
  \param parent
  \return VasnecovProduct
 */
-VasnecovProduct *VasnecovUniverse::addPart(const GLstring &name, VasnecovWorld *world, const GLstring &meshName, VasnecovMaterial *material, VasnecovProduct *parent)
+VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorld *world, const std::string &meshName, VasnecovMaterial *material, VasnecovProduct *parent)
 {
     if(!world)
     {
@@ -318,7 +318,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const GLstring &name, VasnecovWorld *
     // Проверка на наличие меша и его догрузка при необходимости
     if(!meshName.empty())
     {
-        GLstring corMeshName = correctFileId(meshName, Vasnecov::cfg_meshFormat);
+        std::string corMeshName = correctFileId(meshName, Vasnecov::cfg_meshFormat);
         // Поиск меша в списке
         mesh = designerFindMesh(corMeshName);
 
@@ -408,7 +408,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const GLstring &name, VasnecovWorld *
  \param parent
  \return VasnecovProduct
 */
-VasnecovProduct *VasnecovUniverse::addPart(const GLstring &name, VasnecovWorld *world, const GLstring &meshName, const GLstring &textureName, VasnecovProduct *parent)
+VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorld *world, const std::string &meshName, const std::string &textureName, VasnecovProduct *parent)
 {
     if(!textureName.empty())
     {
@@ -542,7 +542,7 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
             }
 
             // Удаление чужих матриц
-            const GLmatrix *matrix = (*dit)->designerExportingMatrix();
+            const QMatrix4x4 *matrix = (*dit)->designerExportingMatrix();
             designerRemoveThisAlienMatrix(matrix);
         }
 
@@ -552,7 +552,7 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
     return false;
 }
 
-VasnecovFigure *VasnecovUniverse::addFigure(const GLstring &name, VasnecovWorld *world)
+VasnecovFigure *VasnecovUniverse::addFigure(const std::string &name, VasnecovWorld *world)
 {
     if(!world)
     {
@@ -626,7 +626,7 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
    \param height высота метки
    \return VasnecovLabel указатель на успешно созданную метку.
  */
-VasnecovLabel *VasnecovUniverse::addLabel(const GLstring &name, VasnecovWorld *world, GLfloat width, GLfloat height)
+VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld *world, GLfloat width, GLfloat height)
 {
     return addLabel(name, world, width, height, "");
 }
@@ -637,7 +637,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const GLstring &name, VasnecovWorld *w
 
    \param textureName имя интерфейсной текстуры. См. \a VasnecovUniverse::loadTextures.
  */
-VasnecovLabel *VasnecovUniverse::addLabel(const GLstring &name, VasnecovWorld *world, GLfloat width, GLfloat height, const GLstring &textureName)
+VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld *world, GLfloat width, GLfloat height, const std::string &textureName)
 {
     if(!world)
     {
@@ -653,7 +653,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const GLstring &name, VasnecovWorld *w
     // Проверка на наличие текстуры и её догрузка при необходимости
     if(!textureName.empty()) // Иначе нулевая текстура
     {
-        GLstring corTextureName = correctFileId(textureName, Vasnecov::cfg_textureFormat);
+        std::string corTextureName = correctFileId(textureName, Vasnecov::cfg_textureFormat);
 
         texture = designerFindTexture(raw_data.dirTexturesIPref + corTextureName);
 
@@ -778,7 +778,7 @@ GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
  \param textureName
  \return VasnecovMaterial
 */
-VasnecovMaterial *VasnecovUniverse::addMaterial(const GLstring &textureName)
+VasnecovMaterial *VasnecovUniverse::addMaterial(const std::string &textureName)
 {
     VasnecovTexture *texture(0);
 
@@ -788,7 +788,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const GLstring &textureName)
     if(!textureName.empty()) // Иначе нулевая текстура
     {
         // Поиск текстуры в списке
-        GLstring corTextureName = correctFileId(textureName, Vasnecov::cfg_textureFormat);
+        std::string corTextureName = correctFileId(textureName, Vasnecov::cfg_textureFormat);
 
         texture = designerFindTexture(corTextureName);
 
@@ -859,10 +859,10 @@ VasnecovMaterial *VasnecovUniverse::addMaterial()
  \param type
  \return VasnecovTexture
 */
-VasnecovTexture *VasnecovUniverse::textureByName(const GLstring &textureName, Vasnecov::TextureTypes type)
+VasnecovTexture *VasnecovUniverse::textureByName(const std::string &textureName, Vasnecov::TextureTypes type)
 {
     VasnecovTexture *texture(0);
-    GLstring newName;
+    std::string newName;
 
     QMutexLocker locker(&mtx_data);
 
@@ -913,7 +913,7 @@ void VasnecovUniverse::setBackgroundColor(QRgb rgb)
  \param dir
  \return GLboolean
 */
-GLboolean VasnecovUniverse::setTexturesDir(const GLstring &dir)
+GLboolean VasnecovUniverse::setTexturesDir(const std::string &dir)
 {
     QMutexLocker locker(&mtx_data);
 
@@ -925,7 +925,7 @@ GLboolean VasnecovUniverse::setTexturesDir(const GLstring &dir)
  \param dir
  \return GLboolean
 */
-GLboolean VasnecovUniverse::setMeshesDir(const GLstring &dir)
+GLboolean VasnecovUniverse::setMeshesDir(const std::string &dir)
 {
     QMutexLocker locker(&mtx_data);
 
@@ -951,7 +951,7 @@ void VasnecovUniverse::loadAll()
  \param fileName
  \return GLboolean
 */
-GLboolean VasnecovUniverse::loadMesh(const GLstring &fileName)
+GLboolean VasnecovUniverse::loadMesh(const std::string &fileName)
 {
     if(fileName.empty())
         return false;
@@ -970,7 +970,7 @@ GLboolean VasnecovUniverse::loadMesh(const GLstring &fileName)
  \param withSub
  \return GLuint
 */
-GLuint VasnecovUniverse::loadMeshes(const GLstring &dirName, GLboolean withSub)
+GLuint VasnecovUniverse::loadMeshes(const std::string &dirName, GLboolean withSub)
 {
     LoadingStatus lStatus(&mtx_data, &m_loading);
     GLuint res(0);
@@ -986,7 +986,7 @@ GLuint VasnecovUniverse::loadMeshes(const GLstring &dirName, GLboolean withSub)
  \param fileName
  \return GLboolean
 */
-GLboolean VasnecovUniverse::loadTexture(const GLstring &fileName)
+GLboolean VasnecovUniverse::loadTexture(const std::string &fileName)
 {
     if(fileName.empty())
         return false;
@@ -1005,7 +1005,7 @@ GLboolean VasnecovUniverse::loadTexture(const GLstring &fileName)
  \param withSub
  \return GLuint
 */
-GLuint VasnecovUniverse::loadTextures(const GLstring &dirName, GLboolean withSub)
+GLuint VasnecovUniverse::loadTextures(const std::string &dirName, GLboolean withSub)
 {
     LoadingStatus lStatus(&mtx_data, &m_loading);
     GLuint res(0);
@@ -1086,7 +1086,7 @@ void VasnecovUniverse::renderInitialize()
 }
 
 
-VasnecovMesh *VasnecovUniverse::designerFindMesh(const GLstring &name)
+VasnecovMesh *VasnecovUniverse::designerFindMesh(const std::string &name)
 {
     if(raw_data.meshes.count(name))
     {
@@ -1104,7 +1104,7 @@ VasnecovMesh *VasnecovUniverse::designerFindMesh(const GLstring &name)
  \param name
  \return VasnecovTexture
 */
-VasnecovTexture *VasnecovUniverse::designerFindTexture(const GLstring &name)
+VasnecovTexture *VasnecovUniverse::designerFindTexture(const std::string &name)
 {
     if(raw_data.textures.count(name))
     {
@@ -1116,7 +1116,7 @@ VasnecovTexture *VasnecovUniverse::designerFindTexture(const GLstring &name)
     }
 }
 
-GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const GLmatrix *alienMs)
+GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
     GLboolean res(false);
 
@@ -1150,14 +1150,14 @@ GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const GLmatrix *alienM
  \param oldDir
  \return GLboolean
 */
-GLboolean VasnecovUniverse::setDirectory(const GLstring &newDir, GLstring &oldDir) const
+GLboolean VasnecovUniverse::setDirectory(const std::string &newDir, std::string &oldDir) const
 {
     if(!newDir.empty())
     {
         QDir qdir(QString::fromStdString(newDir));
         if(qdir.exists())
         {
-            GLstring forNewDir = qdir.path().toStdString();
+            std::string forNewDir = qdir.path().toStdString();
             forNewDir += "/"; // Для дальнейшей подстановки в адреса
             if(forNewDir != oldDir)
             {
@@ -1179,7 +1179,7 @@ GLboolean VasnecovUniverse::setDirectory(const GLstring &newDir, GLstring &oldDi
  \param withSub
  \return GLuint
 */
-GLuint VasnecovUniverse::handleFilesInDir(const GLstring &dirPref, const GLstring &targetDir, const GLstring &format, GLboolean (VasnecovUniverse::*workFun)(const GLstring &), GLboolean withSub)
+GLuint VasnecovUniverse::handleFilesInDir(const std::string &dirPref, const std::string &targetDir, const std::string &format, GLboolean (VasnecovUniverse::*workFun)(const std::string &), GLboolean withSub)
 {
     GLuint res(0);
 
@@ -1222,10 +1222,10 @@ GLuint VasnecovUniverse::handleFilesInDir(const GLstring &dirPref, const GLstrin
  \param fileName
  \return GLboolean
 */
-GLboolean VasnecovUniverse::loadMeshFile(const GLstring &fileName)
+GLboolean VasnecovUniverse::loadMeshFile(const std::string &fileName)
 {
-    GLstring path = raw_data.dirMeshes + fileName; // Путь файла с расширением
-    GLstring fileId = fileName;
+    std::string path = raw_data.dirMeshes + fileName; // Путь файла с расширением
+    std::string fileId = fileName;
 
     if(correctPath(path, fileId, Vasnecov::cfg_meshFormat))
     {
@@ -1253,7 +1253,7 @@ GLboolean VasnecovUniverse::loadMeshFile(const GLstring &fileName)
  \param fileName
  \return GLboolean
 */
-GLboolean VasnecovUniverse::loadTextureFile(const GLstring &fileName)
+GLboolean VasnecovUniverse::loadTextureFile(const std::string &fileName)
 {
     // Поиск префикса типа текстуры в адресе
     Vasnecov::TextureTypes type(Vasnecov::TextureTypeUndefined);
@@ -1271,9 +1271,9 @@ GLboolean VasnecovUniverse::loadTextureFile(const GLstring &fileName)
         type = Vasnecov::TextureTypeNormal;
     }
 
-    GLstring path = raw_data.dirTextures + fileName; // Путь файла с расширением
+    std::string path = raw_data.dirTextures + fileName; // Путь файла с расширением
 
-    GLstring fileId = fileName;
+    std::string fileId = fileName;
 
     if(correctPath(path, fileId, Vasnecov::cfg_textureFormat))
     {
@@ -1333,7 +1333,7 @@ GLboolean VasnecovUniverse::loadTextureFile(const GLstring &fileName)
  \param format
  \return GLboolean
 */
-GLboolean VasnecovUniverse::correctPath(GLstring &path, GLstring &fileId, const GLstring &format) const
+GLboolean VasnecovUniverse::correctPath(std::string &path, std::string &fileId, const std::string &format) const
 {
     if(!format.empty())
     {
@@ -1341,7 +1341,7 @@ GLboolean VasnecovUniverse::correctPath(GLstring &path, GLstring &fileId, const 
         posR = fileId.rfind("." + format);
 
         // Только файлы нужного расширения
-        if(posR != GLstring::npos &&
+        if(posR != std::string::npos &&
            (posR + 1 + format.size()) == fileId.size()) // Позиция + размер точки + размер расширения
         {
             // Отрезать расширение
@@ -1362,9 +1362,9 @@ GLboolean VasnecovUniverse::correctPath(GLstring &path, GLstring &fileId, const 
     return false;
 }
 
-GLstring VasnecovUniverse::correctFileId(const GLstring &fileId, const GLstring &format) const
+std::string VasnecovUniverse::correctFileId(const std::string &fileId, const std::string &format) const
 {
-    GLstring res(fileId);
+    std::string res(fileId);
 
     if(!format.empty())
     {
@@ -1372,7 +1372,7 @@ GLstring VasnecovUniverse::correctFileId(const GLstring &fileId, const GLstring 
         posR = fileId.rfind("." + format);
 
         // Только файлы нужного расширения
-        if(posR != GLstring::npos &&
+        if(posR != std::string::npos &&
            (posR + 1 + format.size()) == fileId.size()) // Позиция + размер точки + размер расширения
         {
             // Отрезать расширение
@@ -1382,7 +1382,7 @@ GLstring VasnecovUniverse::correctFileId(const GLstring &fileId, const GLstring 
     return res;
 }
 
-GLboolean VasnecovUniverse::addTexture(VasnecovTexture *texture, const GLstring &fileId)
+GLboolean VasnecovUniverse::addTexture(VasnecovTexture *texture, const std::string &fileId)
 {
     if(texture)
     {
@@ -1414,7 +1414,7 @@ GLboolean VasnecovUniverse::addTexture(VasnecovTexture *texture, const GLstring 
  \param fileId
  \return GLboolean
 */
-GLboolean VasnecovUniverse::addMesh(VasnecovMesh *mesh, const GLstring &fileId)
+GLboolean VasnecovUniverse::addMesh(VasnecovMesh *mesh, const std::string &fileId)
 {
     if(mesh)
     {
@@ -1554,7 +1554,7 @@ void VasnecovUniverse::renderDrawLoadingImage()
         QImage *image(0);
 
         timespec tm;
-        int diff(0); // миллисекунды
+        GLint diff(0); // миллисекунды
 
 #ifndef _MSC_VER
         clock_gettime(CLOCK_MONOTONIC, &tm);
@@ -1642,13 +1642,13 @@ VasnecovUniverse::UniverseElementList::UniverseElementList() :
 
 Vasnecov::UniverseAttributes::~UniverseAttributes()
 {
-    for(std::map<GLstring, VasnecovMesh *>::iterator rit = meshes.begin();
+    for(std::map<std::string, VasnecovMesh *>::iterator rit = meshes.begin();
         rit != meshes.end(); ++rit)
     {
         delete (rit->second);
         rit->second = 0;
     }
-    for(std::map<GLstring, VasnecovTexture *>::iterator rit = textures.begin();
+    for(std::map<std::string, VasnecovTexture *>::iterator rit = textures.begin();
         rit != textures.end(); ++rit)
     {
         delete (rit->second);

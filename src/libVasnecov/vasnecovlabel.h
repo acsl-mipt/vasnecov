@@ -47,7 +47,7 @@ class VasnecovLabel : public VasnecovElement
 public:
     VasnecovLabel(QMutex *mutex,
                   VasnecovPipeline *pipeline,
-                  const GLstring &name,
+                  const std::string &name,
                   const QVector2D &size,
                   VasnecovTexture *texture = 0);
     ~VasnecovLabel();

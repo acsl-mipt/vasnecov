@@ -24,7 +24,7 @@
 class VasnecovAbstractElement : public Vasnecov::CoreObject
 {
 public:
-    VasnecovAbstractElement(QMutex * mutex, VasnecovPipeline *pipeline, const GLstring &name = GLstring());
+    VasnecovAbstractElement(QMutex * mutex, VasnecovPipeline *pipeline, const std::string &name = std::string());
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами). Без префикса.
@@ -51,10 +51,10 @@ public:
 
 protected:
     // Методы без мьютексов, вызываемые методами, защищенными своими мьютексами. Префикс designer
-    GLmatrix designerMatrixMs() const;
-    const GLmatrix *designerExportingMatrix() const;
+    QMatrix4x4 designerMatrixMs() const;
+    const QMatrix4x4 *designerExportingMatrix() const;
     virtual void designerUpdateMatrixMs();
-    GLboolean designerRemoveThisAlienMatrix(const GLmatrix *alienMs); // Обнуление чужой матрицы, равной заданной параметром
+    GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs); // Обнуление чужой матрицы, равной заданной параметром
 
 protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
@@ -62,7 +62,7 @@ protected:
     virtual GLenum renderUpdateData(); // обновление данных, вызов должен быть обёрнут мьютексом
 
     void renderApplyTranslation() const; // Выполнение позиционирования элемента
-    const GLmatrix &renderMatrixMs() const;
+    const QMatrix4x4 &renderMatrixMs() const;
 
     QVector3D renderCoordinates() const;
     QVector3D renderAngles() const;
@@ -72,8 +72,8 @@ protected:
     QVector3D raw_angles;
     QQuaternion raw_qX, raw_qY, raw_qZ;
 
-    Vasnecov::MutualData<GLmatrix> m_Ms;
-    Vasnecov::MutualData<const GLmatrix*> m_alienMs;
+    Vasnecov::MutualData<QMatrix4x4> m_Ms;
+    Vasnecov::MutualData<const QMatrix4x4*> m_alienMs;
 
     enum Updated // Изменение данных
     {
@@ -88,7 +88,7 @@ private:
 class VasnecovElement : public VasnecovAbstractElement
 {
 public:
-    VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name = "");
+    VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name = "");
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами)
@@ -161,17 +161,17 @@ inline void VasnecovAbstractElement::renderApplyTranslation() const
         pure_pipeline->setMatrixMV(m_Ms.pure());
     }
 }
-inline GLmatrix VasnecovAbstractElement::designerMatrixMs() const
+inline QMatrix4x4 VasnecovAbstractElement::designerMatrixMs() const
 {
     return m_Ms.raw();
 }
-inline const GLmatrix *VasnecovAbstractElement::designerExportingMatrix() const
+inline const QMatrix4x4 *VasnecovAbstractElement::designerExportingMatrix() const
 {
-    const GLmatrix *Ms(&m_Ms.raw());
+    const QMatrix4x4 *Ms(&m_Ms.raw());
     return Ms;
 }
 
-inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const GLmatrix *alienMs)
+inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
     if(m_alienMs.raw() == alienMs)
     {
@@ -180,7 +180,7 @@ inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const GL
     }
     return false;
 }
-inline const GLmatrix &VasnecovAbstractElement::renderMatrixMs() const
+inline const QMatrix4x4 &VasnecovAbstractElement::renderMatrixMs() const
 {
     return m_Ms.pure();
 }

@@ -48,7 +48,7 @@ public:
                   VasnecovPipeline *pipeline,
                   GLint mx, GLint my,
                   GLsizei width, GLsizei height,
-                  const GLstring &name = GLstring());
+                  const std::string &name = std::string());
     ~VasnecovWorld();
 
 public:
@@ -106,7 +106,7 @@ public:
     Vasnecov::Camera camera() const;
 
     Vasnecov::Line unprojectPointToLine(const QPointF &point);
-    Vasnecov::Line unprojectPointToLine(float x, float y);
+    Vasnecov::Line unprojectPointToLine(GLfloat x, GLfloat y);
 
 protected:
     // Списки содержимого
@@ -155,7 +155,7 @@ private:
     Vasnecov::MutualData<Vasnecov::Perspective> m_perspective; // Характеристики вида при перспективной проекции
     Vasnecov::MutualData<Vasnecov::Ortho> m_ortho; // Характеристики вида при ортогональной проекции
     Vasnecov::MutualData<Vasnecov::Camera> m_camera; // камера мира
-    Vasnecov::MutualData<VasnecovMatrix4x4> m_projectionMatrix;
+    Vasnecov::MutualData<QMatrix4x4> m_projectionMatrix;
 
     Vasnecov::LightModel m_lightModel;
     WorldElementList m_elements;

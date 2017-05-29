@@ -54,7 +54,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, Vasn
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, GLstring name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std::string name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(mutex, pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -82,7 +82,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, GLst
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, GLstring name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std::string name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(mutex, pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -112,7 +112,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, GLst
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, GLstring name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std::string name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(mutex, pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -208,7 +208,7 @@ void VasnecovProduct::designerSetVisibleFromParent(bool visible)
 
 void VasnecovProduct::designerUpdateMatrixMs()
 {
-    GLmatrix newMatrix(raw_M1);
+    QMatrix4x4 newMatrix(raw_M1);
     newMatrix.translate(raw_coordinates);
 
     QQuaternion qRot;
@@ -525,7 +525,7 @@ void VasnecovProduct::changeParent(VasnecovProduct *newParent)
     }
     else // Нет родителя - элемент глобальный
     {
-        designerSetMatrixM1Recursively(GLmatrix());
+        designerSetMatrixM1Recursively(QMatrix4x4());
     }
 }
 
@@ -714,7 +714,7 @@ void VasnecovProduct::setScale(GLfloat scale)
  \fn VasnecovProduct::designerSetMatrixM1
  \param M1
 */
-void VasnecovProduct::designerSetMatrixM1(const GLmatrix &M1)
+void VasnecovProduct::designerSetMatrixM1(const QMatrix4x4 &M1)
 {
     if(raw_M1 != M1)
     {
@@ -771,7 +771,7 @@ void VasnecovProduct::designerUpdateChildrenMatrix()
  \fn VasnecovProduct::designerSetMatrixM1Recursively
  \param M1
 */
-void VasnecovProduct::designerSetMatrixM1Recursively(const GLmatrix &M1)
+void VasnecovProduct::designerSetMatrixM1Recursively(const QMatrix4x4 &M1)
 {
     designerUpdateMatrixM1(M1);
     designerUpdateChildrenMatrix();

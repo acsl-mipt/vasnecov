@@ -108,7 +108,7 @@ namespace Vasnecov
     public:
         CoreObject(QMutex * mutex,
                    VasnecovPipeline *pipeline,
-                   const GLstring &name = GLstring()) :
+                   const std::string &name = std::string()) :
             mtx_data(mutex),
             raw_wasUpdated(false),
 
@@ -121,8 +121,8 @@ namespace Vasnecov
 
     public:
         // Название
-        void setName(const GLstring &name);
-        GLstring name() const;
+        void setName(const std::string &name);
+        std::string name() const;
 
         // Видимость
         virtual void setVisible(GLboolean visible = true);
@@ -150,7 +150,7 @@ namespace Vasnecov
     protected:
         // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
         // Для их сокрытия методы объявлены protected, а класс Рендерера сделан friend
-        GLstring renderName() const;
+        std::string renderName() const;
 
         GLboolean renderIsVisible() const;
         GLboolean renderIsHidden() const;
@@ -159,7 +159,7 @@ namespace Vasnecov
         QMutex * const mtx_data; // мьютекс на изменение общих параметров рендеринга и логики
         GLenum raw_wasUpdated;
 
-        MutualData<GLstring> m_name; // Наименование
+        MutualData<std::string> m_name; // Наименование
         MutualData<GLboolean> m_isHidden; // Флаг на отрисовку
 
         VasnecovPipeline *const pure_pipeline; // Указатель конвейера, через который ведётся отрисовка
@@ -174,17 +174,17 @@ namespace Vasnecov
     };
 
 
-    inline void CoreObject::setName(const GLstring &name)
+    inline void CoreObject::setName(const std::string &name)
     {
         QMutexLocker locker(mtx_data);
 
         m_name.set(name);
     }
-    inline GLstring CoreObject::name() const
+    inline std::string CoreObject::name() const
     {
         QMutexLocker locker(mtx_data);
 
-        GLstring name(m_name.raw());
+        std::string name(m_name.raw());
         return name;
     }
 
@@ -257,7 +257,7 @@ namespace Vasnecov
         raw_wasUpdated = raw_wasUpdated &~ flag;
     }
 
-    inline GLstring CoreObject::renderName() const
+    inline std::string CoreObject::renderName() const
     {
         return m_name.pure();
     }

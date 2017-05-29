@@ -22,7 +22,7 @@
  \param type
  \param index
 */
-VasnecovLamp::VasnecovLamp(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name, VasnecovLamp::LampTypes type, GLuint index) :
+VasnecovLamp::VasnecovLamp(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name, VasnecovLamp::LampTypes type, GLuint index) :
     VasnecovAbstractElement(mutex, pipeline, name),
     m_type(raw_wasUpdated, Type, type),
 

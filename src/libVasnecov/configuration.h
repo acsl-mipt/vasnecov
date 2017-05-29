@@ -24,18 +24,18 @@ namespace Vasnecov
     const GLsizei cfg_displayWidthDefault = 320;
     const GLsizei cfg_displayHeightDefault = 320;
 
-    const GLstring cfg_shareDir = "/usr/local/share/";
+    const std::string cfg_shareDir = "/usr/local/share/";
     const GLboolean cfg_showLoadingImage = 1; // Отображать табличку загрузки
-    const int cfg_loadingImagePause = 150;
+    const GLint cfg_loadingImagePause = 150;
 
-    const GLstring cfg_dirTextures = "stuff/textures/";
-    const GLstring cfg_dirTexturesIPref = "i/";
-    const GLstring cfg_dirTexturesDPref = "d/";
-    const GLstring cfg_dirTexturesNPref = "n/";
-    const GLstring cfg_dirMeshes = "stuff/meshes/";
+    const std::string cfg_dirTextures = "stuff/textures/";
+    const std::string cfg_dirTexturesIPref = "i/";
+    const std::string cfg_dirTexturesDPref = "d/";
+    const std::string cfg_dirTexturesNPref = "n/";
+    const std::string cfg_dirMeshes = "stuff/meshes/";
 
-    const GLstring cfg_textureFormat = "png";
-    const GLstring cfg_meshFormat = "obj";
+    const std::string cfg_textureFormat = "png";
+    const std::string cfg_meshFormat = "obj";
     const GLboolean cfg_readFromMTL = 1; // Читать имя текстуры из мтл-библиотеки, указанной в обж
     const GLboolean cfg_sortTransparency = true;
     const GLuint cfg_elementMaxLevel = 16; // Количество максимальных уровней для ВЭлемента

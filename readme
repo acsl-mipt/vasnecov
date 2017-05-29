@@ -6,10 +6,10 @@ Simple C++/Qt wrapper for OpenGL-based 3D graphics.
 
 ================================================================================
 
-It uses Qt Graphics View Framework for rendering.
+It uses Qt Graphics View Framework for rendering. Qt5 is required.
 
 Main abilities:
- - Controlling scene objects from other thread;
+ - Controlling scene objects from other threads;
  - Preparing a viewport (Universe) with several scenes (Worlds);
  - Creating and manipulation scene elements with tree-structure;
  - Using diffuse materials with textures (from QImage) and lights for shading;

@@ -16,6 +16,7 @@
 #endif
 #include <vector>
 #include <QColor>
+#include <QMatrix4x4>
 #include "types.h"
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
@@ -96,17 +97,17 @@ public:
     void setViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
     void setIdentityMatrixP();
-    void setMatrixP(const VasnecovMatrix4x4 &P);
-    void addMatrixP(const VasnecovMatrix4x4 &P); // Домножение на матрицу
-    const VasnecovMatrix4x4 matrixP() const;
+    void setMatrixP(const QMatrix4x4 &P);
+    void addMatrixP(const QMatrix4x4 &P); // Домножение на матрицу
+    const QMatrix4x4 matrixP() const;
 
     void setIdentityMatrixMV(); // Задание единичной модельно-видовой матрицы
-    void setMatrixMV(const VasnecovMatrix4x4 &MV);
-    void setMatrixMV(const VasnecovMatrix4x4 *MV);
-    void addMatrixMV(const VasnecovMatrix4x4 &MV);
-    void addMatrixMV(const VasnecovMatrix4x4 *MV);
-    void setMatrixOrtho2D(const VasnecovMatrix4x4 &MV);
-    QVector4D projectPoint(const GLmatrix &MV, const QVector3D &point = QVector3D());
+    void setMatrixMV(const QMatrix4x4 &MV);
+    void setMatrixMV(const QMatrix4x4 *MV);
+    void addMatrixMV(const QMatrix4x4 &MV);
+    void addMatrixMV(const QMatrix4x4 *MV);
+    void setMatrixOrtho2D(const QMatrix4x4 &MV);
+    QVector4D projectPoint(const QMatrix4x4 &MV, const QVector3D &point = QVector3D());
 
     void setBackgroundColor(const QColor &color = QColor(0, 0, 0, 0));
     void setColor(const QColor &color = QColor(255, 255, 255, 255));
@@ -183,7 +184,7 @@ protected:
     Vasnecov::PolygonDrawingTypes m_drawingType; // Тип отрисовки
     GLuint m_texture2D; // Индекс активной текстуры
 
-    VasnecovMatrix4x4 m_P;
+    QMatrix4x4 m_P;
     GLint m_viewX;
     GLint m_viewY;
     GLsizei m_viewWidth;
@@ -244,21 +245,21 @@ inline void VasnecovPipeline::setIdentityMatrixP()
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
 }
-inline void VasnecovPipeline::setMatrixP(const VasnecovMatrix4x4 &P)
+inline void VasnecovPipeline::setMatrixP(const QMatrix4x4 &P)
 {
     m_P = P;
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(m_P.constData());
     glMatrixMode(GL_MODELVIEW);
 }
-inline void VasnecovPipeline::addMatrixP(const VasnecovMatrix4x4 &P)
+inline void VasnecovPipeline::addMatrixP(const QMatrix4x4 &P)
 {
     m_P = m_P * P;
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(m_P.constData());
     glMatrixMode(GL_MODELVIEW);
 }
-inline const VasnecovMatrix4x4 VasnecovPipeline::matrixP() const
+inline const QMatrix4x4 VasnecovPipeline::matrixP() const
 {
     return m_P;
 }
@@ -266,19 +267,19 @@ inline void VasnecovPipeline::setIdentityMatrixMV()
 {
     glLoadIdentity();
 }
-inline void VasnecovPipeline::setMatrixMV(const VasnecovMatrix4x4 &MV)
+inline void VasnecovPipeline::setMatrixMV(const QMatrix4x4 &MV)
 {
     glLoadMatrixf(MV.constData());
 }
-inline void VasnecovPipeline::setMatrixMV(const VasnecovMatrix4x4 *MV)
+inline void VasnecovPipeline::setMatrixMV(const QMatrix4x4 *MV)
 {
     setMatrixMV(*MV);
 }
-inline void VasnecovPipeline::addMatrixMV(const VasnecovMatrix4x4 &MV)
+inline void VasnecovPipeline::addMatrixMV(const QMatrix4x4 &MV)
 {
     glMultMatrixf(MV.constData());
 }
-inline void VasnecovPipeline::addMatrixMV(const VasnecovMatrix4x4 *MV)
+inline void VasnecovPipeline::addMatrixMV(const QMatrix4x4 *MV)
 {
     addMatrixMV(*MV);
 }

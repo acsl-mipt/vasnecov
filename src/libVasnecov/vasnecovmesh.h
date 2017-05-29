@@ -25,12 +25,12 @@
 class VasnecovMesh
 {
 public:
-    VasnecovMesh(const GLstring &meshPath, VasnecovPipeline *pipeline, const GLstring &name = "");
+    VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeline, const std::string &name = "");
 
-    void setName(GLstring name); // Задать имя меша (необязательный параметр)
+    void setName(std::string name); // Задать имя меша (необязательный параметр)
     VasnecovPipeline::ElementDrawingMethods type() const;
     GLboolean loadModel(GLboolean readFromMTL = Vasnecov::cfg_readFromMTL);
-    GLboolean loadModel(const GLstring &path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
+    GLboolean loadModel(const std::string &path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
     void drawModel(); // Отрисовка модели
     QVector3D cm() const;
     void drawBorderBox(); // Рисовать ограничивающий бокс
@@ -42,9 +42,9 @@ protected:
 protected:
     VasnecovPipeline *const m_pipeline;
     VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки
-    GLstring m_name; // Имя меша (то, что пишется в мап мешей). Необязательный атрибут, для текстур и т.п.
+    std::string m_name; // Имя меша (то, что пишется в мап мешей). Необязательный атрибут, для текстур и т.п.
     GLboolean m_isHidden; // Флаг на отрисовку
-    GLstring m_meshPath; // Адрес (относительно директории приложения) файла модели.
+    std::string m_meshPath; // Адрес (относительно директории приложения) файла модели.
     GLboolean m_isLoaded;
 
     std::vector<GLuint> m_indices; // Индексы для отрисовки
@@ -123,7 +123,7 @@ private:
 
 };
 
-inline void VasnecovMesh :: setName(GLstring name)
+inline void VasnecovMesh :: setName(std::string name)
 {
     m_name = name;
 }

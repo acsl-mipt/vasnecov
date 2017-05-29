@@ -22,7 +22,7 @@
 */
 VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
                                    VasnecovPipeline *pipeline,
-                                   const GLstring &name) :
+                                   const std::string &name) :
     Vasnecov::CoreObject(mutex, pipeline, name),
     m_textureD(raw_wasUpdated, TextureD, 0),
     m_textureN(raw_wasUpdated, TextureN, 0),
@@ -55,7 +55,7 @@ VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
                                    VasnecovPipeline *pipeline,
                                    VasnecovTexture *textureD,
                                    VasnecovTexture *textureN,
-                                   const GLstring &name) :
+                                   const std::string &name) :
     Vasnecov::CoreObject(mutex, pipeline, name),
     m_textureD(raw_wasUpdated, TextureD, textureD),
     m_textureN(raw_wasUpdated, TextureN, textureN),

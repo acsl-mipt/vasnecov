@@ -23,7 +23,7 @@
  \param pipeline
  \param imya_
 */
-VasnecovFigure::VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name) :
+VasnecovFigure::VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name) :
     VasnecovElement(mutex, pipeline, name),
     m_type(raw_wasUpdated, Type, VasnecovPipeline::LoopLine),
     m_points(raw_wasUpdated, Points, true),
@@ -41,7 +41,7 @@ VasnecovFigure::~VasnecovFigure()
 {
 }
 
-std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const GLstring &fileName)
+std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const std::string &fileName)
 {
     std::vector<QVector3D> points;
 
@@ -127,13 +127,13 @@ std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const GLstring &fileNam
             }
         }
 
-        int fails(0);
+        GLint fails(0);
 
         points.reserve(indicies.size() * 2);
         for(uint i = 0; i < indicies.size(); ++i)
         {
-            uint first = static_cast<uint>(indicies.at(i).width());
-            uint last  = static_cast<uint>(indicies.at(i).height());
+            GLuint first = static_cast<GLuint>(indicies.at(i).width());
+            GLuint last  = static_cast<GLuint>(indicies.at(i).height());
 
             if(first < verticies.size() && last < verticies.size())
             {
@@ -374,7 +374,7 @@ void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
         QVector3D kt;
         for(GLuint i = 0; i < factor; ++i)
         {
-            float angle(2*M_PI*i/factor);
+            GLfloat angle(2*M_PI*i/factor);
             kt.setX(r*cos(angle));
             kt.setY(r*sin(angle));
             circ.push_back(kt);
@@ -545,7 +545,7 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
     }
 }
 
-void VasnecovFigure::createMeshFromFile(const GLstring &fileName, const QColor &color)
+void VasnecovFigure::createMeshFromFile(const std::string &fileName, const QColor &color)
 {
     QMutexLocker locker(mtx_data);
 

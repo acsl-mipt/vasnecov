@@ -121,7 +121,8 @@ void VasnecovPipeline::setPerspective(const Vasnecov::Perspective &perspective, 
 {
     glMatrixMode(GL_PROJECTION);
 
-    m_P.setToPerspective(perspective.angle, perspective.ratio, perspective.frontBorder, perspective.backBorder);
+    m_P.setToIdentity();
+    m_P.perspective(perspective.angle, perspective.ratio, perspective.frontBorder, perspective.backBorder);
     setCamera(camera);
 
     glLoadMatrixf(m_P.constData());
@@ -139,7 +140,8 @@ void VasnecovPipeline::setOrtho(const Vasnecov::Ortho &ortho, const CameraAttrib
 {
     glMatrixMode(GL_PROJECTION);
 
-    m_P.setToOrtho(ortho.left, ortho.right, ortho.bottom, ortho.top, ortho.front, ortho.back);
+    m_P.setToIdentity();
+    m_P.ortho(ortho.left, ortho.right, ortho.bottom, ortho.top, ortho.front, ortho.back);
     setCamera(camera);
 
     glLoadMatrixf(m_P.constData());
@@ -157,7 +159,8 @@ void VasnecovPipeline::setPerspective(const Vasnecov::Perspective &perspective)
 {
     glMatrixMode(GL_PROJECTION);
 
-    m_P.setToPerspective(perspective.angle, perspective.ratio, perspective.frontBorder, perspective.backBorder);
+    m_P.setToIdentity();
+    m_P.perspective(perspective.angle, perspective.ratio, perspective.frontBorder, perspective.backBorder);
     glLoadMatrixf(m_P.constData());
 
     glMatrixMode(GL_MODELVIEW);
@@ -172,7 +175,8 @@ void VasnecovPipeline::setOrtho(const Vasnecov::Ortho &ortho)
 {
     glMatrixMode(GL_PROJECTION);
 
-    m_P.setToOrtho(ortho.left, ortho.right, ortho.bottom, ortho.top, ortho.front, ortho.back);
+    m_P.setToIdentity();
+    m_P.ortho(ortho.left, ortho.right, ortho.bottom, ortho.top, ortho.front, ortho.back);
     glLoadMatrixf(m_P.constData());
 
     glMatrixMode(GL_MODELVIEW);
@@ -227,9 +231,9 @@ void VasnecovPipeline::setViewport(GLint x, GLint y, GLsizei width, GLsizei heig
    \brief VasnecovPipeline::setMatrixOrtho2D
    \param MV
  */
-void VasnecovPipeline::setMatrixOrtho2D(const VasnecovMatrix4x4 &MV)
+void VasnecovPipeline::setMatrixOrtho2D(const QMatrix4x4 &MV)
 {
-    GLmatrix matrix;
+    QMatrix4x4 matrix;
     matrix.setColumn(3, projectPoint(MV));
 
     glLoadMatrixf(matrix.constData());
@@ -251,7 +255,7 @@ void VasnecovPipeline::setMatrixOrtho2D(const VasnecovMatrix4x4 &MV)
    \sa setViewport()
    \sa setMatrixOrtho2D()
  */
-QVector4D VasnecovPipeline::projectPoint(const GLmatrix &MV, const QVector3D &point)
+QVector4D VasnecovPipeline::projectPoint(const QMatrix4x4 &MV, const QVector3D &point)
 {
     QVector4D wPoint(point);
     wPoint.setW(1.0f);

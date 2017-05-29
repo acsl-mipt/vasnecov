@@ -31,12 +31,12 @@ class VasnecovMaterial : public Vasnecov::CoreObject
 public:
     VasnecovMaterial(QMutex *mutex,
                      VasnecovPipeline *pipeline,
-                     const GLstring &name = GLstring());
+                     const std::string &name = std::string());
     VasnecovMaterial(QMutex *mutex,
                      VasnecovPipeline *pipeline,
                      VasnecovTexture *textureD,
                      VasnecovTexture *textureN = 0,
-                     const GLstring &name = GLstring());
+                     const std::string &name = std::string());
 
 public:
     void setTextureD(VasnecovTexture *textureD);

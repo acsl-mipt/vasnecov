@@ -20,18 +20,17 @@
 #endif
 #include <GL/gl.h>
 #include <string>
-#include "vasnecovmatrix4x4.h"
+#include <cmath>
+#include <QtGlobal>
+#include <QVector3D>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
 
-typedef std::string GLstring;
-typedef VasnecovMatrix4x4 GLmatrix;
+const GLfloat M_2PI = (GLfloat)(M_PI*2.0f);
 
-const float M_2PI = (float)(M_PI*2.0f);
-
-const float c_radToDeg = (float)(180.0f/M_PI); // Радианы в градусы
-const float c_degToRad = (float)(M_PI/180.0f); // Градусы в радианы
+const GLfloat c_radToDeg = (GLfloat)(180.0f/M_PI); // Радианы в градусы
+const GLfloat c_degToRad = (GLfloat)(M_PI/180.0f); // Градусы в радианы
 
 class VasnecovElement;
 class VasnecovMaterial;
@@ -42,6 +41,15 @@ class QMutex;
 
 namespace Vasnecov
 {
+    enum MatrixType
+    {
+        Identity		= 0x0000,
+        Translation		= 0x0001,
+        RotationX		= 0x0002,
+        RotationY		= 0x0004,
+        RotationZ		= 0x0008
+    };
+
     enum WorldTypes
     {
         WorldTypePerspective = 1, // Перспективный тип проекции
@@ -233,15 +241,15 @@ namespace Vasnecov
         QVector3D p1() const {return m_p1;}
         QVector3D p2() const {return m_p2;}
 
-        float x1() const {return m_p1.x();}
-        float y1() const {return m_p1.y();}
-        float z1() const {return m_p1.z();}
+        GLfloat x1() const {return m_p1.x();}
+        GLfloat y1() const {return m_p1.y();}
+        GLfloat z1() const {return m_p1.z();}
 
-        float x2() const {return m_p1.x();}
-        float y2() const {return m_p1.y();}
-        float z2() const {return m_p1.z();}
+        GLfloat x2() const {return m_p1.x();}
+        GLfloat y2() const {return m_p1.y();}
+        GLfloat z2() const {return m_p1.z();}
 
-        float length() const {return m_p1.distanceToPoint(m_p2);}
+        GLfloat length() const {return m_p1.distanceToPoint(m_p2);}
         QVector3D direction() const {return QVector3D(m_p2 - m_p1).normalized();}
 
         void setP1(const QVector3D &p1) {m_p1 = p1;}

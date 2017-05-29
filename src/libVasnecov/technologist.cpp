@@ -15,42 +15,42 @@
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
 
-int Vasnecov::panic(const GLstring &problemText1, const GLstring &problemText2)
+GLint Vasnecov::panic(const std::string &problemText1, const std::string &problemText2)
 {
     BMCL_CRITICAL() << "3D: " << problemText1 << problemText2;
     return 1;
 }
 
 
-int Vasnecov::panic(const GLstring &problemText1, int errorCode)
+GLint Vasnecov::panic(const std::string &problemText1, GLint errorCode)
 {
     BMCL_CRITICAL() << "3D: "  << problemText1 << errorCode;
     return 1;
 }
 
 
-int Vasnecov::panic(const GLstring &problemText1, float value)
+GLint Vasnecov::panic(const std::string &problemText1, GLfloat value)
 {
     BMCL_CRITICAL() << "3D: "  << problemText1 << value;
     return 1;
 }
 
 
-int Vasnecov::problem(const GLstring &problemText1, const GLstring &problemText2)
+GLint Vasnecov::problem(const std::string &problemText1, const std::string &problemText2)
 {
     BMCL_WARNING() << "3D: "  << problemText1 << problemText2;
     return 1;
 }
 
 
-int Vasnecov::problem(const GLstring &problemText1, int errorCode)
+GLint Vasnecov::problem(const std::string &problemText1, GLint errorCode)
 {
     BMCL_WARNING() << "3D: "  << problemText1 << errorCode;
     return 1;
 }
 
 
-int Vasnecov::problem(const GLstring &problemText1, float value)
+GLint Vasnecov::problem(const std::string &problemText1, GLfloat value)
 {
     BMCL_WARNING() << "3D: "  << problemText1 << value;
     return 1;

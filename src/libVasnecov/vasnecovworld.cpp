@@ -35,7 +35,7 @@ VasnecovWorld::VasnecovWorld(QMutex *mutex,
                              VasnecovPipeline *pipeline,
                              GLint mx, GLint my,
                              GLsizei width, GLsizei height,
-                             const GLstring &name) :
+                             const std::string &name) :
     Vasnecov::CoreObject(mutex, pipeline, name),
     m_parameters(raw_wasUpdated, Parameters),
     m_perspective(raw_wasUpdated, Perspective),
@@ -730,7 +730,7 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QPointF &point)
     return unprojectPointToLine(point.x(), point.y());
 }
 
-Vasnecov::Line VasnecovWorld::unprojectPointToLine(float x, float y)
+Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 {
     QMutexLocker locker(mtx_data);
 
@@ -742,7 +742,7 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(float x, float y)
        m_parameters.raw().height > 0.0f)
     {
         // Поскольку камера умножается только на проективную матрицу, то матрица модели-вида здесь не нужна
-        VasnecovMatrix4x4 matInverted = m_projectionMatrix.raw().inverted();
+        QMatrix4x4 matInverted = m_projectionMatrix.raw().inverted();
 
         // z [0; 1]
         QVector4D viewVector((x - m_parameters.raw().x) * 2.0f / m_parameters.raw().width - 1.0f,

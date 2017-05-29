@@ -41,20 +41,20 @@ public:
 
     VasnecovProduct(QMutex *mutex,
                     VasnecovPipeline *pipeline,
-                    GLstring name,
+                    std::string name,
                     VasnecovProduct::ProductTypes type,
                     VasnecovProduct *parent = 0,
                     GLuint level = 0);
 
     VasnecovProduct(QMutex *mutex,
                     VasnecovPipeline *pipeline,
-                    GLstring name,
+                    std::string name,
                     VasnecovMesh *mesh,
                     VasnecovProduct *parent = 0,
                     GLuint level = 0);
     VasnecovProduct(QMutex *mutex,
                     VasnecovPipeline *pipeline,
-                    GLstring name,
+                    std::string name,
                     VasnecovMesh *mesh,
                     VasnecovMaterial *material,
                     VasnecovProduct *parent = 0,
@@ -112,14 +112,14 @@ protected:
     VasnecovProduct *designerParent() const;
     VasnecovMaterial *designerMaterial() const;
 
-    void designerSetMatrixM1(const GLmatrix &M1);
+    void designerSetMatrixM1(const QMatrix4x4 &M1);
 
     void designerSetColorRecursively(const QColor &color);
 
     void designerUpdateChildrenMatrix(); // Обновляет матрицы детей
-    void designerSetMatrixM1Recursively(const GLmatrix &M1);
+    void designerSetMatrixM1Recursively(const QMatrix4x4 &M1);
 
-    void designerUpdateMatrixM1(const GLmatrix &M1);
+    void designerUpdateMatrixM1(const QMatrix4x4 &M1);
     void designerUpdateMatrixMs();
 
     GLfloat renderCalculateDistanceToPlane(const QVector3D &planePoint, const QVector3D &normal);
@@ -139,7 +139,7 @@ protected:
     const std::vector<VasnecovProduct *> *renderChildren() const;
 
 protected:
-    GLmatrix raw_M1; // Матрица родительских трансформаций
+    QMatrix4x4 raw_M1; // Матрица родительских трансформаций
     bool raw_ownVisible;
 
     Vasnecov::MutualData<ProductTypes> m_type; // тип: узел, деталь
@@ -204,7 +204,7 @@ inline VasnecovMaterial *VasnecovProduct::designerMaterial() const
     return m_material.raw();
 }
 
-inline void VasnecovProduct::designerUpdateMatrixM1(const GLmatrix &M1)
+inline void VasnecovProduct::designerUpdateMatrixM1(const QMatrix4x4 &M1)
 {
     raw_M1 = M1;
 

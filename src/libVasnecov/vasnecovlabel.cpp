@@ -24,7 +24,7 @@
  \param size
  \param texture
 */
-VasnecovLabel::VasnecovLabel(QMutex *mutex, VasnecovPipeline *pipeline, const GLstring &name, const QVector2D &size, VasnecovTexture *texture) :
+VasnecovLabel::VasnecovLabel(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name, const QVector2D &size, VasnecovTexture *texture) :
     VasnecovElement(mutex, pipeline, name),
     m_position(size.x()*0.5, size.y()*0.5),
     m_texturePosition(),

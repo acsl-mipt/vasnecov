@@ -32,8 +32,6 @@ set(VASNECOV_SOURCES
     src/libVasnecov/vasnecovlamp.cpp
     src/libVasnecov/vasnecovmaterial.h
     src/libVasnecov/vasnecovmaterial.cpp
-    src/libVasnecov/vasnecovmatrix4x4.h
-    src/libVasnecov/vasnecovmatrix4x4.cpp
     src/libVasnecov/vasnecovmesh.h
     src/libVasnecov/vasnecovmesh.cpp
     src/libVasnecov/vasnecovpipeline.h

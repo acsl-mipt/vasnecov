@@ -27,7 +27,7 @@
  \param meshPath
  \param name
 */
-VasnecovMesh::VasnecovMesh(const GLstring &meshPath, VasnecovPipeline *pipeline, const GLstring &name) :
+VasnecovMesh::VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeline, const std::string &name) :
     m_pipeline(pipeline),
     m_type(VasnecovPipeline::Points),
     m_name(name),
@@ -74,7 +74,7 @@ GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
  \return GLboolean
 */
 
-GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
+GLboolean VasnecovMesh::loadModel(const std::string &path, GLboolean readFromMTL)
 {
     m_meshPath = path;
     m_type = VasnecovPipeline::Points;
@@ -336,7 +336,7 @@ GLboolean VasnecovMesh::loadModel(const GLstring &path, GLboolean readFromMTL)
         return m_isLoaded;
     }
 
-    int fails(0);
+    GLint fails(0);
 
     if(m_type == VasnecovPipeline::Lines)
     {

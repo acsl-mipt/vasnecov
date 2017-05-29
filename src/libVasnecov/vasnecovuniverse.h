@@ -37,8 +37,8 @@ namespace Vasnecov
     struct UniverseAttributes : public Attributes
     {
         // Данные, используемые только в потоке управления
-        std::map<GLstring, VasnecovMesh *> meshes;
-        std::map<GLstring, VasnecovTexture *> textures;
+        std::map<std::string, VasnecovMesh *> meshes;
+        std::map<std::string, VasnecovTexture *> textures;
 
         std::string dirMeshes; // Основная директория мешей
         std::string dirTextures; // Основная директория текстур
@@ -188,55 +188,55 @@ public:
     // Но это не критично, т.к. поток отрисовки использует tryLock и просто не обновляет данные, рисуя старые
     VasnecovWorld *addWorld(GLint posX, GLint posY, GLsizei width, GLsizei height);
 
-    VasnecovLamp *addLamp(const GLstring &name,
+    VasnecovLamp *addLamp(const std::string &name,
                           VasnecovWorld *world,
                           VasnecovLamp::LampTypes type = VasnecovLamp::LampTypeCelestial);
     VasnecovLamp *referLampToWorld(VasnecovLamp *lamp, VasnecovWorld *world);
 
     // Добавление новых продуктов
-    VasnecovProduct *addAssembly(const GLstring &name,
+    VasnecovProduct *addAssembly(const std::string &name,
                                   VasnecovWorld *world,
                                   VasnecovProduct *parent = 0);
 
-    VasnecovProduct *addPart(const GLstring &name,
+    VasnecovProduct *addPart(const std::string &name,
                               VasnecovWorld *world,
-                              const GLstring &meshName,
+                              const std::string &meshName,
                               VasnecovProduct *parent = 0); // Материал по умолчанию
 
-    VasnecovProduct *addPart(const GLstring &name,
+    VasnecovProduct *addPart(const std::string &name,
                               VasnecovWorld *world,
-                              const GLstring &meshName,
+                              const std::string &meshName,
                               VasnecovMaterial *material,
                               VasnecovProduct *parent = 0);
 
-    VasnecovProduct *addPart(const GLstring &name,
+    VasnecovProduct *addPart(const std::string &name,
                               VasnecovWorld *world,
-                              const GLstring &meshName,
-                              const GLstring &textureName,
+                              const std::string &meshName,
+                              const std::string &textureName,
                               VasnecovProduct *parent = 0); // Материал по умолчанию с указанной текстурой
     VasnecovProduct *referProductToWorld(VasnecovProduct *product, VasnecovWorld *world); // Сделать дубликат изделия в заданный мир
     GLboolean removeProduct(VasnecovProduct *product);
 
-    VasnecovFigure *addFigure(const GLstring &name,
+    VasnecovFigure *addFigure(const std::string &name,
                               VasnecovWorld *world);
     GLboolean removeFigure(VasnecovFigure *figure);
 
-    VasnecovLabel *addLabel(const GLstring &name,
+    VasnecovLabel *addLabel(const std::string &name,
                             VasnecovWorld *world,
                             GLfloat width,
                             GLfloat height);
-    VasnecovLabel *addLabel(const GLstring &name,
+    VasnecovLabel *addLabel(const std::string &name,
                             VasnecovWorld *world,
                             GLfloat width,
                             GLfloat height,
-                            const GLstring &textureName);
+                            const std::string &textureName);
     VasnecovLabel *referLabelToWorld(VasnecovLabel *label, VasnecovWorld *world);
     GLboolean removeLabel(VasnecovLabel *label);
 
     // Добавление материала
-    VasnecovMaterial *addMaterial(const GLstring &textureName);
+    VasnecovMaterial *addMaterial(const std::string &textureName);
     VasnecovMaterial *addMaterial();
-    VasnecovTexture *textureByName(const GLstring &textureName, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
+    VasnecovTexture *textureByName(const std::string &textureName, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
 
 
     // Настройки рендеринга
@@ -251,45 +251,45 @@ public:
      * Имена ресурсов соответствуют адресу файла из этой директории.
      */
     // TODO: Unloading resources with full cleaning Worlds's content
-    GLboolean setTexturesDir(const GLstring &dir);
-    GLboolean setMeshesDir(const GLstring &dir);
+    GLboolean setTexturesDir(const std::string &dir);
+    GLboolean setMeshesDir(const std::string &dir);
 
     void loadAll(); // Загрузка всех ресурсов из своих директорий
 
-    GLboolean loadMesh(const GLstring &fileName); // Загрузка конкретного меша
-    GLuint loadMeshes(const GLstring &dirName = "", GLboolean withSub = true); // Загрузка всех мешей
-    GLboolean loadTexture(const GLstring &fileName);
-    GLuint loadTextures(const GLstring &dirName = "", GLboolean withSub = true); // Загрузка всех текстур
+    GLboolean loadMesh(const std::string &fileName); // Загрузка конкретного меша
+    GLuint loadMeshes(const std::string &dirName = "", GLboolean withSub = true); // Загрузка всех мешей
+    GLboolean loadTexture(const std::string &fileName);
+    GLuint loadTextures(const std::string &dirName = "", GLboolean withSub = true); // Загрузка всех текстур
 
     QString info(GLuint type = 0);
 
 protected:
     // Блокирует мьютекс, но вызывается из других методов
     // TODO: make abstract class Resource for textures, meshes, may be shaders. And use with template like an Element
-    GLboolean addTexture(VasnecovTexture *texture, const GLstring &fileId);
-    GLboolean addMesh(VasnecovMesh *mesh, const GLstring &fileId);
+    GLboolean addTexture(VasnecovTexture *texture, const std::string &fileId);
+    GLboolean addMesh(VasnecovMesh *mesh, const std::string &fileId);
 
     // Работа с файлами ресурсов
-    GLuint handleFilesInDir(const GLstring &dirPref,
-                            const GLstring &targetDir,
-                            const GLstring &format,
-                            GLboolean (VasnecovUniverse::*workFun)(const GLstring &),
+    GLuint handleFilesInDir(const std::string &dirPref,
+                            const std::string &targetDir,
+                            const std::string &format,
+                            GLboolean (VasnecovUniverse::*workFun)(const std::string &),
                             GLboolean withSub = true); // Поиск файлов в директории и выполнение с ними метода
-    GLboolean loadMeshFile(const GLstring &fileName);
-    GLboolean loadTextureFile(const GLstring &fileName);
+    GLboolean loadMeshFile(const std::string &fileName);
+    GLboolean loadTextureFile(const std::string &fileName);
 
 protected:
     // Методы, вызываемые из внешних потоков (работают с сырыми данными)
-    VasnecovMesh *designerFindMesh(const GLstring &name);
-    VasnecovTexture *designerFindTexture(const GLstring &name);
+    VasnecovMesh *designerFindMesh(const std::string &name);
+    VasnecovTexture *designerFindTexture(const std::string &name);
 
-    GLboolean designerRemoveThisAlienMatrix(const GLmatrix *alienMs);
+    GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs);
 
 protected:
     // Вспомогательные (не привязаны к внутренним данным)
-    GLboolean setDirectory(const GLstring &newDir, GLstring &oldDir) const;
-    GLboolean correctPath(GLstring &path, GLstring &fileId, const GLstring &format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
-    GLstring correctFileId(const GLstring &fileId, const GLstring &format) const; // Удаляет формат из имени
+    GLboolean setDirectory(const std::string &newDir, std::string &oldDir) const;
+    GLboolean correctPath(std::string &path, std::string &fileId, const std::string &format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
+    std::string correctFileId(const std::string &fileId, const std::string &format) const; // Удаляет формат из имени
 
 protected:
     GLenum renderUpdateData(); // Единственный метод, который лочит мьютекс из основного потока (потока отрисовки)

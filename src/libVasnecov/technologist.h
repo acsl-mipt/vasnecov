@@ -20,18 +20,18 @@
 
 namespace Vasnecov
 {
-    int panic(const GLstring &problemText1, const GLstring &problemText2 = ""); // Функция сообщения и архивирования критических ошибок
-    int panic(const GLstring &problemText1, int errorCode); // Функция сообщения и архивирования критических ошибок
-    int panic(const GLstring &problemText1, float value); // Функция сообщения и архивирования критических ошибок
+    GLint panic(const std::string &problemText1, const std::string &problemText2 = ""); // Функция сообщения и архивирования критических ошибок
+    GLint panic(const std::string &problemText1, GLint errorCode); // Функция сообщения и архивирования критических ошибок
+    GLint panic(const std::string &problemText1, GLfloat value); // Функция сообщения и архивирования критических ошибок
 
-    int problem(const GLstring &problemText1, const GLstring &problemText2 = ""); // Функция сообщения и архивирования системных ошибок
-    int problem(const GLstring &problemText1, int errorCode); // Функция сообщения и архивирования системных ошибок
-    int problem(const GLstring &problemText1, float value); // Функция сообщения и архивирования системных ошибок
+    GLint problem(const std::string &problemText1, const std::string &problemText2 = ""); // Функция сообщения и архивирования системных ошибок
+    GLint problem(const std::string &problemText1, GLint errorCode); // Функция сообщения и архивирования системных ошибок
+    GLint problem(const std::string &problemText1, GLfloat value); // Функция сообщения и архивирования системных ошибок
 
-    float trimAngle(float deg);
+    GLfloat trimAngle(GLfloat deg);
 }
 
-inline float Vasnecov::trimAngle(float deg)
+inline GLfloat Vasnecov::trimAngle(GLfloat deg)
 {
     if(deg > 0)
     {
