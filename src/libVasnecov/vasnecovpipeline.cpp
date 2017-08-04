@@ -329,7 +329,7 @@ void VasnecovPipeline::disableAllConcreteLamps(GLboolean strong)
     }
     else
     {
-        for(GLuint i = GL_LIGHT0; i < Vasnecov::cfg_lampsCountMax; ++i)
+        for(GLuint i = GL_LIGHT0; i < (GL_LIGHT0 + Vasnecov::cfg_lampsCountMax); ++i)
         {
             glDisable(i);
         }
