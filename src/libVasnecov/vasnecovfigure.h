@@ -280,8 +280,8 @@ class VasnecovFigure : public VasnecovElement
             // Если он есть, значит точка используется еще где-то, поэтому список точек не трогаем
             std::vector<GLuint>::iterator found1, found2;
             // Ищем в списке до самого итератора и после
-            found1 == find(raw_indices.begin(), needed, index);
-            found2 == find(needed + 1, raw_indices.end(), index);
+            found1 = find(raw_indices.begin(), needed, index);
+            found2 = find(needed + 1, raw_indices.end(), index);
 
             // Удаление самого индекса
             std::vector<GLuint>::iterator next = raw_indices.erase(needed);
