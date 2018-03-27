@@ -8,7 +8,7 @@ qt5_dep = dependency('qt5', modules: ['Core', 'Gui', 'Widgets', 'OpenGL'])
 bmcl_mod = subproject('bmcl', default_options: ['build_tests=false'])
 bmcl_dep = bmcl_mod.get_variable('bmcl_dep')
 
-rc_file = 'resources.qrc'
+rc_file = 'vasnecov.qrc'
 
 inc = include_directories('src')
 

@@ -12,7 +12,7 @@ add_subdirectory(thirdparty/bmcl)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-qt5_add_resources(VASNECOV_RESOURCES resources.qrc)
+qt5_add_resources(VASNECOV_RESOURCES vasnecov.qrc)
 
 set(VASNECOV_SOURCES
     src/libVasnecov/configuration.h
