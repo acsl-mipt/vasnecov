@@ -57,7 +57,7 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
     m_techSL(raw_data.wasUpdated, Tech03),
     m_techExtensions(raw_data.wasUpdated, Tech04)
 {
-    Q_INIT_RESOURCE(resources);
+    Q_INIT_RESOURCE(vasnecov);
 
     if(!m_loadingImage0.load(":/share/loading0.png") ||
        !m_loadingImage1.load(":/share/loading1.png"))
@@ -87,7 +87,7 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
 */
 VasnecovUniverse::~VasnecovUniverse()
 {
-    Q_CLEANUP_RESOURCE(resources);
+    Q_CLEANUP_RESOURCE(vasnecov);
 }
 
 /*!
