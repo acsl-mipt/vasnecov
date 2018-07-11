@@ -64,4 +64,5 @@ vasnecov_lib = static_library('vasnecov',
 vasnecov_dep = declare_dependency(
   link_with : vasnecov_lib,
   include_directories : include_directories('src', is_system : true),
+  dependencies : [bmcl_dep, qt5_dep],
 )
