@@ -19,26 +19,26 @@
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
 
-class QImage;
+#include <QImage>
 
 class VasnecovTexture
 {
 public:
-    explicit VasnecovTexture(QImage *image);
+    explicit VasnecovTexture(const QImage& image);
     virtual ~VasnecovTexture();
     virtual GLboolean loadImage() = 0; // Загрузка данных из файла
 
-    void setImage(QImage *image);
+    void setImage(const QImage& image);
 
     GLuint id() const;
-    const QImage *image() const;
+    const QImage& image() const;
     GLsizei width() const {return m_width;}
     GLsizei height() const {return m_height;}
     GLboolean isTransparency() const;
 
 protected:
     GLuint m_id;
-    QImage *m_image;
+    QImage m_image;
     GLsizei m_width, m_height;
     GLboolean m_isTransparency;
 
@@ -50,7 +50,7 @@ private:
 class VasnecovTextureDiffuse : public VasnecovTexture
 {
 public:
-    explicit VasnecovTextureDiffuse(QImage *image);
+    explicit VasnecovTextureDiffuse(const QImage& image);
     GLboolean loadImage();
 };
 
@@ -58,18 +58,18 @@ public:
 class VasnecovTextureInterface : public VasnecovTexture
 {
 public:
-    explicit VasnecovTextureInterface(QImage *image);
+    explicit VasnecovTextureInterface(const QImage& image);
     GLboolean loadImage();
 };
 
 class VasnecovTextureNormal : public VasnecovTextureInterface // Карта нормалей. Когда-нибудь я её наконец-то реализую
 {
 public:
-    explicit VasnecovTextureNormal(QImage *image);
+    explicit VasnecovTextureNormal(const QImage& image);
 };
 
 //==================================================================================================
-inline void VasnecovTexture::setImage(QImage *image)
+inline void VasnecovTexture::setImage(const QImage& image)
 {
     m_image = image;
 }
@@ -78,7 +78,7 @@ inline GLuint VasnecovTexture::id() const
 {
     return m_id;
 }
-inline const QImage *VasnecovTexture::image() const
+inline const QImage& VasnecovTexture::image() const
 {
     return m_image;
 }

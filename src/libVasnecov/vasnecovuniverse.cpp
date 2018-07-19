@@ -1279,12 +1279,12 @@ GLboolean VasnecovUniverse::loadTextureFile(const std::string &fileName)
     {
         if(!raw_data.textures.count(fileId)) // Данные
         {
-            QImage *image = new QImage(QString::fromStdString(path));
+            QImage image(QString::fromStdString(path));
 
-            if(!image->isNull())
+            if(!image.isNull())
             {
                 // Проверка на соотношение сторон (чудо-алгоритм от Мастана)
-                if((image->width() & (image->width() - 1)) == 0 && (image->height() & (image->height() - 1)) == 0)
+                if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
                 {
                     VasnecovTexture *texture(0);
 
@@ -1311,9 +1311,6 @@ GLboolean VasnecovUniverse::loadTextureFile(const std::string &fileName)
 
                     delete texture;
                     texture = 0;
-
-                    delete image;
-                    image = 0;
                 }
                 else
                 {

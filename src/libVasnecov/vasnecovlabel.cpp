@@ -152,8 +152,7 @@ GLboolean VasnecovLabel::setImage(const QImage &image)
         if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
         {
             // Делается копия картинки на куче (которая удалится сама текстурой после загрузки), чтобы не было проблем с многопоточностью
-            QImage *newImage = new QImage();
-            *newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
+            QImage newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
 
             QMutexLocker locker(mtx_data);
 
