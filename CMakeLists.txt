@@ -10,8 +10,9 @@ find_package(Qt5Widgets REQUIRED)
 add_subdirectory(thirdparty/bmcl)
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+qt5_add_resources(VASNECOV_RESOURCES vasnecov.qrc)
 
 set(VASNECOV_SOURCES
     src/libVasnecov/configuration.h
@@ -62,7 +63,10 @@ if(HAS_PARENT_SCOPE)
     )
 endif()
 
-add_library(Vasnecov STATIC ${VASNECOV_SOURCES} resources.qrc)
+add_library(Vasnecov STATIC
+    ${VASNECOV_SOURCES}
+    ${VASNECOV_RESOURCES}
+)
 
 if(NOT MSVC)
     target_compile_options(Vasnecov PUBLIC -std=c++11)

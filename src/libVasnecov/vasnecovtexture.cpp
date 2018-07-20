@@ -19,7 +19,7 @@
  \fn VasnecovTexture::VasnecovTexture
  \param image
 */
-VasnecovTexture::VasnecovTexture(QImage *image):
+VasnecovTexture::VasnecovTexture(const QImage& image):
     m_id(0),
     m_image(image),
     m_width(0),	m_height(0),
@@ -48,7 +48,7 @@ VasnecovTexture::~VasnecovTexture()
  \fn VasnecovTextureDiffuse::VasnecovTextureDiffuse
  \param image
 */
-VasnecovTextureDiffuse::VasnecovTextureDiffuse(QImage *image) :
+VasnecovTextureDiffuse::VasnecovTextureDiffuse(const QImage& image) :
     VasnecovTexture(image)
 {
 }
@@ -60,32 +60,31 @@ VasnecovTextureDiffuse::VasnecovTextureDiffuse(QImage *image) :
 */
 GLboolean VasnecovTextureDiffuse::loadImage()
 {
-    if(m_image && !m_image->isNull())
+    if(!m_image.isNull())
     {
-        m_width = m_image->width();
-        m_height = m_image->height();
+        m_width = m_image.width();
+        m_height = m_image.height();
 
         // Создание и инициализация текстуры
         glGenTextures(1, &m_id);
         glBindTexture(GL_TEXTURE_2D, m_id);
 
-        if(m_image->hasAlphaChannel())
+        if(m_image.hasAlphaChannel())
         {
             m_isTransparency = true;
-            gluBuild2DMipmaps(GL_TEXTURE_2D, 4, m_width, m_height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image->bits());
+            gluBuild2DMipmaps(GL_TEXTURE_2D, 4, m_width, m_height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image.bits());
         }
         else
         {
-            gluBuild2DMipmaps(GL_TEXTURE_2D, 3, m_width, m_height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image->bits());
+            gluBuild2DMipmaps(GL_TEXTURE_2D, 3, m_width, m_height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image.bits());
         }
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        delete m_image;
-        m_image = 0;
+        m_image = QImage();
 
-        return m_id;
+        return static_cast<GLboolean>(m_id);
     }
 
     Vasnecov::problem("Текстура не может быть загружена");
@@ -100,7 +99,7 @@ GLboolean VasnecovTextureDiffuse::loadImage()
  \fn VasnecovTextureInterface::VasnecovTextureInterface
  \param image
 */
-VasnecovTextureInterface::VasnecovTextureInterface(QImage *image) :
+VasnecovTextureInterface::VasnecovTextureInterface(const QImage& image) :
     VasnecovTexture(image)
 {
 }
@@ -112,33 +111,32 @@ VasnecovTextureInterface::VasnecovTextureInterface(QImage *image) :
 */
 GLboolean VasnecovTextureInterface::loadImage()
 {
-    if(m_image && !m_image->isNull())
+    if(!m_image.isNull())
     {
-        m_width = m_image->width();
-        m_height = m_image->height();
+        m_width = m_image.width();
+        m_height = m_image.height();
 
         // Создание и инициализация текстуры
         glGenTextures(1, &m_id);
         glBindTexture(GL_TEXTURE_2D, m_id);
 
-        if(m_image->hasAlphaChannel())
+        if(m_image.hasAlphaChannel())
         {
             m_isTransparency = true;
-            glTexImage2D(GL_TEXTURE_2D, 0, 4, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image->bits());
+            glTexImage2D(GL_TEXTURE_2D, 0, 4, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image.bits());
         }
         else
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, 3, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image->bits());
+            glTexImage2D(GL_TEXTURE_2D, 0, 3, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_image.bits());
         }
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         // После загрузки класс сам удаляет более ненужный QImage
-        delete m_image;
-        m_image = 0;
+        m_image = QImage();
 
-        return m_id;
+        return static_cast<GLboolean>(m_id);
     }
 
     Vasnecov::problem("Текстура не может быть загружена");
@@ -153,7 +151,7 @@ GLboolean VasnecovTextureInterface::loadImage()
  \fn VasnecovTextureNormal::VasnecovTextureNormal
  \param image
 */
-VasnecovTextureNormal::VasnecovTextureNormal(QImage *image) :
+VasnecovTextureNormal::VasnecovTextureNormal(const QImage& image) :
     VasnecovTextureInterface(image)
 {
 }

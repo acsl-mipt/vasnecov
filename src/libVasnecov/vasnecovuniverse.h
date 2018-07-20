@@ -37,8 +37,8 @@ namespace Vasnecov
     struct UniverseAttributes : public Attributes
     {
         // Данные, используемые только в потоке управления
-        std::map<std::string, VasnecovMesh *> meshes;
-        std::map<std::string, VasnecovTexture *> textures;
+        std::map<std::string, VasnecovMesh*> meshes;
+        std::map<std::string, VasnecovTexture*> textures;
 
         std::string dirMeshes; // Основная директория мешей
         std::string dirTextures; // Основная директория текстур
@@ -48,8 +48,8 @@ namespace Vasnecov
 
         // Списки для загрузки
         // Поскольку используется только один OpenGL контекст (в основном потоке), приходится использовать списки действий.
-        std::vector<VasnecovMesh *> meshesForLoading;
-        std::vector<VasnecovTexture *> texturesForLoading;
+        std::vector<VasnecovMesh*> meshesForLoading;
+        std::vector<VasnecovTexture*> texturesForLoading;
 
         UniverseAttributes() :
             Attributes(),
@@ -75,7 +75,7 @@ class VasnecovUniverse
     class LoadingStatus
     {
     public:
-        LoadingStatus(QMutex *mutex, Vasnecov::MutualData<GLboolean> *loading) :
+        LoadingStatus(QMutex* mutex, Vasnecov::MutualData<GLboolean>* loading) :
             m_mutex(mutex),
             m_loading(loading)
         {
@@ -90,8 +90,8 @@ class VasnecovUniverse
             m_loading->set(false);
         }
     private:
-        QMutex *m_mutex;
-        Vasnecov::MutualData<GLboolean> *m_loading;
+        QMutex* m_mutex;
+        Vasnecov::MutualData<GLboolean>* m_loading;
 
         Q_DISABLE_COPY(LoadingStatus)
     };
@@ -105,11 +105,11 @@ class VasnecovUniverse
         ~ElementFullBox();
 
         virtual GLboolean synchronize();
-        GLboolean removeElement(T *element);
-        const std::vector<T *> &deleting() const;
+        GLboolean removeElement(T* element);
+        const std::vector<T*>& deleting() const;
 
     protected:
-        std::vector<T *> m_deleting;
+        std::vector<T*> m_deleting;
     };
 
     // Список контейнеров списков, расширенный
@@ -118,30 +118,30 @@ class VasnecovUniverse
     public:
         UniverseElementList();
 
-        VasnecovWorld	 *findRawElement(VasnecovWorld *world) const {return m_worlds.findElement(world);}
-        VasnecovMaterial *findRawElement(VasnecovMaterial *material) const {return m_materials.findElement(material);}
+        VasnecovWorld* findRawElement(VasnecovWorld* world) const {return m_worlds.findElement(world);}
+        VasnecovMaterial* findRawElement(VasnecovMaterial* material) const {return m_materials.findElement(material);}
         using Vasnecov::ElementList<ElementFullBox>::findRawElement;
 
-        GLboolean addElement(VasnecovWorld *world, GLboolean check = false) {return m_worlds.addElement(world, check);}
-        GLboolean addElement(VasnecovMaterial *material, GLboolean check = false) {return m_materials.addElement(material, check);}
+        GLboolean addElement(VasnecovWorld* world, GLboolean check = false) {return m_worlds.addElement(world, check);}
+        GLboolean addElement(VasnecovMaterial* material, GLboolean check = false) {return m_materials.addElement(material, check);}
         using Vasnecov::ElementList<ElementFullBox>::addElement;
 
-        GLboolean removeElement(VasnecovWorld *world) {return m_worlds.removeElement(world);}
-        GLboolean removeElement(VasnecovMaterial *material) {return m_materials.removeElement(material);}
+        GLboolean removeElement(VasnecovWorld* world) {return m_worlds.removeElement(world);}
+        GLboolean removeElement(VasnecovMaterial* material) {return m_materials.removeElement(material);}
         using Vasnecov::ElementList<ElementFullBox>::removeElement;
 
-        GLuint removeElements(const std::vector<VasnecovWorld *> &deletingList) {return m_worlds.removeElements(deletingList);}
-        GLuint removeElements(const std::vector<VasnecovMaterial *> &deletingList) {return m_materials.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovWorld*>& deletingList) {return m_worlds.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovMaterial*>& deletingList) {return m_materials.removeElements(deletingList);}
         using Vasnecov::ElementList<ElementFullBox>::removeElements;
 
         GLboolean synchronizeWorlds() {return m_worlds.synchronize();}
         GLboolean synchronizeMaterials() {return m_materials.synchronize();}
 
-        const std::vector<VasnecovWorld *>	  &rawWorlds() const {return m_worlds.raw();}
-        const std::vector<VasnecovMaterial *> &rawMaterials() const {return m_materials.raw();}
+        const std::vector<VasnecovWorld*>& rawWorlds() const {return m_worlds.raw();}
+        const std::vector<VasnecovMaterial*>& rawMaterials() const {return m_materials.raw();}
 
-        const std::vector<VasnecovWorld *>	  &pureWorlds() const {return m_worlds.pure();}
-        const std::vector<VasnecovMaterial *> &pureMaterials() const {return m_materials.pure();}
+        const std::vector<VasnecovWorld*>& pureWorlds() const {return m_worlds.pure();}
+        const std::vector<VasnecovMaterial*>& pureMaterials() const {return m_materials.pure();}
 
         GLboolean hasPureWorlds() const {return m_worlds.hasPure();}
         GLboolean hasPureMaterials() const {return m_materials.hasPure();}
@@ -166,12 +166,12 @@ class VasnecovUniverse
         }
 
         // Работа со списками удаления
-        const std::vector<VasnecovWorld *>	  &deletingWorlds() const {return m_worlds.deleting();}
-        const std::vector<VasnecovMaterial *> &deletingMaterials() const {return m_materials.deleting();}
-        const std::vector<VasnecovLamp *>	  &deletingLamps() const {return m_lamps.deleting();}
-        const std::vector<VasnecovProduct *>  &deletingProduct() const {return m_products.deleting();}
-        const std::vector<VasnecovFigure *>   &deletingFigure() const {return m_figures.deleting();}
-        const std::vector<VasnecovLabel *>	  &deletingLabel() const {return m_labels.deleting();}
+        const std::vector<VasnecovWorld*>& deletingWorlds() const {return m_worlds.deleting();}
+        const std::vector<VasnecovMaterial*>& deletingMaterials() const {return m_materials.deleting();}
+        const std::vector<VasnecovLamp*>& deletingLamps() const {return m_lamps.deleting();}
+        const std::vector<VasnecovProduct*>& deletingProduct() const {return m_products.deleting();}
+        const std::vector<VasnecovFigure*>& deletingFigure() const {return m_figures.deleting();}
+        const std::vector<VasnecovLabel*>& deletingLabel() const {return m_labels.deleting();}
 
     protected:
         ElementFullBox<VasnecovWorld> m_worlds;
@@ -180,68 +180,68 @@ class VasnecovUniverse
 
 
 public:
-    explicit VasnecovUniverse(const QGLContext *context = 0);
+    explicit VasnecovUniverse(const QGLContext* context = nullptr);
     ~VasnecovUniverse();
 
 public:
     // Методы добавления блокируют мьютекс на все время исполнения
     // Но это не критично, т.к. поток отрисовки использует tryLock и просто не обновляет данные, рисуя старые
-    VasnecovWorld *addWorld(GLint posX, GLint posY, GLsizei width, GLsizei height);
+    VasnecovWorld* addWorld(GLint posX, GLint posY, GLsizei width, GLsizei height);
 
-    VasnecovLamp *addLamp(const std::string &name,
-                          VasnecovWorld *world,
+    VasnecovLamp* addLamp(const std::string& name,
+                          VasnecovWorld* world,
                           VasnecovLamp::LampTypes type = VasnecovLamp::LampTypeCelestial);
-    VasnecovLamp *referLampToWorld(VasnecovLamp *lamp, VasnecovWorld *world);
+    VasnecovLamp* referLampToWorld(VasnecovLamp* lamp, VasnecovWorld* world);
 
     // Добавление новых продуктов
-    VasnecovProduct *addAssembly(const std::string &name,
-                                  VasnecovWorld *world,
-                                  VasnecovProduct *parent = 0);
+    VasnecovProduct* addAssembly(const std::string& name,
+                                  VasnecovWorld* world,
+                                  VasnecovProduct* parent = nullptr);
 
-    VasnecovProduct *addPart(const std::string &name,
-                              VasnecovWorld *world,
-                              const std::string &meshName,
-                              VasnecovProduct *parent = 0); // Материал по умолчанию
+    VasnecovProduct* addPart(const std::string& name,
+                              VasnecovWorld* world,
+                              const std::string& meshName,
+                              VasnecovProduct* parent = nullptr); // Материал по умолчанию
 
-    VasnecovProduct *addPart(const std::string &name,
-                              VasnecovWorld *world,
-                              const std::string &meshName,
-                              VasnecovMaterial *material,
-                              VasnecovProduct *parent = 0);
+    VasnecovProduct* addPart(const std::string& name,
+                              VasnecovWorld* world,
+                              const std::string& meshName,
+                              VasnecovMaterial* material,
+                              VasnecovProduct* parent = nullptr);
 
-    VasnecovProduct *addPart(const std::string &name,
-                              VasnecovWorld *world,
-                              const std::string &meshName,
-                              const std::string &textureName,
-                              VasnecovProduct *parent = 0); // Материал по умолчанию с указанной текстурой
-    VasnecovProduct *referProductToWorld(VasnecovProduct *product, VasnecovWorld *world); // Сделать дубликат изделия в заданный мир
-    GLboolean removeProduct(VasnecovProduct *product);
+    VasnecovProduct* addPart(const std::string& name,
+                              VasnecovWorld* world,
+                              const std::string& meshName,
+                              const std::string& textureName,
+                              VasnecovProduct* parent = nullptr); // Материал по умолчанию с указанной текстурой
+    VasnecovProduct* referProductToWorld(VasnecovProduct* product, VasnecovWorld* world); // Сделать дубликат изделия в заданный мир
+    GLboolean removeProduct(VasnecovProduct* product);
 
-    VasnecovFigure *addFigure(const std::string &name,
-                              VasnecovWorld *world);
-    GLboolean removeFigure(VasnecovFigure *figure);
+    VasnecovFigure* addFigure(const std::string& name,
+                              VasnecovWorld* world);
+    GLboolean removeFigure(VasnecovFigure* figure);
 
-    VasnecovLabel *addLabel(const std::string &name,
-                            VasnecovWorld *world,
+    VasnecovLabel* addLabel(const std::string& name,
+                            VasnecovWorld* world,
                             GLfloat width,
                             GLfloat height);
-    VasnecovLabel *addLabel(const std::string &name,
-                            VasnecovWorld *world,
+    VasnecovLabel* addLabel(const std::string& name,
+                            VasnecovWorld* world,
                             GLfloat width,
                             GLfloat height,
-                            const std::string &textureName);
-    VasnecovLabel *referLabelToWorld(VasnecovLabel *label, VasnecovWorld *world);
-    GLboolean removeLabel(VasnecovLabel *label);
+                            const std::string& textureName);
+    VasnecovLabel* referLabelToWorld(VasnecovLabel* label, VasnecovWorld* world);
+    GLboolean removeLabel(VasnecovLabel* label);
 
     // Добавление материала
-    VasnecovMaterial *addMaterial(const std::string &textureName);
-    VasnecovMaterial *addMaterial();
-    VasnecovTexture *textureByName(const std::string &textureName, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
+    VasnecovMaterial* addMaterial(const std::string& textureName);
+    VasnecovMaterial* addMaterial();
+    VasnecovTexture* textureByName(const std::string& textureName, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
 
 
     // Настройки рендеринга
-    void setContext(const QGLContext *context);
-    void setBackgroundColor(const QColor &color);
+    void setContext(const QGLContext* context);
+    void setBackgroundColor(const QColor& color);
     void setBackgroundColor(QRgb rgb);
 
     // Загрузка ресурсов
@@ -251,45 +251,45 @@ public:
      * Имена ресурсов соответствуют адресу файла из этой директории.
      */
     // TODO: Unloading resources with full cleaning Worlds's content
-    GLboolean setTexturesDir(const std::string &dir);
-    GLboolean setMeshesDir(const std::string &dir);
+    GLboolean setTexturesDir(const std::string& dir);
+    GLboolean setMeshesDir(const std::string& dir);
 
     void loadAll(); // Загрузка всех ресурсов из своих директорий
 
-    GLboolean loadMesh(const std::string &fileName); // Загрузка конкретного меша
-    GLuint loadMeshes(const std::string &dirName = "", GLboolean withSub = true); // Загрузка всех мешей
-    GLboolean loadTexture(const std::string &fileName);
-    GLuint loadTextures(const std::string &dirName = "", GLboolean withSub = true); // Загрузка всех текстур
+    GLboolean loadMesh(const std::string& fileName); // Загрузка конкретного меша
+    GLuint loadMeshes(const std::string& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
+    GLboolean loadTexture(const std::string& fileName);
+    GLuint loadTextures(const std::string& dirName = "", GLboolean withSub = true); // Загрузка всех текстур
 
     QString info(GLuint type = 0);
 
 protected:
     // Блокирует мьютекс, но вызывается из других методов
     // TODO: make abstract class Resource for textures, meshes, may be shaders. And use with template like an Element
-    GLboolean addTexture(VasnecovTexture *texture, const std::string &fileId);
-    GLboolean addMesh(VasnecovMesh *mesh, const std::string &fileId);
+    GLboolean addTexture(VasnecovTexture* texture, const std::string& fileId);
+    GLboolean addMesh(VasnecovMesh* mesh, const std::string& fileId);
 
     // Работа с файлами ресурсов
-    GLuint handleFilesInDir(const std::string &dirPref,
-                            const std::string &targetDir,
-                            const std::string &format,
-                            GLboolean (VasnecovUniverse::*workFun)(const std::string &),
+    GLuint handleFilesInDir(const std::string& dirPref,
+                            const std::string& targetDir,
+                            const std::string& format,
+                            GLboolean (VasnecovUniverse::*workFun)(const std::string&),
                             GLboolean withSub = true); // Поиск файлов в директории и выполнение с ними метода
-    GLboolean loadMeshFile(const std::string &fileName);
-    GLboolean loadTextureFile(const std::string &fileName);
+    GLboolean loadMeshFile(const std::string& fileName);
+    GLboolean loadTextureFile(const std::string& fileName);
 
 protected:
     // Методы, вызываемые из внешних потоков (работают с сырыми данными)
-    VasnecovMesh *designerFindMesh(const std::string &name);
-    VasnecovTexture *designerFindTexture(const std::string &name);
+    VasnecovMesh* designerFindMesh(const std::string& name);
+    VasnecovTexture* designerFindTexture(const std::string& name);
 
-    GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs);
+    GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs);
 
 protected:
     // Вспомогательные (не привязаны к внутренним данным)
-    GLboolean setDirectory(const std::string &newDir, std::string &oldDir) const;
-    GLboolean correctPath(std::string &path, std::string &fileId, const std::string &format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
-    std::string correctFileId(const std::string &fileId, const std::string &format) const; // Удаляет формат из имени
+    GLboolean setDirectory(const std::string& newDir, std::string& oldDir) const;
+    GLboolean correctPath(std::string& path, std::string& fileId, const std::string& format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
+    std::string correctFileId(const std::string& fileId, const std::string& format) const; // Удаляет формат из имени
 
 protected:
     GLenum renderUpdateData(); // Единственный метод, который лочит мьютекс из основного потока (потока отрисовки)
@@ -301,7 +301,7 @@ protected:
     void renderDrawLoadingImage();
 
     template <typename T>
-    static void renderUpdateElementData(T *element)
+    static void renderUpdateElementData(T* element)
     {
         if(element)
         {
@@ -311,7 +311,7 @@ protected:
 
 private:
     VasnecovPipeline m_pipeline;
-    Vasnecov::MutualData<const QGLContext *> m_context;
+    Vasnecov::MutualData<const QGLContext*> m_context;
     Vasnecov::MutualData<QColor> m_backgroundColor;
 
     GLsizei m_width, m_height; // Размеры окна вывода
@@ -410,7 +410,7 @@ GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
                 eit != m_deleting.end(); ++eit)
             {
                 delete (*eit);
-                (*eit) = 0;
+                (*eit) = nullptr;
             }
             m_deleting.clear();
         }

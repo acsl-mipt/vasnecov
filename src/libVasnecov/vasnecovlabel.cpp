@@ -26,7 +26,7 @@
 */
 VasnecovLabel::VasnecovLabel(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name, const QVector2D &size, VasnecovTexture *texture) :
     VasnecovElement(mutex, pipeline, name),
-    m_position(size.x()*0.5, size.y()*0.5),
+    m_position(size.x() * 0.5f, size.y() * 0.5f),
     m_texturePosition(),
 
     m_indices(6),
@@ -78,11 +78,11 @@ void VasnecovLabel::setTextureZone(GLfloat x, GLfloat y, GLfloat width, GLfloat 
     if(raw_dataLabel.texturePoint != QVector2D(x ,y) ||
        raw_dataLabel.textureZone != QVector2D(width, height))
     {
-        if(width == 0)
+        if(width == 0.0f)
         {
             width = raw_dataLabel.size.x();
         }
-        if(height == 0)
+        if(height == 0.0f)
         {
             height = raw_dataLabel.size.y();
         }
@@ -152,8 +152,7 @@ GLboolean VasnecovLabel::setImage(const QImage &image)
         if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
         {
             // Делается копия картинки на куче (которая удалится сама текстурой после загрузки), чтобы не было проблем с многопоточностью
-            QImage *newImage = new QImage();
-            *newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
+            QImage newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
 
             QMutexLocker locker(mtx_data);
 
@@ -203,7 +202,7 @@ bool VasnecovLabel::updaterCalculateTexturePosition()
             return false;
         }
 
-        if(texWidth != 0.0 && texHeight != 0.0)
+        if(texWidth != 0.0f && texHeight != 0.0f)
         {
             GLfloat width(raw_dataLabel.textureZone.x());
             GLfloat height(raw_dataLabel.textureZone.y());
@@ -279,8 +278,8 @@ GLenum VasnecovLabel::renderUpdateData()
         if(updaterIsUpdateFlag(Size))
         {
             // Полигон метки рисуется из центра
-            m_position.setX(raw_dataLabel.size.x()*0.5);
-            m_position.setY(raw_dataLabel.size.y()*0.5);
+            m_position.setX(raw_dataLabel.size.x() * 0.5f);
+            m_position.setY(raw_dataLabel.size.y() * 0.5f);
 
             ok = updaterCalculateTexturePosition();
 
@@ -326,7 +325,7 @@ void VasnecovLabel::renderDraw()
         pure_pipeline->setColor(m_color.pure());
         pure_pipeline->enableTexture2D(m_texture->id());
 
-        pure_pipeline->drawElements(VasnecovPipeline::Triangles, &m_indices, &m_vertices, 0, &m_textures);
+        pure_pipeline->drawElements(VasnecovPipeline::Triangles, &m_indices, &m_vertices, nullptr, &m_textures);
     }
 }
 
@@ -335,7 +334,7 @@ void VasnecovLabel::updaterRemoveOldPersonalTexture()
     if(m_personalTexture)
     {
         delete m_texture;
-        m_texture = 0;
+        m_texture = nullptr;
         m_personalTexture = false;
     }
 }

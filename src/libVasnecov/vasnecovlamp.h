@@ -30,7 +30,7 @@ namespace Vasnecov
         {
             m_ambientColor.setRgbF(0.2, 0.2, 0.2, 1.0);
         }
-        void setAmbientColor(const QColor &color)
+        void setAmbientColor(const QColor& color)
         {
             m_ambientColor = color;
         }
@@ -55,19 +55,19 @@ public:
     };
 
 public:
-    VasnecovLamp(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name, VasnecovLamp::LampTypes type, GLuint index);
+    VasnecovLamp(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name, VasnecovLamp::LampTypes type, GLuint index);
 
 public:
     void setType(LampTypes type);
 
-    void setCelestialDirection(const QVector3D &direction); // Обертки для направленного источника света
+    void setCelestialDirection(const QVector3D& direction); // Обертки для направленного источника света
     void setCelestialDirection(GLfloat x, GLfloat y, GLfloat z);
 
-    void setAmbientColor(const QColor &color);
-    void setDiffuseColor(const QColor &color);
-    void setSpecularColor(const QColor &color);
+    void setAmbientColor(const QColor& color);
+    void setDiffuseColor(const QColor& color);
+    void setSpecularColor(const QColor& color);
 
-    void setSpotDirection(const QVector3D &direction);
+    void setSpotDirection(const QVector3D& direction);
     void setSpotExponent(GLfloat exponent);
     void setSpotAngle(GLfloat angle);
 

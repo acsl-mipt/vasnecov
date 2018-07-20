@@ -10,7 +10,7 @@
 #include "technologist.h"
 #include <iostream>
 #include <sstream>
-#include "bmcl/Logging.h"
+#include <bmcl/Logging.h>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif

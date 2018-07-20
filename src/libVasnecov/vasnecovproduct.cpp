@@ -34,8 +34,8 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, Vasn
     m_parent(raw_wasUpdated, Parent, parent),
     m_level(raw_wasUpdated, Level, level),
 
-    m_mesh(raw_wasUpdated, Mesh, 0),
-    m_material(raw_wasUpdated, Material, 0),
+    m_mesh(raw_wasUpdated, Mesh, nullptr),
+    m_material(raw_wasUpdated, Material, nullptr),
     m_children(raw_wasUpdated, Children),
 
     m_drawingBox(raw_wasUpdated, DrawingBox, false)
@@ -54,7 +54,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, Vasn
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std::string name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, const std::string& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(mutex, pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -63,8 +63,8 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std:
     m_parent(raw_wasUpdated, Parent, parent),
     m_level(raw_wasUpdated, Level, level),
 
-    m_mesh(raw_wasUpdated, Mesh, 0),
-    m_material(raw_wasUpdated, Material, 0),
+    m_mesh(raw_wasUpdated, Mesh, nullptr),
+    m_material(raw_wasUpdated, Material, nullptr),
     m_children(raw_wasUpdated, Children),
 
     m_drawingBox(raw_wasUpdated, DrawingBox, false)
@@ -82,7 +82,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std:
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std::string name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(mutex, pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -92,7 +92,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std:
     m_level(raw_wasUpdated, Level, level),
 
     m_mesh(raw_wasUpdated, Mesh, mesh),
-    m_material(raw_wasUpdated, Material, 0),
+    m_material(raw_wasUpdated, Material, nullptr),
     m_children(raw_wasUpdated, Children),
 
     m_drawingBox(raw_wasUpdated, DrawingBox, false)
@@ -112,7 +112,7 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std:
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, std::string name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(mutex, pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -216,7 +216,7 @@ void VasnecovProduct::designerUpdateMatrixMs()
 
     newMatrix.rotate(qRot);
 
-    if(m_scale.raw() != 1.0)
+    if(m_scale.raw() != 1.0f)
     {
         newMatrix.scale(m_scale.raw(), m_scale.raw(), m_scale.raw());
     }
@@ -259,7 +259,7 @@ GLenum VasnecovProduct::renderUpdateData()
     {
         transp = m_material.raw()->renderTextureD()->isTransparency();
     }
-    if(m_color.raw().alphaF() < 1.0f)
+    if(m_color.raw().alphaF() < 1.0)
     {
         transp = true;
     }
@@ -585,7 +585,7 @@ void VasnecovProduct::setCoordinates(const QVector3D &coordinates)
 */
 void VasnecovProduct::incrementCoordinates(const QVector3D &increment)
 {
-    if(increment.x() != 0.0 || increment.y() != 0.0 || increment.z() != 0.0)
+    if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
         QMutexLocker locker(mtx_data);
 
@@ -658,7 +658,7 @@ void VasnecovProduct::setAngles(const QVector3D &angles)
 */
 void VasnecovProduct::incrementAngles(const QVector3D &increment)
 {
-    if(increment.x() != 0.0 || increment.y() != 0.0 || increment.z() != 0.0)
+    if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
         QMutexLocker locker(mtx_data);
 

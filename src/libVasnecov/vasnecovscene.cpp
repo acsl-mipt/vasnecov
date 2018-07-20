@@ -24,7 +24,7 @@ VasnecovScene::VasnecovScene(QObject *parent) :
     QGraphicsScene(parent),
     m_width(0),
     m_height(0),
-    m_universe(0)
+    m_universe(nullptr)
 {
 }
 

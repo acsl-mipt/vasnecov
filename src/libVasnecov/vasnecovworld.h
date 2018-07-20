@@ -44,11 +44,11 @@ class VasnecovWorld : public Vasnecov::CoreObject
 
 
 public:
-    VasnecovWorld(QMutex *mutex,
-                  VasnecovPipeline *pipeline,
+    VasnecovWorld(QMutex* mutex,
+                  VasnecovPipeline* pipeline,
                   GLint mx, GLint my,
                   GLsizei width, GLsizei height,
-                  const std::string &name = std::string());
+                  const std::string& name = std::string());
     ~VasnecovWorld();
 
 public:
@@ -81,20 +81,20 @@ public:
     Vasnecov::Ortho ortho() const;
 
     // TODO: add camera (operator) position with angles (quaternions) & use setCameraAngles in local CS
-    void setCamera(const Vasnecov::Camera &camera);
+    void setCamera(const Vasnecov::Camera& camera);
     // Задать положение камеры
-    void setCameraPosition(const QVector3D &position);
+    void setCameraPosition(const QVector3D& position);
     void setCameraPosition(GLfloat x, GLfloat y, GLfloat z);
     // Задать точку, в которую смотрит камера
-    void setCameraTarget(const QVector3D &target);
+    void setCameraTarget(const QVector3D& target);
     void setCameraTarget(GLfloat x, GLfloat y, GLfloat z);
     // Задать углы направления взгляда камеры
     void setCameraAngles(GLfloat yaw, GLfloat pitch);
     void setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll); // с креном камеры
     // Перемещение камеры
-    void flyCamera(const QVector3D &step);
+    void flyCamera(const QVector3D& step);
     void flyCamera(GLfloat x, GLfloat y, GLfloat z);
-    void moveCamera(const QVector3D &step);
+    void moveCamera(const QVector3D& step);
     void moveCamera(GLfloat x, GLfloat y, GLfloat z);
     // Вращение камеры
     void rotateCamera(GLfloat yaw, GLfloat pitch);
@@ -105,26 +105,26 @@ public:
 
     Vasnecov::Camera camera() const;
 
-    Vasnecov::Line unprojectPointToLine(const QPointF &point);
+    Vasnecov::Line unprojectPointToLine(const QPointF& point);
     Vasnecov::Line unprojectPointToLine(GLfloat x, GLfloat y);
 
 protected:
     // Списки содержимого
-    VasnecovLamp    *designerFindElement(VasnecovLamp *lamp) const;
-    VasnecovProduct *designerFindElement(VasnecovProduct *product) const;
-    VasnecovFigure  *designerFindElement(VasnecovFigure *figure) const;
-    VasnecovLabel	*designerFindElement(VasnecovLabel *label) const;
+    VasnecovLamp* designerFindElement(VasnecovLamp* lamp) const;
+    VasnecovProduct* designerFindElement(VasnecovProduct* product) const;
+    VasnecovFigure* designerFindElement(VasnecovFigure* figure) const;
+    VasnecovLabel* designerFindElement(VasnecovLabel* label) const;
 
     // Добавление новых элементов в списки
-    GLboolean designerAddElement(VasnecovLamp *lamp, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovProduct *product, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovFigure *figure, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovLabel *label, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovLamp* lamp, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovProduct* product, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovFigure* figure, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovLabel* label, GLboolean check = false);
 
-    GLboolean designerRemoveElement(VasnecovLamp *lamp);
-    GLboolean designerRemoveElement(VasnecovProduct *product);
-    GLboolean designerRemoveElement(VasnecovFigure *figure);
-    GLboolean designerRemoveElement(VasnecovLabel *label);
+    GLboolean designerRemoveElement(VasnecovLamp* lamp);
+    GLboolean designerRemoveElement(VasnecovProduct* product);
+    GLboolean designerRemoveElement(VasnecovFigure* figure);
+    GLboolean designerRemoveElement(VasnecovLabel* label);
 
     void designerUpdateOrtho();
 
@@ -136,13 +136,13 @@ protected:
     void renderSwitchLamps() const;
     VasnecovPipeline::CameraAttributes renderCalculateCamera() const;
 
-    const Vasnecov::WorldParameters &renderWorldParameters() const;
-    const Vasnecov::Perspective &renderPerspective() const;
-    const Vasnecov::Ortho &renderOrtho() const;
-    const Vasnecov::Camera &renderCamera() const;
+    const Vasnecov::WorldParameters& renderWorldParameters() const;
+    const Vasnecov::Perspective& renderPerspective() const;
+    const Vasnecov::Ortho& renderOrtho() const;
+    const Vasnecov::Camera& renderCamera() const;
 
     template <typename T>
-    static void renderDrawElement(T *element)
+    static void renderDrawElement(T* element)
     {
         if(element)
         {
@@ -180,53 +180,53 @@ private:
     Q_DISABLE_COPY(VasnecovWorld)
 };
 
-inline VasnecovLamp *VasnecovWorld::designerFindElement(VasnecovLamp *lamp) const
+inline VasnecovLamp* VasnecovWorld::designerFindElement(VasnecovLamp* lamp) const
 {
     return m_elements.findRawElement(lamp);
 }
-inline VasnecovProduct *VasnecovWorld::designerFindElement(VasnecovProduct *product) const
+inline VasnecovProduct* VasnecovWorld::designerFindElement(VasnecovProduct* product) const
 {
     return m_elements.findRawElement(product);
 }
-inline VasnecovFigure *VasnecovWorld::designerFindElement(VasnecovFigure *figure) const
+inline VasnecovFigure* VasnecovWorld::designerFindElement(VasnecovFigure* figure) const
 {
     return m_elements.findRawElement(figure);
 }
-inline VasnecovLabel *VasnecovWorld::designerFindElement(VasnecovLabel *label) const
+inline VasnecovLabel* VasnecovWorld::designerFindElement(VasnecovLabel* label) const
 {
     return m_elements.findRawElement(label);
 }
 
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovLamp *lamp, GLboolean check)
+inline GLboolean VasnecovWorld::designerAddElement(VasnecovLamp* lamp, GLboolean check)
 {
     return m_elements.addElement(lamp, check);
 }
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovProduct *product, GLboolean check)
+inline GLboolean VasnecovWorld::designerAddElement(VasnecovProduct* product, GLboolean check)
 {
     return m_elements.addElement(product, check);
 }
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovFigure *figure, GLboolean check)
+inline GLboolean VasnecovWorld::designerAddElement(VasnecovFigure* figure, GLboolean check)
 {
     return m_elements.addElement(figure, check);
 }
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel *label, GLboolean check)
+inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel* label, GLboolean check)
 {
     return m_elements.addElement(label, check);
 }
 
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLamp *lamp)
+inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLamp* lamp)
 {
     return m_elements.removeElement(lamp);
 }
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovProduct *product)
+inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovProduct* product)
 {
     return m_elements.removeElement(product);
 }
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovFigure *figure)
+inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovFigure* figure)
 {
     return m_elements.removeElement(figure);
 }
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel *label)
+inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel* label)
 {
     return m_elements.removeElement(label);
 }
@@ -245,22 +245,22 @@ inline void VasnecovWorld::renderSwitchLamps() const
 
 
 
-inline const Vasnecov::WorldParameters &VasnecovWorld::renderWorldParameters() const
+inline const Vasnecov::WorldParameters& VasnecovWorld::renderWorldParameters() const
 {
     return m_parameters.pure();
 }
 
-inline const Vasnecov::Perspective &VasnecovWorld::renderPerspective() const
+inline const Vasnecov::Perspective& VasnecovWorld::renderPerspective() const
 {
     return m_perspective.pure();
 }
 
-inline const Vasnecov::Ortho &VasnecovWorld::renderOrtho() const
+inline const Vasnecov::Ortho& VasnecovWorld::renderOrtho() const
 {
     return m_ortho.pure();
 }
 
-inline const Vasnecov::Camera &VasnecovWorld::renderCamera() const
+inline const Vasnecov::Camera& VasnecovWorld::renderCamera() const
 {
     return m_camera.pure();
 }

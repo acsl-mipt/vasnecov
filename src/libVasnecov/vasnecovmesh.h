@@ -25,12 +25,12 @@
 class VasnecovMesh
 {
 public:
-    VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeline, const std::string &name = "");
+    VasnecovMesh(const std::string& meshPath, VasnecovPipeline* pipeline, const std::string& name = "");
 
-    void setName(std::string name); // Задать имя меша (необязательный параметр)
+    void setName(const std::string& name); // Задать имя меша (необязательный параметр)
     VasnecovPipeline::ElementDrawingMethods type() const;
     GLboolean loadModel(GLboolean readFromMTL = Vasnecov::cfg_readFromMTL);
-    GLboolean loadModel(const std::string &path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
+    GLboolean loadModel(const std::string& path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
     void drawModel(); // Отрисовка модели
     QVector3D cm() const;
     void drawBorderBox(); // Рисовать ограничивающий бокс
@@ -40,7 +40,7 @@ protected:
     void calculateBox();
 
 protected:
-    VasnecovPipeline *const m_pipeline;
+    VasnecovPipeline* const m_pipeline;
     VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки
     std::string m_name; // Имя меша (то, что пишется в мап мешей). Необязательный атрибут, для текстур и т.п.
     GLboolean m_isHidden; // Флаг на отрисовку
@@ -84,7 +84,7 @@ private:
             normals{0},
             textures{0}
         {}
-        TrianglesIndices &operator=(const QuadsIndices &value)
+        TrianglesIndices& operator=(const QuadsIndices& value)
         {
             for(GLuint i = 0; i < amount; ++i)
             {
@@ -106,7 +106,7 @@ private:
             vertices{0},
             textures{0}
         {}
-        LinesIndices &operator=(const TrianglesIndices &value)
+        LinesIndices& operator=(const TrianglesIndices& value)
         {
             for(GLuint i = 0; i < amount; ++i)
             {
@@ -123,7 +123,7 @@ private:
 
 };
 
-inline void VasnecovMesh :: setName(std::string name)
+inline void VasnecovMesh :: setName(const std::string& name)
 {
     m_name = name;
 }

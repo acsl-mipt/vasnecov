@@ -29,25 +29,25 @@ class VasnecovPipeline;
 class VasnecovMaterial : public Vasnecov::CoreObject
 {
 public:
-    VasnecovMaterial(QMutex *mutex,
-                     VasnecovPipeline *pipeline,
-                     const std::string &name = std::string());
-    VasnecovMaterial(QMutex *mutex,
-                     VasnecovPipeline *pipeline,
-                     VasnecovTexture *textureD,
-                     VasnecovTexture *textureN = 0,
-                     const std::string &name = std::string());
+    VasnecovMaterial(QMutex* mutex,
+                     VasnecovPipeline* pipeline,
+                     const std::string& name = std::string());
+    VasnecovMaterial(QMutex* mutex,
+                     VasnecovPipeline* pipeline,
+                     VasnecovTexture* textureD,
+                     VasnecovTexture* textureN = nullptr,
+                     const std::string& name = std::string());
 
 public:
-    void setTextureD(VasnecovTexture *textureD);
-    VasnecovTexture *textureD() const;
-    void setTextureN(VasnecovTexture *textureN);
-    VasnecovTexture *textureN() const;
+    void setTextureD(VasnecovTexture* textureD);
+    VasnecovTexture* textureD() const;
+    void setTextureN(VasnecovTexture* textureN);
+    VasnecovTexture* textureN() const;
 
-    void setAmbientColor(const QColor &color);
-    void setDiffuseColor(const QColor &color);
-    void setSpecularColor(const QColor &color);
-    void setEmissionColor(const QColor &color);
+    void setAmbientColor(const QColor& color);
+    void setDiffuseColor(const QColor& color);
+    void setSpecularColor(const QColor& color);
+    void setEmissionColor(const QColor& color);
     void setShininess(GLfloat shininess);
     QColor ambientColor() const;
     QColor diffuseColor() const;
@@ -56,14 +56,14 @@ public:
     GLfloat shininess() const;
 
 protected:
-    void designerSetAmbientAndDiffuseColor(const QColor &color);
+    void designerSetAmbientAndDiffuseColor(const QColor& color);
 
 protected:
     GLenum renderUpdateData();
     void renderDraw();
 
-    VasnecovTexture *renderTextureD() const;
-    VasnecovTexture *renderTextureN() const;
+    VasnecovTexture* renderTextureD() const;
+    VasnecovTexture* renderTextureN() const;
 
     QColor renderAmbientColor() const;
     QColor renderDiffuseColor() const;
@@ -79,8 +79,8 @@ protected:
         DefaultDiffuseTextured
     };
 
-    Vasnecov::MutualData<VasnecovTexture *> m_textureD;
-    Vasnecov::MutualData<VasnecovTexture *> m_textureN;
+    Vasnecov::MutualData<VasnecovTexture*> m_textureD;
+    Vasnecov::MutualData<VasnecovTexture*> m_textureN;
 
     Vasnecov::MutualData<QColor> m_ambientColor;
     Vasnecov::MutualData<QColor> m_diffuseColor;

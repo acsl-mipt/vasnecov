@@ -16,7 +16,7 @@
 #endif
 #include <GL/glu.h>
 #include "vasnecovmesh.h"
-#include "bmcl/Logging.h"
+#include <bmcl/Logging.h>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
@@ -57,7 +57,7 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
     m_techSL(raw_data.wasUpdated, Tech03),
     m_techExtensions(raw_data.wasUpdated, Tech04)
 {
-    Q_INIT_RESOURCE(resources);
+    Q_INIT_RESOURCE(vasnecov);
 
     if(!m_loadingImage0.load(":/share/loading0.png") ||
        !m_loadingImage1.load(":/share/loading1.png"))
@@ -87,7 +87,7 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
 */
 VasnecovUniverse::~VasnecovUniverse()
 {
-    Q_CLEANUP_RESOURCE(resources);
+    Q_CLEANUP_RESOURCE(vasnecov);
 }
 
 /*!
@@ -116,7 +116,7 @@ VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width,
     }
 
     Vasnecov::problem("Неверные размеры мира");
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -132,7 +132,7 @@ VasnecovLamp *VasnecovUniverse::addLamp(const std::string &name, VasnecovWorld *
     if(!world)
     {
         Vasnecov::problem("Мир не задан");
-        return 0;
+        return nullptr;
     }
 
     GLuint index(GL_LIGHT0);
@@ -143,7 +143,7 @@ VasnecovLamp *VasnecovUniverse::addLamp(const std::string &name, VasnecovWorld *
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
-        return 0;
+        return nullptr;
     }
     size_t count = m_elements.rawLampsCount();
     if(count < m_lampsCountMax)
@@ -162,10 +162,10 @@ VasnecovLamp *VasnecovUniverse::addLamp(const std::string &name, VasnecovWorld *
     else
     {
         delete lamp;
-        lamp = 0;
+        lamp = nullptr;
 
         Vasnecov::problem("Неверный фонарь либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -188,7 +188,7 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
     if(!lamp || !world)
     {
         Vasnecov::problem("Фонарь или мир не заданы");
-        return 0;
+        return nullptr;
     }
 
     QMutexLocker locker(&mtx_data);
@@ -197,13 +197,13 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
     if(!m_elements.findRawElement(lamp))
     {
         Vasnecov::problem("Заданный фонарь не найден");
-        return 0;
+        return nullptr;
     }
     // Поиск мира в списке
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
-        return 0;
+        return nullptr;
     }
 
     if(world->designerAddElement(lamp, true))
@@ -213,7 +213,7 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
     else
     {
         Vasnecov::problem("Неверный фонарь либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -230,10 +230,10 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, Vasnecov
     if(!world)
     {
         Vasnecov::problem("Мир не задан");
-        return 0;
+        return nullptr;
     }
 
-    VasnecovProduct *assembly(0);
+    VasnecovProduct *assembly(nullptr);
     GLuint level(0);
 
     QMutexLocker locker(&mtx_data);
@@ -242,7 +242,7 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, Vasnecov
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
-        return 0;
+        return nullptr;
     }
 
     if(parent)
@@ -253,13 +253,13 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, Vasnecov
             if(level > Vasnecov::cfg_elementMaxLevel)
             {
                 Vasnecov::problem("Превышен максимальный уровень вложенности изделия");
-                return 0;
+                return nullptr;
             }
         }
         else
         {
             Vasnecov::problem("Родительский узел не найден");
-            return 0;
+            return nullptr;
         }
     }
 
@@ -288,7 +288,7 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, Vasnecov
 */
 VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorld *world, const std::string &meshName, VasnecovProduct *parent)
 {
-    return addPart(name, world, meshName, 0, parent);
+    return addPart(name, world, meshName, nullptr, parent);
 }
 
 /*!
@@ -306,11 +306,11 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
     if(!world)
     {
         Vasnecov::problem("Мир не задан");
-        return 0;
+        return nullptr;
     }
 
-    VasnecovProduct *part(0);
-    VasnecovMesh *mesh(0);
+    VasnecovProduct *part(nullptr);
+    VasnecovMesh *mesh(nullptr);
     GLuint level(0);
 
     QMutexLocker locker(&mtx_data);
@@ -330,7 +330,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
             if(!loadMeshFile(corMeshName))
             {
                 Vasnecov::problem("Не найден заданный меш");
-                return 0;
+                return nullptr;
             }
             locker.relock();
 
@@ -340,21 +340,21 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
                 Vasnecov::problem("Не найден заданный меш");
-                return 0;
+                return nullptr;
             }
         }
     }
     else
     {
         Vasnecov::problem("Не указан меш");
-        return 0;
+        return nullptr;
     }
 
     // Поиск мира в списке
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан не верно");
-        return 0;
+        return nullptr;
     }
     // Поиск материала
     if(material)
@@ -362,7 +362,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
         if(!m_elements.findRawElement(material))
         {
             Vasnecov::problem("Не найден заданный материал");
-            return 0;
+            return nullptr;
         }
     }
     // Указан родитель
@@ -374,13 +374,13 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
             if(level > Vasnecov::cfg_elementMaxLevel)
             {
                 Vasnecov::problem("Превышен максимальный уровень вложенности изделия");
-                return 0;
+                return nullptr;
             }
         }
         else
         {
             Vasnecov::problem("Родительский узел не найден");
-            return 0;
+            return nullptr;
         }
     }
 
@@ -416,7 +416,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
     }
     else
     {
-        return addPart(name, world, meshName, 0, parent);
+        return addPart(name, world, meshName, nullptr, parent);
     }
 }
 
@@ -432,7 +432,7 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
     if(!product || !world)
     {
         Vasnecov::problem("Элемент или мир не заданы");
-        return 0;
+        return nullptr;
     }
 
     QMutexLocker locker(&mtx_data);
@@ -441,13 +441,13 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
     if(!m_elements.findRawElement(product))
     {
         Vasnecov::problem("Заданное изделие не найдено");
-        return 0;
+        return nullptr;
     }
     // Поиск мира в списке
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
-        return 0;
+        return nullptr;
     }
 
     if(world->designerAddElement(product, true))
@@ -457,7 +457,7 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
     else
     {
         Vasnecov::problem("Неверное изделие либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -557,10 +557,10 @@ VasnecovFigure *VasnecovUniverse::addFigure(const std::string &name, VasnecovWor
     if(!world)
     {
         Vasnecov::problem("Мир не задан");
-        return 0;
+        return nullptr;
     }
 
-    VasnecovFigure *figure(0);
+    VasnecovFigure *figure(nullptr);
 
     QMutexLocker locker(&mtx_data);
 
@@ -568,7 +568,7 @@ VasnecovFigure *VasnecovUniverse::addFigure(const std::string &name, VasnecovWor
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан не верно");
-        return 0;
+        return nullptr;
     }
 
     figure = new VasnecovFigure(&mtx_data, &m_pipeline, name);
@@ -581,10 +581,10 @@ VasnecovFigure *VasnecovUniverse::addFigure(const std::string &name, VasnecovWor
     else
     {
         delete figure;
-        figure = 0;
+        figure = nullptr;
 
         Vasnecov::problem("Неверная фигура либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -642,11 +642,11 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
     if(!world)
     {
         Vasnecov::problem("Мир не задан");
-        return 0;
+        return nullptr;
     }
 
-    VasnecovLabel *label(0);
-    VasnecovTexture *texture(0);
+    VasnecovLabel *label(nullptr);
+    VasnecovTexture *texture(nullptr);
 
     QMutexLocker locker(&mtx_data);
 
@@ -665,7 +665,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
             if(!loadTextureFile(raw_data.dirTexturesIPref + corTextureName))
             {
                 Vasnecov::problem("Не найдена заданная текстура");
-                return 0;
+                return nullptr;
             }
             locker.relock();
 
@@ -674,7 +674,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
                 Vasnecov::problem("Не найдена заданная текстура");
-                return 0;
+                return nullptr;
             }
         }
     }
@@ -683,7 +683,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан не верно");
-        return 0;
+        return nullptr;
     }
 
     label = new VasnecovLabel(&mtx_data, &m_pipeline, name, QVector2D(width, height), texture);
@@ -696,10 +696,10 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
     else
     {
         delete label;
-        label = 0;
+        label = nullptr;
 
         Vasnecov::problem("Неверная метка либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -708,7 +708,7 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
     if(!label || !world)
     {
         Vasnecov::problem("Элемент или мир не заданы");
-        return 0;
+        return nullptr;
     }
 
     QMutexLocker locker(&mtx_data);
@@ -717,13 +717,13 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
     if(!m_elements.findRawElement(label))
     {
         Vasnecov::problem("Заданная метка не найдена");
-        return 0;
+        return nullptr;
     }
     // Поиск мира в списке
     if(!m_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
-        return 0;
+        return nullptr;
     }
 
     if(world->designerAddElement(label, true))
@@ -733,7 +733,7 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
     else
     {
         Vasnecov::problem("Неверная метка либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 /*!
@@ -780,7 +780,7 @@ GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
 */
 VasnecovMaterial *VasnecovUniverse::addMaterial(const std::string &textureName)
 {
-    VasnecovTexture *texture(0);
+    VasnecovTexture *texture(nullptr);
 
     QMutexLocker locker(&mtx_data);
 
@@ -800,7 +800,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const std::string &textureName)
             if(!loadTextureFile(corTextureName))
             {
                 Vasnecov::problem("Заданная текстура не найдена");
-                return 0;
+                return nullptr;
             }
             locker.relock();
 
@@ -810,7 +810,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const std::string &textureName)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
                 Vasnecov::problem("Заданная текстура не найдена");
-                return 0;
+                return nullptr;
             }
         }
     }
@@ -823,10 +823,10 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const std::string &textureName)
     else
     {
         delete material;
-        material = 0;
+        material = nullptr;
 
         Vasnecov::problem("Неверный материал либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -845,10 +845,10 @@ VasnecovMaterial *VasnecovUniverse::addMaterial()
     else
     {
         delete material;
-        material = 0;
+        material = nullptr;
 
         Vasnecov::problem("Неверный материал либо дублирование данных");
-        return 0;
+        return nullptr;
     }
 }
 
@@ -861,7 +861,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial()
 */
 VasnecovTexture *VasnecovUniverse::textureByName(const std::string &textureName, Vasnecov::TextureTypes type)
 {
-    VasnecovTexture *texture(0);
+    VasnecovTexture *texture(nullptr);
     std::string newName;
 
     QMutexLocker locker(&mtx_data);
@@ -957,7 +957,7 @@ GLboolean VasnecovUniverse::loadMesh(const std::string &fileName)
         return false;
 
     LoadingStatus lStatus(&mtx_data, &m_loading);
-    GLuint res(false);
+    GLboolean res(false);
 
     res = loadMeshFile(fileName);
 
@@ -992,7 +992,7 @@ GLboolean VasnecovUniverse::loadTexture(const std::string &fileName)
         return false;
 
     LoadingStatus lStatus(&mtx_data, &m_loading);
-    GLuint res(false);
+    GLboolean res(false);
 
     res = loadTextureFile(fileName);
 
@@ -1094,7 +1094,7 @@ VasnecovMesh *VasnecovUniverse::designerFindMesh(const std::string &name)
     }
     else
     {
-        return 0;
+        return nullptr;
     }
 }
 
@@ -1112,7 +1112,7 @@ VasnecovTexture *VasnecovUniverse::designerFindTexture(const std::string &name)
     }
     else
     {
-        return 0;
+        return nullptr;
     }
 }
 
@@ -1240,7 +1240,7 @@ GLboolean VasnecovUniverse::loadMeshFile(const std::string &fileName)
                 }
             }
             delete mesh;
-            mesh = 0;
+            mesh = nullptr;
         }
     }
     return false;
@@ -1279,14 +1279,14 @@ GLboolean VasnecovUniverse::loadTextureFile(const std::string &fileName)
     {
         if(!raw_data.textures.count(fileId)) // Данные
         {
-            QImage *image = new QImage(QString::fromStdString(path));
+            QImage image(QString::fromStdString(path));
 
-            if(!image->isNull())
+            if(!image.isNull())
             {
                 // Проверка на соотношение сторон (чудо-алгоритм от Мастана)
-                if((image->width() & (image->width() - 1)) == 0 && (image->height() & (image->height() - 1)) == 0)
+                if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
                 {
-                    VasnecovTexture *texture(0);
+                    VasnecovTexture *texture(nullptr);
 
                     switch(type)
                     {
@@ -1310,10 +1310,7 @@ GLboolean VasnecovUniverse::loadTextureFile(const std::string &fileName)
                     }
 
                     delete texture;
-                    texture = 0;
-
-                    delete image;
-                    image = 0;
+                    texture = nullptr;
                 }
                 else
                 {
@@ -1576,8 +1573,8 @@ void VasnecovUniverse::renderDrawLoadingImage()
 #endif
         if(image && !image->isNull())
         {
-            glRasterPos2i(0.5*m_width - image->width()*0.5,
-                          0.5*m_height - image->height()*0.5);
+            glRasterPos2i(0.5f*m_width - image->width()*0.5f,
+                          0.5f*m_height - image->height()*0.5f);
             glDrawPixels(image->width(), image->height(), GL_BGRA_EXT, GL_UNSIGNED_BYTE, image->bits());
         }
     }
@@ -1646,13 +1643,13 @@ Vasnecov::UniverseAttributes::~UniverseAttributes()
         rit != meshes.end(); ++rit)
     {
         delete (rit->second);
-        rit->second = 0;
+        rit->second = nullptr;
     }
     for(std::map<std::string, VasnecovTexture *>::iterator rit = textures.begin();
         rit != textures.end(); ++rit)
     {
         delete (rit->second);
-        rit->second = 0;
+        rit->second = nullptr;
     }
 }
 

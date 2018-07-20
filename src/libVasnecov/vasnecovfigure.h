@@ -26,7 +26,7 @@ class VasnecovFigure : public VasnecovElement
     class VertexManager
     {
     public:
-        VertexManager(GLenum &wasUpdated, const GLenum flag, GLboolean optimize = true) :
+        VertexManager(GLenum& wasUpdated, const GLenum flag, GLboolean optimize = true) :
             m_flag(flag),
             m_wasUpdated(wasUpdated),
             m_optimize(optimize),
@@ -48,10 +48,10 @@ class VasnecovFigure : public VasnecovElement
 
         GLuint rawVerticesSize() const
         {
-            return (GLuint)raw_vertices.size();
+            return static_cast<GLuint>(raw_vertices.size());
         }
 
-        void set(const std::vector <QVector3D> &points)
+        void set(const std::vector<QVector3D>& points)
         {
             // Заливка в сырые данные с удалением дубликатов точек
             raw_vertices.clear();
@@ -97,7 +97,7 @@ class VasnecovFigure : public VasnecovElement
             prepareUpdate();
         }
 
-        void addLast(const QVector3D &point)
+        void addLast(const QVector3D& point)
         {
             // Т.к. рендер только читает чистые данные, то можно их прочитать и из другого потока
             if(!pure_indices.empty())
@@ -117,13 +117,13 @@ class VasnecovFigure : public VasnecovElement
                         else
                         {
                             raw_vertices.push_back(point);
-                            raw_indices.push_back((GLuint)raw_vertices.size() - 1);
+                            raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
                         }
                     }
                     else
                     {
                         raw_vertices.push_back(point);
-                        raw_indices.push_back((GLuint)raw_vertices.size() - 1);
+                        raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
                     }
 
                     prepareUpdate();
@@ -132,7 +132,7 @@ class VasnecovFigure : public VasnecovElement
             else
             {
                 raw_vertices.push_back(point);
-                raw_indices.push_back((GLuint)raw_vertices.size() - 1);
+                raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
 
                 prepareUpdate();
             }
@@ -149,7 +149,7 @@ class VasnecovFigure : public VasnecovElement
                 prepareUpdate();
             }
         }
-        void replaceLast(const QVector3D &point)
+        void replaceLast(const QVector3D& point)
         {
             if(!pure_indices.empty())
             {
@@ -166,7 +166,7 @@ class VasnecovFigure : public VasnecovElement
             }
         }
 
-        void addFirst(const QVector3D &point)
+        void addFirst(const QVector3D& point)
         {
             if(!pure_indices.empty())
             {
@@ -185,13 +185,13 @@ class VasnecovFigure : public VasnecovElement
                         else
                         {
                             raw_vertices.push_back(point);
-                            raw_indices.insert(raw_indices.begin(), (GLuint)raw_vertices.size() - 1);
+                            raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
                         }
                     }
                     else
                     {
                         raw_vertices.push_back(point);
-                        raw_indices.insert(raw_indices.begin(), (GLuint)raw_vertices.size() - 1);
+                        raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
                     }
 
                     prepareUpdate();
@@ -200,7 +200,7 @@ class VasnecovFigure : public VasnecovElement
             else
             {
                 raw_vertices.push_back(point);
-                raw_indices.insert(raw_indices.begin(), (GLuint)raw_vertices.size() - 1);
+                raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
 
                 prepareUpdate();
             }
@@ -217,7 +217,7 @@ class VasnecovFigure : public VasnecovElement
                 prepareUpdate();
             }
         }
-        void replaceFirst(const QVector3D &point)
+        void replaceFirst(const QVector3D& point)
         {
             if(!pure_indices.empty())
             {
@@ -247,11 +247,11 @@ class VasnecovFigure : public VasnecovElement
             return 0;
         }
 
-        const std::vector<QVector3D> *pureVertices() const
+        const std::vector<QVector3D>* pureVertices() const
         {
             return &pure_vertices;
         }
-        const std::vector<GLuint> *pureIndices() const
+        const std::vector<GLuint>* pureIndices() const
         {
             return &pure_indices;
         }
@@ -261,7 +261,7 @@ class VasnecovFigure : public VasnecovElement
         }
 
     private:
-        GLboolean optimizedIndex(const QVector3D &vert, GLuint &fIndex) const
+        GLboolean optimizedIndex(const QVector3D& vert, GLuint& fIndex) const
         {
             for(fIndex = 0; fIndex < raw_vertices.size(); ++fIndex)
             {
@@ -272,7 +272,7 @@ class VasnecovFigure : public VasnecovElement
             }
             return false;
         }
-        void removeByIndexIterator(const std::vector<GLuint>::iterator &needed)
+        void removeByIndexIterator(const std::vector<GLuint>::iterator& needed)
         {
             GLuint index = *needed;
 
@@ -280,8 +280,8 @@ class VasnecovFigure : public VasnecovElement
             // Если он есть, значит точка используется еще где-то, поэтому список точек не трогаем
             std::vector<GLuint>::iterator found1, found2;
             // Ищем в списке до самого итератора и после
-            found1 == find(raw_indices.begin(), needed, index);
-            found2 == find(needed + 1, raw_indices.end(), index);
+            found1 = find(raw_indices.begin(), needed, index);
+            found2 = find(needed + 1, raw_indices.end(), index);
 
             // Удаление самого индекса
             std::vector<GLuint>::iterator next = raw_indices.erase(needed);
@@ -316,7 +316,7 @@ class VasnecovFigure : public VasnecovElement
 
     private:
         const GLenum m_flag; // Флаг. Идентификатор, выдаваемый результатом синхронизации update()
-        GLenum &m_wasUpdated; // Ссылка на общий флаг обновлений
+        GLenum& m_wasUpdated; // Ссылка на общий флаг обновлений
         GLboolean m_optimize;
 
         std::vector<QVector3D> raw_vertices; // Точки сырых данных
@@ -342,22 +342,22 @@ public:
     };
 
 public:
-    VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name = std::string());
+    VasnecovFigure(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name = std::string());
     ~VasnecovFigure();
 
-    static std::vector<QVector3D> readPointsFromObj(const std::string &fileName);
+    static std::vector<QVector3D> readPointsFromObj(const std::string& fileName);
 
-    void setPoints(const std::vector<QVector3D> &points);
+    void setPoints(const std::vector<QVector3D>& points);
     void clearPoints();
     GLuint pointsAmount() const;
 
-    void addFirstPoint(const QVector3D &point);
+    void addFirstPoint(const QVector3D& point);
     void removeFirstPoint();
-    void replaceFirstPoint(const QVector3D &point);
+    void replaceFirstPoint(const QVector3D& point);
 
-    void addLastPoint(const QVector3D &point);
+    void addLastPoint(const QVector3D& point);
     void removeLastPoint();
-    void replaceLastPoint(const QVector3D &point);
+    void replaceLastPoint(const QVector3D& point);
 
     GLboolean setType(VasnecovFigure::Types type);
     VasnecovFigure::Types type() const;
@@ -377,15 +377,15 @@ public:
     GLboolean optimization() const;
 
     // Making some simple figures
-    void createLine(GLfloat length, const QColor &color = QColor());
-    void createLine(const QVector3D &first, const QVector3D &second, const QColor &color = QColor());
-    void createLine(const Vasnecov::Line &line, const QColor &color = QColor());
-    void createCircle(GLfloat r, const QColor &color = QColor(), GLuint factor = 64); // Circle at horizontal plane
-    void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
-    void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color = QColor(), GLuint factor = 128);
-    void createSquareGrid(GLfloat width, GLfloat height, const QColor &color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
-    void createMeshFromFile(const std::string &fileName, const QColor &color = QColor());
-    void createMeshFromPoints(const std::vector<QVector3D> &points, const QColor &color = QColor());
+    void createLine(GLfloat length, const QColor& color = QColor());
+    void createLine(const QVector3D& first, const QVector3D& second, const QColor& color = QColor());
+    void createLine(const Vasnecov::Line& line, const QColor& color = QColor());
+    void createCircle(GLfloat r, const QColor& color = QColor(), GLuint factor = 64); // Circle at horizontal plane
+    void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor& color = QColor(), GLuint factor = 128);
+    void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor& color = QColor(), GLuint factor = 128);
+    void createSquareGrid(GLfloat width, GLfloat height, const QColor& color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
+    void createMeshFromFile(const std::string& fileName, const QColor& color = QColor());
+    void createMeshFromPoints(const std::vector<QVector3D>& points, const QColor& color = QColor());
 
 protected:
     GLboolean designerSetType(VasnecovFigure::Types type);
@@ -393,7 +393,7 @@ protected:
     GLenum renderUpdateData();
     void renderDraw();
 
-    GLfloat renderCalculateDistanceToPlane(const QVector3D &planePoint, const QVector3D &normal);
+    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
     GLenum renderType() const;
     QVector3D renderCm() const;
