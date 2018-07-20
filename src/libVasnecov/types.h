@@ -27,10 +27,10 @@
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
 
-const GLfloat M_2PI = (GLfloat)(M_PI*2.0f);
+const GLfloat M_2PI = static_cast<GLfloat>(M_PI * 2.0);
 
-const GLfloat c_radToDeg = (GLfloat)(180.0f/M_PI); // Радианы в градусы
-const GLfloat c_degToRad = (GLfloat)(M_PI/180.0f); // Градусы в радианы
+const GLfloat c_radToDeg = static_cast<GLfloat>(180.0 / M_PI); // Радианы в градусы
+const GLfloat c_degToRad = static_cast<GLfloat>(M_PI / 180.0); // Градусы в радианы
 
 class VasnecovElement;
 class VasnecovMaterial;
@@ -189,7 +189,7 @@ namespace Vasnecov
         {
             wasUpdated = 0;
         }
-        GLboolean updateFlag() const
+        GLenum updateFlag() const
         {
             return wasUpdated;
         }

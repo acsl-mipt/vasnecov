@@ -84,7 +84,7 @@ GLboolean VasnecovTextureDiffuse::loadImage()
 
         m_image = QImage();
 
-        return m_id;
+        return static_cast<GLboolean>(m_id);
     }
 
     Vasnecov::problem("Текстура не может быть загружена");
@@ -136,7 +136,7 @@ GLboolean VasnecovTextureInterface::loadImage()
         // После загрузки класс сам удаляет более ненужный QImage
         m_image = QImage();
 
-        return m_id;
+        return static_cast<GLboolean>(m_id);
     }
 
     Vasnecov::problem("Текстура не может быть загружена");

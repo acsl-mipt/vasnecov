@@ -81,41 +81,41 @@ public:
     };
 
 public:
-    explicit VasnecovPipeline(QGLContext *context = 0);
+    explicit VasnecovPipeline(QGLContext* context = nullptr);
 
-    void initialize(QGLContext *context = 0);
+    void initialize(QGLContext* context = nullptr);
 
     void clearAll();
     void clearZBuffer();
 
-    void setPerspective(const Vasnecov::Perspective &perspective, const CameraAttributes &camera);
-    void setOrtho(const Vasnecov::Ortho &ortho, const CameraAttributes &camera);
-    void setPerspective(const Vasnecov::Perspective &perspective);
-    void setOrtho(const Vasnecov::Ortho &ortho);
+    void setPerspective(const Vasnecov::Perspective& perspective, const CameraAttributes& camera);
+    void setOrtho(const Vasnecov::Ortho& ortho, const CameraAttributes& camera);
+    void setPerspective(const Vasnecov::Perspective& perspective);
+    void setOrtho(const Vasnecov::Ortho& ortho);
     void setOrtho2D(); // "Технолический" режим, в матрицу m_P не учитывается
     void unsetOrtho2D(); // Возвращение прошлой матрицы проекции
     void setViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
     void setIdentityMatrixP();
-    void setMatrixP(const QMatrix4x4 &P);
-    void addMatrixP(const QMatrix4x4 &P); // Домножение на матрицу
+    void setMatrixP(const QMatrix4x4& P);
+    void addMatrixP(const QMatrix4x4& P); // Домножение на матрицу
     const QMatrix4x4 matrixP() const;
 
     void setIdentityMatrixMV(); // Задание единичной модельно-видовой матрицы
-    void setMatrixMV(const QMatrix4x4 &MV);
-    void setMatrixMV(const QMatrix4x4 *MV);
-    void addMatrixMV(const QMatrix4x4 &MV);
-    void addMatrixMV(const QMatrix4x4 *MV);
-    void setMatrixOrtho2D(const QMatrix4x4 &MV);
-    QVector4D projectPoint(const QMatrix4x4 &MV, const QVector3D &point = QVector3D());
+    void setMatrixMV(const QMatrix4x4& MV);
+    void setMatrixMV(const QMatrix4x4* MV);
+    void addMatrixMV(const QMatrix4x4& MV);
+    void addMatrixMV(const QMatrix4x4* MV);
+    void setMatrixOrtho2D(const QMatrix4x4& MV);
+    QVector4D projectPoint(const QMatrix4x4& MV, const QVector3D& point = QVector3D());
 
-    void setBackgroundColor(const QColor &color = QColor(0, 0, 0, 0));
-    void setColor(const QColor &color = QColor(255, 255, 255, 255));
+    void setBackgroundColor(const QColor& color = QColor(0, 0, 0, 0));
+    void setColor(const QColor& color = QColor(255, 255, 255, 255));
 
     void enableTexture2D(GLuint m_texture2D, GLboolean strong = false);
     void disableTexture2D(GLboolean strong = false);
 
-    void setAmbientColor(const QColor &color);
+    void setAmbientColor(const QColor& color);
 
     void enableLamps(GLboolean strong = false);
     void disableLamps(GLboolean strong = false);
@@ -140,15 +140,15 @@ public:
     void disableConcreteLamp(GLuint lamp, GLboolean strong = false);
     void disableAllConcreteLamps(GLboolean strong = false);
 
-    void setMaterialColors(const QColor &ambient,
-                           const QColor &diffuse,
-                           const QColor &specular,
-                           const QColor &emission,
+    void setMaterialColors(const QColor& ambient,
+                           const QColor& diffuse,
+                           const QColor& specular,
+                           const QColor& emission,
                            GLfloat shininess);
-    void setMaterialAmbientColor(const QColor &color);
-    void setMaterialDiffuseColor(const QColor &color);
-    void setMaterialSpecularColor(const QColor &color);
-    void setMaterialEmissionColor(const QColor &color);
+    void setMaterialAmbientColor(const QColor& color);
+    void setMaterialDiffuseColor(const QColor& color);
+    void setMaterialSpecularColor(const QColor& color);
+    void setMaterialEmissionColor(const QColor& color);
     void setMaterialShininess(GLfloat shininess);
     void resetMaterialColors();
 
@@ -157,10 +157,10 @@ public:
     void setPointSize(float size);
 
     void drawElements(ElementDrawingMethods method,
-                      const std::vector<GLuint> *indices,
-                      const std::vector<QVector3D> *vertices,
-                      const std::vector<QVector3D> *normals = 0,
-                      const std::vector<QVector2D> *textures = 0) const;
+                      const std::vector<GLuint>* indices,
+                      const std::vector<QVector3D>* vertices,
+                      const std::vector<QVector3D>* normals = nullptr,
+                      const std::vector<QVector2D>* textures = nullptr) const;
 
     void setSomethingWasUpdated() {m_wasSomethingUpdated = true;}
 
@@ -169,15 +169,15 @@ public:
 
 protected:
     void applyMaterialColors();
-    void setCamera(const CameraAttributes &camera);
+    void setCamera(const CameraAttributes& camera);
 
-    void setContext(const QGLContext *context);
+    void setContext(const QGLContext* context);
 
     void clearSomethingUpdates() {m_wasSomethingUpdated = false;}
     bool wasSomethingUpdated() const {return m_wasSomethingUpdated;}
 
 protected:
-    const QGLContext *m_context;
+    const QGLContext* m_context;
 
     QColor m_backgroundColor; // Цвет задника
     QColor m_color; // Цвет отрисовки

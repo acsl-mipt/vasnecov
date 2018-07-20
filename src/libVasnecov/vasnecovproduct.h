@@ -33,31 +33,31 @@ public:
     };
 
 public:
-    VasnecovProduct(QMutex *mutex,
-                    VasnecovPipeline *pipeline,
+    VasnecovProduct(QMutex* mutex,
+                    VasnecovPipeline* pipeline,
                     VasnecovProduct::ProductTypes type,
-                    VasnecovProduct *parent = 0,
+                    VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
 
-    VasnecovProduct(QMutex *mutex,
-                    VasnecovPipeline *pipeline,
-                    std::string name,
+    VasnecovProduct(QMutex* mutex,
+                    VasnecovPipeline* pipeline,
+                    const std::string& name,
                     VasnecovProduct::ProductTypes type,
-                    VasnecovProduct *parent = 0,
+                    VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
 
-    VasnecovProduct(QMutex *mutex,
-                    VasnecovPipeline *pipeline,
-                    std::string name,
-                    VasnecovMesh *mesh,
-                    VasnecovProduct *parent = 0,
+    VasnecovProduct(QMutex* mutex,
+                    VasnecovPipeline* pipeline,
+                    const std::string& name,
+                    VasnecovMesh* mesh,
+                    VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
-    VasnecovProduct(QMutex *mutex,
-                    VasnecovPipeline *pipeline,
-                    std::string name,
-                    VasnecovMesh *mesh,
-                    VasnecovMaterial *material,
-                    VasnecovProduct *parent = 0,
+    VasnecovProduct(QMutex* mutex,
+                    VasnecovPipeline* pipeline,
+                    const std::string& name,
+                    VasnecovMesh* mesh,
+                    VasnecovMaterial* material,
+                    VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
     ~VasnecovProduct();
 
@@ -66,35 +66,35 @@ public:
     // Интерфейсы свойств
     virtual void setVisible(GLboolean visible = true);
 
-    void setMaterial(VasnecovMaterial *material);
-    VasnecovMaterial *material() const;
+    void setMaterial(VasnecovMaterial* material);
+    VasnecovMaterial* material() const;
 
-    void setMesh(VasnecovMesh *mesh);
-    VasnecovMesh *mesh() const;
+    void setMesh(VasnecovMesh* mesh);
+    VasnecovMesh* mesh() const;
 
     GLuint level() const;
     VasnecovProduct::ProductTypes type() const;
 
-    VasnecovProduct *parent() const;
-    void changeParent(VasnecovProduct *newParent);
-    std::vector<VasnecovProduct *> children() const;
+    VasnecovProduct* parent() const;
+    void changeParent(VasnecovProduct* newParent);
+    std::vector<VasnecovProduct*> children() const;
 
     // Изменение цвета
-    void setColor(const QColor &color); // Задаёт общий цвет продукта. Если есть материал, то передается в ambient и diffuse материала
+    void setColor(const QColor& color); // Задаёт общий цвет продукта. Если есть материал, то передается в ambient и diffuse материала
     using VasnecovElement::setColor;
 
     // Привязка координат
-    void setCoordinates(const QVector3D &coordinates);
+    void setCoordinates(const QVector3D& coordinates);
     using VasnecovElement::setCoordinates;
-    void incrementCoordinates(const QVector3D &increment);
+    void incrementCoordinates(const QVector3D& increment);
     using VasnecovElement::incrementCoordinates;
     QVector3D globalCoordinates();
-    void setAngles(const QVector3D &angles);
+    void setAngles(const QVector3D& angles);
     using VasnecovElement::setAngles;
-    virtual void incrementAngles(const QVector3D &increment);
+    virtual void incrementAngles(const QVector3D& increment);
     using VasnecovElement::incrementAngles;
     void setScale(GLfloat scale = 1.0f);
-    virtual void setPositionFromElement(const VasnecovAbstractElement *element);
+    virtual void setPositionFromElement(const VasnecovAbstractElement* element);
 
     void switchDrawingBox();
 
@@ -102,54 +102,54 @@ protected:
     // Методы, вызываемые внутри методов, вызываемых извне (в состоянии заблокированного мьютекса)
     void designerOwnSetVisible(bool visible);
     void designerSetVisibleFromParent(bool visible);
-    GLboolean designerRemoveThisMaterial(const VasnecovMaterial *material);
+    GLboolean designerRemoveThisMaterial(const VasnecovMaterial* material);
 
     GLuint designerLevel() const;
 
-    GLboolean designerAddChild(VasnecovProduct *child); // Добавить дочерний элемент, параметром передается индекс элемента
-    GLboolean designerRemoveChild(VasnecovProduct *child);
-    std::vector<VasnecovProduct *> designerAllChildren(); // Возвращает общий список всех детей
-    VasnecovProduct *designerParent() const;
-    VasnecovMaterial *designerMaterial() const;
+    GLboolean designerAddChild(VasnecovProduct* child); // Добавить дочерний элемент, параметром передается индекс элемента
+    GLboolean designerRemoveChild(VasnecovProduct* child);
+    std::vector<VasnecovProduct*> designerAllChildren(); // Возвращает общий список всех детей
+    VasnecovProduct* designerParent() const;
+    VasnecovMaterial* designerMaterial() const;
 
-    void designerSetMatrixM1(const QMatrix4x4 &M1);
+    void designerSetMatrixM1(const QMatrix4x4& M1);
 
-    void designerSetColorRecursively(const QColor &color);
+    void designerSetColorRecursively(const QColor& color);
 
     void designerUpdateChildrenMatrix(); // Обновляет матрицы детей
-    void designerSetMatrixM1Recursively(const QMatrix4x4 &M1);
+    void designerSetMatrixM1Recursively(const QMatrix4x4& M1);
 
-    void designerUpdateMatrixM1(const QMatrix4x4 &M1);
+    void designerUpdateMatrixM1(const QMatrix4x4& M1);
     void designerUpdateMatrixMs();
 
-    GLfloat renderCalculateDistanceToPlane(const QVector3D &planePoint, const QVector3D &normal);
+    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
 protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов)
     GLenum renderUpdateData();
     void renderDraw();
 
-    VasnecovMaterial *renderMaterial() const;
-    VasnecovMesh *renderMesh() const;
+    VasnecovMaterial* renderMaterial() const;
+    VasnecovMesh* renderMesh() const;
 
     VasnecovProduct::ProductTypes renderType() const;
     GLuint renderLevel() const;
 
-    VasnecovProduct *renderParent() const;
-    const std::vector<VasnecovProduct *> *renderChildren() const;
+    VasnecovProduct* renderParent() const;
+    const std::vector<VasnecovProduct*>* renderChildren() const;
 
 protected:
     QMatrix4x4 raw_M1; // Матрица родительских трансформаций
     bool raw_ownVisible;
 
     Vasnecov::MutualData<ProductTypes> m_type; // тип: узел, деталь
-    Vasnecov::MutualData<VasnecovProduct *> m_parent; // Индекс родительского элемента (если уровень больше нуля, иначе 0)
+    Vasnecov::MutualData<VasnecovProduct*> m_parent; // Индекс родительского элемента (если уровень больше нуля, иначе 0)
     Vasnecov::MutualData<GLuint> m_level; // отсчет от нуля (нулевой уровень - корень дерева)
 
-    Vasnecov::MutualData<VasnecovMesh *> m_mesh; // Меш (для детали) - геометрия отрисовки
-    Vasnecov::MutualData<VasnecovMaterial *> m_material; // Материал меша
+    Vasnecov::MutualData<VasnecovMesh*> m_mesh; // Меш (для детали) - геометрия отрисовки
+    Vasnecov::MutualData<VasnecovMaterial*> m_material; // Материал меша
 
-    Vasnecov::MutualData<std::vector<VasnecovProduct *> > m_children; // Список дочерних объектов (для узла)
+    Vasnecov::MutualData<std::vector<VasnecovProduct*> > m_children; // Список дочерних объектов (для узла)
     Vasnecov::MutualData<GLboolean> m_drawingBox; // TODO: to enum with configuration flags
 
     enum Updated // Дополнительные флаги изменений. При множественном наследовании могут быть проблемы
@@ -184,7 +184,7 @@ inline GLboolean VasnecovProduct::designerRemoveThisMaterial(const VasnecovMater
     {
         if(m_type.raw() == ProductTypePart)
         {
-            m_material.set(0);
+            m_material.set(nullptr);
             return true;
         }
     }

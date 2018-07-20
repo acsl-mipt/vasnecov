@@ -106,9 +106,9 @@ namespace Vasnecov
     class CoreObject
     {
     public:
-        CoreObject(QMutex * mutex,
-                   VasnecovPipeline *pipeline,
-                   const std::string &name = std::string()) :
+        CoreObject(QMutex* mutex,
+                   VasnecovPipeline* pipeline,
+                   const std::string& name = std::string()) :
             mtx_data(mutex),
             raw_wasUpdated(false),
 
@@ -121,7 +121,7 @@ namespace Vasnecov
 
     public:
         // Название
-        void setName(const std::string &name);
+        void setName(const std::string& name);
         std::string name() const;
 
         // Видимость
@@ -156,13 +156,13 @@ namespace Vasnecov
         GLboolean renderIsHidden() const;
 
     protected:
-        QMutex * const mtx_data; // мьютекс на изменение общих параметров рендеринга и логики
+        QMutex* const mtx_data; // мьютекс на изменение общих параметров рендеринга и логики
         GLenum raw_wasUpdated;
 
         MutualData<std::string> m_name; // Наименование
         MutualData<GLboolean> m_isHidden; // Флаг на отрисовку
 
-        VasnecovPipeline *const pure_pipeline; // Указатель конвейера, через который ведётся отрисовка
+        VasnecovPipeline* const pure_pipeline; // Указатель конвейера, через который ведётся отрисовка
 
         enum Updated // Изменение данных
         {

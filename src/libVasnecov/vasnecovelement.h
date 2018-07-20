@@ -24,37 +24,37 @@
 class VasnecovAbstractElement : public Vasnecov::CoreObject
 {
 public:
-    VasnecovAbstractElement(QMutex * mutex, VasnecovPipeline *pipeline, const std::string &name = std::string());
+    VasnecovAbstractElement(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name = std::string());
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами). Без префикса.
     // Координаты
-    virtual void setCoordinates(const QVector3D &coordinates);
+    virtual void setCoordinates(const QVector3D& coordinates);
     void setCoordinates(GLfloat x, GLfloat y, GLfloat z);
-    virtual void incrementCoordinates(const QVector3D &increment); // Приращение координат
+    virtual void incrementCoordinates(const QVector3D& increment); // Приращение координат
     void incrementCoordinates(GLfloat x, GLfloat y, GLfloat z);
     QVector3D coordinates() const;
     // Углы (по умолчанию, задаются в градусах. В них же хранятся)
-    virtual void setAngles(const QVector3D &angles);
+    virtual void setAngles(const QVector3D& angles);
     void setAngles(GLfloat x, GLfloat y, GLfloat z);
-    virtual void incrementAngles(const QVector3D &increment);
+    virtual void incrementAngles(const QVector3D& increment);
     void incrementAngles(GLfloat x, GLfloat y, GLfloat z);
-    void setAnglesRad(const QVector3D &angles);
+    void setAnglesRad(const QVector3D& angles);
     void setAnglesRad(GLfloat x, GLfloat y, GLfloat z);
-    void incrementAnglesRad(const QVector3D &increment);
+    void incrementAnglesRad(const QVector3D& increment);
     void incrementAnglesRad(GLfloat x, GLfloat y, GLfloat z);
     QVector3D angles() const;
 
-    virtual void setPositionFromElement(const VasnecovAbstractElement *element);
-    void attachToElement(const VasnecovAbstractElement *element);
+    virtual void setPositionFromElement(const VasnecovAbstractElement* element);
+    void attachToElement(const VasnecovAbstractElement* element);
     void detachFromOtherElement();
 
 protected:
     // Методы без мьютексов, вызываемые методами, защищенными своими мьютексами. Префикс designer
     QMatrix4x4 designerMatrixMs() const;
-    const QMatrix4x4 *designerExportingMatrix() const;
+    const QMatrix4x4* designerExportingMatrix() const;
     virtual void designerUpdateMatrixMs();
-    GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs); // Обнуление чужой матрицы, равной заданной параметром
+    GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs); // Обнуление чужой матрицы, равной заданной параметром
 
 protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
@@ -62,7 +62,7 @@ protected:
     virtual GLenum renderUpdateData(); // обновление данных, вызов должен быть обёрнут мьютексом
 
     void renderApplyTranslation() const; // Выполнение позиционирования элемента
-    const QMatrix4x4 &renderMatrixMs() const;
+    const QMatrix4x4& renderMatrixMs() const;
 
     QVector3D renderCoordinates() const;
     QVector3D renderAngles() const;
@@ -88,12 +88,12 @@ private:
 class VasnecovElement : public VasnecovAbstractElement
 {
 public:
-    VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name = "");
+    VasnecovElement(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name = "");
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами)
     // Цвет
-    virtual void setColor(const QColor &color);
+    virtual void setColor(const QColor& color);
     void setColor(GLint r, GLint g, GLint b, GLint a = 255);
     void setColorF(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void setColor(QRgb rgb);
@@ -121,10 +121,10 @@ protected:
     GLfloat renderScale() const;
 
     GLboolean renderIsTransparency() const;
-    virtual GLfloat renderCalculateDistanceToPlane(const QVector3D &planePoint, const QVector3D &normal);
+    virtual GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
-    static bool renderCompareByReverseDistance(VasnecovElement *first, VasnecovElement *second);
-    static bool renderCompareByDirectDistance(VasnecovElement *first, VasnecovElement *second);
+    static bool renderCompareByReverseDistance(VasnecovElement* first, VasnecovElement* second);
+    static bool renderCompareByDirectDistance(VasnecovElement* first, VasnecovElement* second);
 
 protected:
     Vasnecov::MutualData<QColor> m_color; // Цвет
@@ -175,7 +175,7 @@ inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const QM
 {
     if(m_alienMs.raw() == alienMs)
     {
-        m_alienMs.set(0);
+        m_alienMs.set(nullptr);
         return true;
     }
     return false;

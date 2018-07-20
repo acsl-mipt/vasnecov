@@ -31,11 +31,11 @@
  \param width
  \param height
 */
-VasnecovWorld::VasnecovWorld(QMutex *mutex,
-                             VasnecovPipeline *pipeline,
+VasnecovWorld::VasnecovWorld(QMutex* mutex,
+                             VasnecovPipeline* pipeline,
                              GLint mx, GLint my,
                              GLsizei width, GLsizei height,
-                             const std::string &name) :
+                             const std::string& name) :
     Vasnecov::CoreObject(mutex, pipeline, name),
     m_parameters(raw_wasUpdated, Parameters),
     m_perspective(raw_wasUpdated, Perspective),
@@ -86,12 +86,12 @@ void VasnecovWorld::designerUpdateOrtho()
 
     Vasnecov::Ortho ortho;
 
-    ortho.top = tan(m_perspective.raw().angle*c_degToRad*0.5)*dist;
+    ortho.top = tan(m_perspective.raw().angle*c_degToRad*0.5f)*dist;
     ortho.bottom = - ortho.top;
     ortho.left = m_perspective.raw().ratio*ortho.bottom;
     ortho.right = m_perspective.raw().ratio*ortho.top;
-    ortho.front = -dist*10; // NOTE: it's stupidy, but i don't know how to make it correct
-    ortho.back = (m_perspective.raw().backBorder+dist)*10;
+    ortho.front = -dist*10.0f; // NOTE: it's stupidy, but i don't know how to make it correct
+    ortho.back = (m_perspective.raw().backBorder+dist)*10.0f;
 
     m_ortho.set(ortho);
 }
@@ -310,7 +310,7 @@ void VasnecovWorld::setCameraRoll(GLfloat roll)
 void VasnecovWorld::tiltCamera(GLfloat roll)
 {
     QMutexLocker locker(mtx_data);
-    if(roll)
+    if(roll != 0.0f)
     {
         m_camera.editableRaw().roll = m_camera.raw().roll + roll;
         designerUpdateOrtho();
@@ -1050,7 +1050,7 @@ VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
     cameraAttr.center = m_camera.pure().target;
 
     // Камере (lookAt) не нужен строгий вектор направления вверх. LookAt всё равно берет с него проекцию.
-    // Если вектор направление взгляда вертикален, то up-вектор просто направляем по X
+    // Если вектор направления взгляда вертикален, то up-вектор просто направляем по X
     if(m_camera.pure().position.x() == m_camera.pure().target.x() && m_camera.pure().position.y() == m_camera.pure().target.y())
     {
         cameraAttr.up = QVector3D(1.0f, 0.0f, 0.0f);

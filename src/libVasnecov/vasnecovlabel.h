@@ -28,9 +28,9 @@ namespace Vasnecov
     {
         QVector2D size;
         QVector2D texturePoint, textureZone; // поцизия на текстуре, размер зоны
-        VasnecovTexture *texture;
+        VasnecovTexture* texture;
 
-        LabelAttributes(VasnecovTexture *p_texture, QVector2D p_size) :
+        LabelAttributes(VasnecovTexture* p_texture, QVector2D p_size) :
             size(p_size),
             texturePoint(), textureZone(p_size),
             texture(p_texture)
@@ -45,24 +45,24 @@ namespace Vasnecov
 class VasnecovLabel : public VasnecovElement
 {
 public:
-    VasnecovLabel(QMutex *mutex,
-                  VasnecovPipeline *pipeline,
-                  const std::string &name,
-                  const QVector2D &size,
-                  VasnecovTexture *texture = 0);
+    VasnecovLabel(QMutex* mutex,
+                  VasnecovPipeline* pipeline,
+                  const std::string& name,
+                  const QVector2D& size,
+                  VasnecovTexture* texture = nullptr);
     ~VasnecovLabel();
 
     void setSize(GLfloat width, GLfloat height);
     // Задаёт позицию метки на текстуре. Для случаев, когда от текстуры используется только кусочек
     void setTextureZone(GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
 
-    GLboolean setTexture(VasnecovTexture *texture);
-    GLboolean setTexture(VasnecovTexture *texture, GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
-    GLboolean setImage(const QImage &image);
-    GLboolean setImage(const QImage &image, GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
+    GLboolean setTexture(VasnecovTexture* texture);
+    GLboolean setTexture(VasnecovTexture* texture, GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
+    GLboolean setImage(const QImage& image);
+    GLboolean setImage(const QImage& image, GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
 
 protected:
-    VasnecovTexture *designerTexture() const {return raw_dataLabel.texture;}
+    VasnecovTexture* designerTexture() const {return raw_dataLabel.texture;}
 
 protected:
     // Методы, которые вызываются на этапе обновления данных, т.е. имеют доступ и к сырым, и к нормальным
@@ -73,7 +73,7 @@ protected:
     GLenum renderUpdateData();
     void renderDraw();
 
-    VasnecovTexture *texture() const {return m_texture;}
+    VasnecovTexture* texture() const {return m_texture;}
 
 protected:
     QVector2D m_position;
@@ -83,7 +83,7 @@ protected:
     std::vector<QVector3D> m_vertices;
     std::vector<QVector2D> m_textures;
 
-    VasnecovTexture *m_texture;
+    VasnecovTexture* m_texture;
     bool m_personalTexture; // Текстура создается Меткой сама только для себя
 
     Vasnecov::LabelAttributes raw_dataLabel;

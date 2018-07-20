@@ -35,11 +35,11 @@ inline GLfloat Vasnecov::trimAngle(GLfloat deg)
 {
     if(deg > 0)
     {
-        deg = fmod(deg, 360);
+        deg = std::fmod(deg, 360.0f);
     }
     if(deg < 0)
     {
-        deg = fmod(deg, 360) + 360;
+        deg = std::fmod(deg, 360.0f) + 360.0f;
     }
     return deg;
 }
