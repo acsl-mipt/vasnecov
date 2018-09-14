@@ -17,13 +17,11 @@
  \brief
 
  \fn VasnecovMaterial::VasnecovMaterial
- \param mutex
  \param pipeline
 */
-VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
-                                   VasnecovPipeline *pipeline,
+VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
                                    const std::string &name) :
-    Vasnecov::CoreObject(mutex, pipeline, name),
+    Vasnecov::CoreObject(pipeline, name),
     m_textureD(raw_wasUpdated, TextureD, nullptr),
     m_textureN(raw_wasUpdated, TextureN, nullptr),
 
@@ -46,17 +44,15 @@ VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
  \brief
 
  \fn VasnecovMaterial::VasnecovMaterial
- \param mutex
  \param pipeline
  \param textureD
  \param textureN
 */
-VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
-                                   VasnecovPipeline *pipeline,
+VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
                                    VasnecovTexture *textureD,
                                    VasnecovTexture *textureN,
                                    const std::string &name) :
-    Vasnecov::CoreObject(mutex, pipeline, name),
+    Vasnecov::CoreObject(pipeline, name),
     m_textureD(raw_wasUpdated, TextureD, textureD),
     m_textureN(raw_wasUpdated, TextureN, textureN),
 
@@ -76,8 +72,6 @@ VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
 */
 void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 {
-    QMutexLocker locker(mtx_data);
-
     m_textureD.set(textureD);
 }
 
@@ -89,8 +83,6 @@ void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 */
 VasnecovTexture *VasnecovMaterial::textureD() const
 {
-    QMutexLocker locker(mtx_data);
-
     VasnecovTexture *texture(m_textureD.raw());
     return texture;
 }
@@ -103,8 +95,6 @@ VasnecovTexture *VasnecovMaterial::textureD() const
 */
 void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 {
-    QMutexLocker locker(mtx_data);
-
     m_textureN.set(textureN);
 }
 
@@ -116,8 +106,6 @@ void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 */
 VasnecovTexture *VasnecovMaterial::textureN() const
 {
-    QMutexLocker locker(mtx_data);
-
     VasnecovTexture *texture(m_textureN.raw());
     return texture;
 }
@@ -130,8 +118,6 @@ VasnecovTexture *VasnecovMaterial::textureN() const
 */
 void VasnecovMaterial::setAmbientColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_ambientColor.set(color);
 }
 
@@ -143,8 +129,6 @@ void VasnecovMaterial::setAmbientColor(const QColor &color)
 */
 void VasnecovMaterial::setDiffuseColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_diffuseColor.set(color);
 }
 
@@ -156,8 +140,6 @@ void VasnecovMaterial::setDiffuseColor(const QColor &color)
 */
 void VasnecovMaterial::setSpecularColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_specularColor.set(color);
 }
 
@@ -169,8 +151,6 @@ void VasnecovMaterial::setSpecularColor(const QColor &color)
 */
 void VasnecovMaterial::setEmissionColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_emissionColor.set(color);
 }
 
@@ -182,8 +162,6 @@ void VasnecovMaterial::setEmissionColor(const QColor &color)
 */
 void VasnecovMaterial::setShininess(GLfloat shininess)
 {
-    QMutexLocker locker(mtx_data);
-
     m_shininess.set(shininess);
 }
 
@@ -195,8 +173,6 @@ void VasnecovMaterial::setShininess(GLfloat shininess)
 */
 QColor VasnecovMaterial::ambientColor() const
 {
-    QMutexLocker locker(mtx_data);
-
     QColor color(m_ambientColor.raw());
     return color;
 }
@@ -208,8 +184,6 @@ QColor VasnecovMaterial::ambientColor() const
 */
 QColor VasnecovMaterial::diffuseColor() const
 {
-    QMutexLocker locker(mtx_data);
-
     QColor color(m_diffuseColor.raw());
     return color;
 }
@@ -221,8 +195,6 @@ QColor VasnecovMaterial::diffuseColor() const
 */
 QColor VasnecovMaterial::specularColor() const
 {
-    QMutexLocker locker(mtx_data);
-
     QColor color(m_specularColor.raw());
     return color;
 }
@@ -234,8 +206,6 @@ QColor VasnecovMaterial::specularColor() const
 */
 QColor VasnecovMaterial::emissionColor() const
 {
-    QMutexLocker locker(mtx_data);
-
     QColor color(m_emissionColor.raw());
     return color;
 }
@@ -247,8 +217,6 @@ QColor VasnecovMaterial::emissionColor() const
 */
 GLfloat VasnecovMaterial::shininess() const
 {
-    QMutexLocker locker(mtx_data);
-
     GLfloat shininess(m_shininess.raw());
     return shininess;
 }

@@ -342,7 +342,7 @@ public:
     };
 
 public:
-    VasnecovFigure(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name = std::string());
+    VasnecovFigure(VasnecovPipeline* pipeline, const std::string& name = std::string());
     ~VasnecovFigure();
 
     static std::vector<QVector3D> readPointsFromObj(const std::string& fileName);
@@ -425,39 +425,27 @@ private:
 
 inline void VasnecovFigure::enableLighting()
 {
-    QMutexLocker locker(mtx_data);
-
     m_lighting.set(true);
 }
 inline void VasnecovFigure::disableLighting()
 {
-    QMutexLocker locker(mtx_data);
-
     m_lighting.set(false);
 }
 inline GLboolean VasnecovFigure::lighting() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_lighting.raw();
 }
 
 inline void VasnecovFigure::enableDepth()
 {
-    QMutexLocker locker(mtx_data);
-
     m_depth.set(true);
 }
 inline void VasnecovFigure::disableDepth()
 {
-    QMutexLocker locker(mtx_data);
-
     m_depth.set(false);
 }
 inline GLboolean VasnecovFigure::depth() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_depth.raw();
 }
 inline GLenum VasnecovFigure::renderType() const

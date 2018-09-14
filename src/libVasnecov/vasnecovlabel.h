@@ -45,8 +45,7 @@ namespace Vasnecov
 class VasnecovLabel : public VasnecovElement
 {
 public:
-    VasnecovLabel(QMutex* mutex,
-                  VasnecovPipeline* pipeline,
+    VasnecovLabel(VasnecovPipeline* pipeline,
                   const std::string& name,
                   const QVector2D& size,
                   VasnecovTexture* texture = nullptr);
@@ -106,8 +105,6 @@ private:
 
 inline void VasnecovLabel::setSize(GLfloat width, GLfloat height)
 {
-    QMutexLocker locker(mtx_data);
-
     raw_dataLabel.size.setX(width);
     raw_dataLabel.size.setY(height);
 }

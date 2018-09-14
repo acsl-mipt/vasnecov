@@ -13,7 +13,6 @@
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#include <QMutex>
 #include "types.h"
 #include "vasnecovpipeline.h"
 #ifndef _MSC_VER
@@ -106,10 +105,8 @@ namespace Vasnecov
     class CoreObject
     {
     public:
-        CoreObject(QMutex* mutex,
-                   VasnecovPipeline* pipeline,
+        CoreObject(VasnecovPipeline* pipeline,
                    const std::string& name = std::string()) :
-            mtx_data(mutex),
             raw_wasUpdated(false),
 
             m_name(raw_wasUpdated, Name, name),
@@ -156,7 +153,6 @@ namespace Vasnecov
         GLboolean renderIsHidden() const;
 
     protected:
-        QMutex* const mtx_data; // мьютекс на изменение общих параметров рендеринга и логики
         GLenum raw_wasUpdated;
 
         MutualData<std::string> m_name; // Наименование
@@ -176,22 +172,16 @@ namespace Vasnecov
 
     inline void CoreObject::setName(const std::string &name)
     {
-        QMutexLocker locker(mtx_data);
-
         m_name.set(name);
     }
     inline std::string CoreObject::name() const
     {
-        QMutexLocker locker(mtx_data);
-
         std::string name(m_name.raw());
         return name;
     }
 
     inline void CoreObject::setVisible(GLboolean visible)
     {
-        QMutexLocker locker(mtx_data);
-
         m_isHidden.set(!visible);
     }
     inline void CoreObject::setHidden(GLboolean hidden)
@@ -208,8 +198,6 @@ namespace Vasnecov
     }
     inline GLboolean CoreObject::isVisible() const
     {
-        QMutexLocker locker(mtx_data);
-
         GLboolean visible(!m_isHidden.raw());
         return visible;
     }

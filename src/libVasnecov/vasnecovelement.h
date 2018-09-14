@@ -24,7 +24,7 @@
 class VasnecovAbstractElement : public Vasnecov::CoreObject
 {
 public:
-    VasnecovAbstractElement(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name = std::string());
+    VasnecovAbstractElement(VasnecovPipeline* pipeline, const std::string& name = std::string());
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами). Без префикса.
@@ -88,7 +88,7 @@ private:
 class VasnecovElement : public VasnecovAbstractElement
 {
 public:
-    VasnecovElement(QMutex* mutex, VasnecovPipeline* pipeline, const std::string& name = "");
+    VasnecovElement(VasnecovPipeline* pipeline, const std::string& name = "");
 
 public:
     // Методы, вызываемые извне (защищенные мьютексами)

@@ -29,14 +29,13 @@
 /*!
  \brief Конструктор абстрактного класса
 
- \param mutex указатель на внешний мьютекс, который защищает внутренние данные
  \param pipeline указатель на конвейер OpenGL
  \param name имя объекта
 
  \sa VasnecovPipeline
 */
-VasnecovAbstractElement::VasnecovAbstractElement(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name) :
-    Vasnecov::CoreObject(mutex, pipeline, name),
+VasnecovAbstractElement::VasnecovAbstractElement(VasnecovPipeline *pipeline, const std::string &name) :
+    Vasnecov::CoreObject(pipeline, name),
     raw_coordinates(),
     raw_angles(),
     raw_qX(), raw_qY(), raw_qZ(),
@@ -57,8 +56,6 @@ VasnecovAbstractElement::VasnecovAbstractElement(QMutex *mutex, VasnecovPipeline
 */
 void VasnecovAbstractElement::setCoordinates(const QVector3D &coordinates)
 {
-    QMutexLocker locker(mtx_data);
-
     if(raw_coordinates != coordinates)
     {
         raw_coordinates = coordinates;
@@ -89,8 +86,6 @@ void VasnecovAbstractElement::incrementCoordinates(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
-        QMutexLocker locker(mtx_data);
-
         raw_coordinates += increment;
         designerUpdateMatrixMs();
     }
@@ -117,8 +112,6 @@ void VasnecovAbstractElement::incrementCoordinates(GLfloat x, GLfloat y, GLfloat
 */
 QVector3D VasnecovAbstractElement::coordinates() const
 {
-    QMutexLocker locker(mtx_data);
-
     QVector3D coordinates(raw_coordinates);
     return coordinates;
 }
@@ -131,8 +124,6 @@ QVector3D VasnecovAbstractElement::coordinates() const
 */
 void VasnecovAbstractElement::setAngles(const QVector3D &angles)
 {
-    QMutexLocker locker(mtx_data);
-
     if(raw_angles != angles)
     {
         GLenum rotate(0);
@@ -186,8 +177,6 @@ void VasnecovAbstractElement::incrementAngles(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
-        QMutexLocker locker(mtx_data);
-
         GLenum rotate(0);
 
         if(increment.x() != 0.0)
@@ -281,8 +270,6 @@ void VasnecovAbstractElement::incrementAnglesRad(GLfloat x, GLfloat y, GLfloat z
 */
 QVector3D VasnecovAbstractElement::angles() const
 {
-    QMutexLocker locker(mtx_data);
-
     QVector3D angles(raw_angles);
     return angles;
 }
@@ -291,8 +278,6 @@ void VasnecovAbstractElement::setPositionFromElement(const VasnecovAbstractEleme
 {
     if(element)
     {
-        QMutexLocker locker(mtx_data);
-
         // NOTE: After this element's coordinates, angles & quaternions will be not actual
         m_Ms.set(element->designerMatrixMs());
     }
@@ -303,8 +288,6 @@ void VasnecovAbstractElement::setPositionFromElement(const VasnecovAbstractEleme
 */
 void VasnecovAbstractElement::detachFromOtherElement()
 {
-    QMutexLocker locker(mtx_data);
-
     m_alienMs.set(nullptr);
 }
 
@@ -312,8 +295,6 @@ void VasnecovAbstractElement::attachToElement(const VasnecovAbstractElement *ele
 {
     if(element)
     {
-        QMutexLocker locker(mtx_data);
-
         m_alienMs.set(element->designerExportingMatrix());
     }
 }
@@ -360,12 +341,11 @@ GLenum VasnecovAbstractElement::renderUpdateData()
  \brief
 
  \fn VasnecovElement::VasnecovElement
- \param mutex
  \param pipeline
  \param name
 */
-VasnecovElement::VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name) :
-    VasnecovAbstractElement(mutex, pipeline, name),
+VasnecovElement::VasnecovElement(VasnecovPipeline *pipeline, const std::string &name) :
+    VasnecovAbstractElement(pipeline, name),
     m_color(raw_wasUpdated, Color, QColor(255, 255, 255, 255)),
     m_scale(raw_wasUpdated, Scale, 1.0f),
     m_isTransparency(raw_wasUpdated, Transparency, false),
@@ -382,8 +362,6 @@ VasnecovElement::VasnecovElement(QMutex *mutex, VasnecovPipeline *pipeline, cons
 */
 void VasnecovElement::setColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_color.set(color);
 }
 
@@ -479,8 +457,6 @@ void VasnecovElement::setColorAlphaF(GLfloat alpha)
 */
 QColor VasnecovElement::color() const
 {
-    QMutexLocker locker(mtx_data);
-
     QColor color(m_color.raw());
     return color;
 }
@@ -493,8 +469,6 @@ QColor VasnecovElement::color() const
 */
 void VasnecovElement::setScale(GLfloat scale)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_scale.set(scale))
     {
         designerUpdateMatrixMs();
@@ -508,8 +482,6 @@ void VasnecovElement::setScale(GLfloat scale)
 */
 GLfloat VasnecovElement::scale() const
 {
-    QMutexLocker locker(mtx_data);
-
     GLfloat scale(m_scale.raw());
     return scale;
 }
@@ -521,8 +493,6 @@ GLfloat VasnecovElement::scale() const
 */
 GLboolean VasnecovElement::isTransparency() const
 {
-    QMutexLocker locker(mtx_data);
-
     GLboolean transparency(m_isTransparency.raw());
     return transparency;
 }

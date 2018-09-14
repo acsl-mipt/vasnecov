@@ -18,14 +18,13 @@
  \brief
 
  \fn VasnecovLabel::VasnecovLabel
- \param mutex
  \param pipeline
  \param name
  \param size
  \param texture
 */
-VasnecovLabel::VasnecovLabel(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name, const QVector2D &size, VasnecovTexture *texture) :
-    VasnecovElement(mutex, pipeline, name),
+VasnecovLabel::VasnecovLabel(VasnecovPipeline *pipeline, const std::string &name, const QVector2D &size, VasnecovTexture *texture) :
+    VasnecovElement(pipeline, name),
     m_position(size.x() * 0.5f, size.y() * 0.5f),
     m_texturePosition(),
 
@@ -73,8 +72,6 @@ VasnecovLabel::~VasnecovLabel()
 */
 void VasnecovLabel::setTextureZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
-    QMutexLocker locker(mtx_data);
-
     if(raw_dataLabel.texturePoint != QVector2D(x ,y) ||
        raw_dataLabel.textureZone != QVector2D(width, height))
     {
@@ -106,8 +103,6 @@ GLboolean VasnecovLabel::setTexture(VasnecovTexture *texture)
 {
     if(texture)
     {
-        QMutexLocker locker(mtx_data);
-
         if(raw_dataLabel.texture != texture)
         {
             raw_dataLabel.texture = texture;
@@ -153,8 +148,6 @@ GLboolean VasnecovLabel::setImage(const QImage &image)
         {
             // Делается копия картинки на куче (которая удалится сама текстурой после загрузки), чтобы не было проблем с многопоточностью
             QImage newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
-
-            QMutexLocker locker(mtx_data);
 
             raw_dataLabel.texture = new VasnecovTextureInterface(newImage);
             updaterSetUpdateFlag(Image);

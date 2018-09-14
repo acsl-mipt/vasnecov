@@ -16,14 +16,13 @@
  \brief
 
  \fn VasnecovLamp::VasnecovLamp
- \param mutex
  \param pipeline
  \param name
  \param type
  \param index
 */
-VasnecovLamp::VasnecovLamp(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name, VasnecovLamp::LampTypes type, GLuint index) :
-    VasnecovAbstractElement(mutex, pipeline, name),
+VasnecovLamp::VasnecovLamp(VasnecovPipeline *pipeline, const std::string &name, VasnecovLamp::LampTypes type, GLuint index) :
+    VasnecovAbstractElement(pipeline, name),
     m_type(raw_wasUpdated, Type, type),
 
     m_ambientColor(raw_wasUpdated, Ambient, QColor(0, 0, 0, 255)),
@@ -57,8 +56,6 @@ VasnecovLamp::VasnecovLamp(QMutex *mutex, VasnecovPipeline *pipeline, const std:
 */
 void VasnecovLamp::setType(LampTypes type)
 {
-    QMutexLocker locker(mtx_data);
-
     m_type.set(type);
 }
 
@@ -95,8 +92,6 @@ void VasnecovLamp::setCelestialDirection(GLfloat x, GLfloat y, GLfloat z)
 */
 void VasnecovLamp::setAmbientColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_ambientColor.set(color);
 }
 
@@ -108,8 +103,6 @@ void VasnecovLamp::setAmbientColor(const QColor &color)
 */
 void VasnecovLamp::setDiffuseColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_diffuseColor.set(color);
 }
 
@@ -121,8 +114,6 @@ void VasnecovLamp::setDiffuseColor(const QColor &color)
 */
 void VasnecovLamp::setSpecularColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     m_specularColor.set(color);
 }
 
@@ -134,8 +125,6 @@ void VasnecovLamp::setSpecularColor(const QColor &color)
 */
 void VasnecovLamp::setSpotDirection(const QVector3D &direction)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_spotDirection.set(direction))
     {
         m_type.set(LampTypeHeadlight);
@@ -150,8 +139,6 @@ void VasnecovLamp::setSpotDirection(const QVector3D &direction)
 */
 void VasnecovLamp::setSpotExponent(GLfloat exponent)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_spotExponent.set(exponent))
     {
         m_type.set(LampTypeHeadlight);
@@ -166,8 +153,6 @@ void VasnecovLamp::setSpotExponent(GLfloat exponent)
 */
 void VasnecovLamp::setSpotAngle(GLfloat angle)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_spotAngle.set(angle))
     {
         if(angle != 180.0f)
@@ -191,8 +176,6 @@ void VasnecovLamp::setSpotAngle(GLfloat angle)
 */
 void VasnecovLamp::setConstantAttenuation(GLfloat attenuation)
 {
-    QMutexLocker locker(mtx_data);
-
     m_constantAttenuation.set(attenuation);
 }
 
@@ -204,8 +187,6 @@ void VasnecovLamp::setConstantAttenuation(GLfloat attenuation)
 */
 void VasnecovLamp::setLinearAttenuation(GLfloat attenuation)
 {
-    QMutexLocker locker(mtx_data);
-
     m_linearAttenuation.set(attenuation);
 }
 
@@ -217,8 +198,6 @@ void VasnecovLamp::setLinearAttenuation(GLfloat attenuation)
 */
 void VasnecovLamp::setQuadraticAttenuation(GLfloat attenuation)
 {
-    QMutexLocker locker(mtx_data);
-
     m_quadraticAttenuation.set(attenuation);
 }
 /*!
