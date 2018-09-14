@@ -1,7 +1,5 @@
 build/
 subprojects/bmcl/
-CMakeLists.txt.user
-build-meson/
 Vasnecov.config
 Vasnecov.creator
 Vasnecov.creator.user
