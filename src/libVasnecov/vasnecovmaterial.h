@@ -29,11 +29,9 @@ class VasnecovPipeline;
 class VasnecovMaterial : public Vasnecov::CoreObject
 {
 public:
-    VasnecovMaterial(QMutex* mutex,
-                     VasnecovPipeline* pipeline,
+    VasnecovMaterial(VasnecovPipeline* pipeline,
                      const std::string& name = std::string());
-    VasnecovMaterial(QMutex* mutex,
-                     VasnecovPipeline* pipeline,
+    VasnecovMaterial(VasnecovPipeline* pipeline,
                      VasnecovTexture* textureD,
                      VasnecovTexture* textureN = nullptr,
                      const std::string& name = std::string());

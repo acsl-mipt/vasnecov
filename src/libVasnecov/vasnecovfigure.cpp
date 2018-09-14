@@ -19,12 +19,11 @@
  \brief
 
  \fn VasnecovFigure::VasnecovFigure
- \param mutex
  \param pipeline
  \param imya_
 */
-VasnecovFigure::VasnecovFigure(QMutex *mutex, VasnecovPipeline *pipeline, const std::string &name) :
-    VasnecovElement(mutex, pipeline, name),
+VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const std::string &name) :
+    VasnecovElement(pipeline, name),
     m_type(raw_wasUpdated, Type, VasnecovPipeline::LoopLine),
     m_points(raw_wasUpdated, Points, true),
     m_thickness(raw_wasUpdated, Thickness, 1.0f),
@@ -167,8 +166,6 @@ std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const std::string &file
 */
 void VasnecovFigure::setPoints(const std::vector <QVector3D> &points)
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.set(points);
 }
 /*!
@@ -179,22 +176,16 @@ void VasnecovFigure::setPoints(const std::vector <QVector3D> &points)
 */
 void VasnecovFigure::addLastPoint(const QVector3D &point)
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.addLast(point);
 }
 
 void VasnecovFigure::removeLastPoint()
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.removeLast();
 }
 
 void VasnecovFigure::replaceLastPoint(const QVector3D &point)
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.replaceLast(point);
 }
 /*!
@@ -204,35 +195,25 @@ void VasnecovFigure::replaceLastPoint(const QVector3D &point)
 */
 void VasnecovFigure::clearPoints()
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.clear();
 }
 
 GLuint VasnecovFigure::pointsAmount() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_points.rawVerticesSize();
 }
 
 void VasnecovFigure::addFirstPoint(const QVector3D &point)
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.addFirst(point);
 }
 void VasnecovFigure::removeFirstPoint()
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.removeFirst();
 }
 
 void VasnecovFigure::replaceFirstPoint(const QVector3D &point)
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.replaceFirst(point);
 }
 /*!
@@ -244,15 +225,11 @@ void VasnecovFigure::replaceFirstPoint(const QVector3D &point)
 */
 GLboolean VasnecovFigure::setType(VasnecovFigure::Types type)
 {
-    QMutexLocker locker(mtx_data);
-
     return designerSetType(type);
 }
 
 VasnecovFigure::Types VasnecovFigure::type() const
 {
-    QMutexLocker locker(mtx_data);
-
     switch(m_type.raw())
     {
         case VasnecovPipeline::PolyLine:
@@ -282,7 +259,6 @@ GLint VasnecovFigure::setThickness(GLfloat thick)
 {
     if(thick >= 1.0f && thick <= 16.0f)
     {
-        QMutexLocker locker(mtx_data);
         m_thickness.set(thick);
 
         return 1;
@@ -295,21 +271,15 @@ GLint VasnecovFigure::setThickness(GLfloat thick)
 
 GLfloat VasnecovFigure::thickness() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_thickness.raw();
 }
 
 void VasnecovFigure::setOptimization(GLboolean optimize)
 {
-    QMutexLocker locker(mtx_data);
-
     m_points.setOptimization(optimize);
 }
 GLboolean VasnecovFigure::optimization() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_points.optimization();
 }
 
@@ -317,8 +287,6 @@ void VasnecovFigure::createLine(GLfloat length, const QColor &color)
 {
     if(length > 0.0f)
     {
-        QMutexLocker locker(mtx_data);
-
         designerSetType(VasnecovFigure::TypeLines);
 
         if(color.isValid())
@@ -334,8 +302,6 @@ void VasnecovFigure::createLine(const QVector3D &first, const QVector3D &second,
 {
     if(first != second)
     {
-        QMutexLocker locker(mtx_data);
-
         designerSetType(VasnecovFigure::TypeLines);
 
         if(color.isValid())
@@ -359,8 +325,6 @@ void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
 {
     if(r > 0.0f && factor > 0)
     {
-        QMutexLocker locker(mtx_data);
-
         designerSetType(VasnecovFigure::TypePolylineLoop);
 
         if(color.isValid())
@@ -387,8 +351,6 @@ void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
 {
     if(r > 0.0f && spanAngle != 0.0f && factor > 0)
     {
-        QMutexLocker locker(mtx_data);
-
         designerSetType(VasnecovFigure::TypePolyline);
 
         if(color.isValid())
@@ -439,8 +401,6 @@ void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
 {
     if(r > 0.0 && spanAngle != 0.0 && factor > 0)
     {
-        QMutexLocker locker(mtx_data);
-
         designerSetType(VasnecovFigure::TypePolygons);
 
         if(color.isValid())
@@ -492,8 +452,6 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
 {
     if(horizontals || verticals)
     {
-        QMutexLocker locker(mtx_data);
-
         designerSetType(VasnecovFigure::TypeLines);
 
         if(color.isValid())
@@ -547,8 +505,6 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
 
 void VasnecovFigure::createMeshFromFile(const std::string &fileName, const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     designerSetType(VasnecovFigure::TypeLines);
 
     if(color.isValid())
@@ -561,8 +517,6 @@ void VasnecovFigure::createMeshFromFile(const std::string &fileName, const QColo
 
 void VasnecovFigure::createMeshFromPoints(const std::vector<QVector3D> &points, const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     designerSetType(VasnecovFigure::TypeLines);
 
     if(color.isValid())

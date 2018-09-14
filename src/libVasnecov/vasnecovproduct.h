@@ -33,27 +33,23 @@ public:
     };
 
 public:
-    VasnecovProduct(QMutex* mutex,
-                    VasnecovPipeline* pipeline,
+    VasnecovProduct(VasnecovPipeline* pipeline,
                     VasnecovProduct::ProductTypes type,
                     VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
 
-    VasnecovProduct(QMutex* mutex,
-                    VasnecovPipeline* pipeline,
+    VasnecovProduct(VasnecovPipeline* pipeline,
                     const std::string& name,
                     VasnecovProduct::ProductTypes type,
                     VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
 
-    VasnecovProduct(QMutex* mutex,
-                    VasnecovPipeline* pipeline,
+    VasnecovProduct(VasnecovPipeline* pipeline,
                     const std::string& name,
                     VasnecovMesh* mesh,
                     VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
-    VasnecovProduct(QMutex* mutex,
-                    VasnecovPipeline* pipeline,
+    VasnecovProduct(VasnecovPipeline* pipeline,
                     const std::string& name,
                     VasnecovMesh* mesh,
                     VasnecovMaterial* material,

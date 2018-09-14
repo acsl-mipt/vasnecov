@@ -24,19 +24,17 @@
  \brief
 
  \fn VasnecovWorld::VasnecovWorld
- \param mutex
  \param pipeline
  \param mx
  \param my
  \param width
  \param height
 */
-VasnecovWorld::VasnecovWorld(QMutex* mutex,
-                             VasnecovPipeline* pipeline,
+VasnecovWorld::VasnecovWorld(VasnecovPipeline* pipeline,
                              GLint mx, GLint my,
                              GLsizei width, GLsizei height,
                              const std::string& name) :
-    Vasnecov::CoreObject(mutex, pipeline, name),
+    Vasnecov::CoreObject(pipeline, name),
     m_parameters(raw_wasUpdated, Parameters),
     m_perspective(raw_wasUpdated, Perspective),
     m_ortho(raw_wasUpdated, Ortho),
@@ -105,8 +103,6 @@ void VasnecovWorld::designerUpdateOrtho()
 */
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
 {
-    QMutexLocker locker(mtx_data);
-
     QVector3D vec(1.0, 0.0, 0.0); // Единичный вектор по направлению X
 
     QQuaternion qYaw = QQuaternion::fromAxisAndAngle(0, 0, 1, yaw);
@@ -134,19 +130,16 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
 */
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
-    QMutexLocker locker(mtx_data);
     if(m_camera.raw().roll != roll)
     {
         m_camera.editableRaw().roll = roll;
     }
-    locker.unlock();
 
     setCameraAngles(yaw, pitch);
 }
 
 void VasnecovWorld::flyCamera(const QVector3D &step)
 {
-    QMutexLocker locker(mtx_data);
 
     QVector3D forward = (m_camera.raw().target - m_camera.raw().position).normalized();
 
@@ -207,8 +200,6 @@ void VasnecovWorld::flyCamera(GLfloat x, GLfloat y, GLfloat z)
 
 void VasnecovWorld::moveCamera(const QVector3D &step)
 {
-    QMutexLocker locker(mtx_data);
-
     bool updated(false);
     QVector3D target, position;
 
@@ -267,8 +258,6 @@ void VasnecovWorld::moveCamera(GLfloat x, GLfloat y, GLfloat z)
 
 void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch)
 {
-    QMutexLocker locker(mtx_data);
-
     QVector3D vec = m_camera.raw().target - m_camera.raw().position;
 
     QQuaternion qYaw = QQuaternion::fromAxisAndAngle(0, 0, 1, yaw);
@@ -287,19 +276,16 @@ void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch)
 
 void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
-    QMutexLocker locker(mtx_data);
     if(m_camera.raw().roll != roll)
     {
         m_camera.editableRaw().roll = roll;
     }
-    locker.unlock();
 
     rotateCamera(yaw, pitch);
 }
 
 void VasnecovWorld::setCameraRoll(GLfloat roll)
 {
-    QMutexLocker locker(mtx_data);
     if(m_camera.raw().roll != roll)
     {
         m_camera.editableRaw().roll = roll;
@@ -309,7 +295,6 @@ void VasnecovWorld::setCameraRoll(GLfloat roll)
 
 void VasnecovWorld::tiltCamera(GLfloat roll)
 {
-    QMutexLocker locker(mtx_data);
     if(roll != 0.0f)
     {
         m_camera.editableRaw().roll = m_camera.raw().roll + roll;
@@ -398,7 +383,7 @@ void VasnecovWorld::renderDraw()
         if(m_elements.hasPureFigures())
         {
             // Задание материала по умолчанию
-            VasnecovMaterial mat(mtx_data, pure_pipeline);
+            VasnecovMaterial mat(pure_pipeline);
             mat.renderDraw();
 
             pure_pipeline->disableLamps();
@@ -518,7 +503,7 @@ void VasnecovWorld::renderDraw()
             }
 
             // Задание материала по умолчанию
-            VasnecovMaterial mat(mtx_data, pure_pipeline);
+            VasnecovMaterial mat(pure_pipeline);
             mat.renderDraw();
 
             pure_pipeline->disableLamps();
@@ -574,52 +559,38 @@ void VasnecovWorld::renderDraw()
 */
 Vasnecov::WorldParameters VasnecovWorld::worldParameters() const
 {
-    QMutexLocker locker(mtx_data);
-
     Vasnecov::WorldParameters parameters(m_parameters.raw());
     return parameters;
 }
 
 Vasnecov::WorldTypes VasnecovWorld::projection() const
 {
-    QMutexLocker locker(mtx_data);
-
     Vasnecov::WorldTypes projection(m_parameters.raw().projection);
     return projection;
 }
 
 GLint VasnecovWorld::x() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_parameters.raw().x;
 }
 
 GLint VasnecovWorld::y() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_parameters.raw().y;
 }
 
 GLsizei VasnecovWorld::width() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_parameters.raw().width;
 }
 
 GLsizei VasnecovWorld::height() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_parameters.raw().height;
 }
 
 QSize VasnecovWorld::size() const
 {
-    QMutexLocker locker(mtx_data);
-
     return QSize(m_parameters.raw().width, m_parameters.raw().height);
 }
 /*!
@@ -630,8 +601,6 @@ QSize VasnecovWorld::size() const
 */
 QRect VasnecovWorld::window() const
 {
-    QMutexLocker locker(mtx_data);
-
     return QRect(m_parameters.raw().x,
                  m_parameters.raw().y,
                  m_parameters.raw().width,
@@ -645,8 +614,6 @@ QRect VasnecovWorld::window() const
 */
 void VasnecovWorld::setDrawingType(Vasnecov::PolygonDrawingTypes type)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_parameters.raw().drawingType != type)
     {
         m_parameters.editableRaw().drawingType = type;
@@ -655,8 +622,6 @@ void VasnecovWorld::setDrawingType(Vasnecov::PolygonDrawingTypes type)
 
 void VasnecovWorld::setCameraPosition(const QVector3D &position)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_camera.raw().position != position)
     {
         m_camera.editableRaw().position = position;
@@ -677,8 +642,6 @@ void VasnecovWorld::setCameraPosition(GLfloat x, GLfloat y, GLfloat z)
 }
 void VasnecovWorld::setCameraTarget(const QVector3D &target)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_camera.raw().target != target)
     {
         m_camera.editableRaw().target = target;
@@ -705,8 +668,6 @@ void VasnecovWorld::setCameraTarget(GLfloat x, GLfloat y, GLfloat z)
 */
 void VasnecovWorld::setCamera(const Vasnecov::Camera &camera)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_camera.set(camera))
         designerUpdateOrtho(); // т.к. изменяется расстояние между фронтальными границами
 }
@@ -719,8 +680,6 @@ void VasnecovWorld::setCamera(const Vasnecov::Camera &camera)
 */
 Vasnecov::Camera VasnecovWorld::camera() const
 {
-    QMutexLocker locker(mtx_data);
-
     Vasnecov::Camera camera(m_camera.raw());
     return camera;
 }
@@ -732,8 +691,6 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QPointF &point)
 
 Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 {
-    QMutexLocker locker(mtx_data);
-
     if(x >= m_parameters.raw().x &&
        y >= m_parameters.raw().y &&
        x <= (m_parameters.raw().x + m_parameters.raw().width) &&
@@ -775,8 +732,6 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 */
 Vasnecov::Perspective VasnecovWorld::perspective() const
 {
-    QMutexLocker locker(mtx_data);
-
     Vasnecov::Perspective perspective(m_perspective.raw());
     return perspective;
 }
@@ -788,8 +743,6 @@ Vasnecov::Perspective VasnecovWorld::perspective() const
 */
 Vasnecov::Ortho VasnecovWorld::ortho() const
 {
-    QMutexLocker locker(mtx_data);
-
     Vasnecov::Ortho orto(m_ortho.raw());
     return orto;
 }
@@ -805,8 +758,6 @@ GLboolean VasnecovWorld::setProjection(Vasnecov::WorldTypes type)
 {
     if(type == Vasnecov::WorldTypePerspective || type == Vasnecov::WorldTypeOrthographic)
     {
-        QMutexLocker locker(mtx_data);
-
         if(m_parameters.raw().projection != type)
         {
             m_parameters.editableRaw().projection = type;
@@ -833,8 +784,6 @@ GLboolean VasnecovWorld::setWindow(GLint x, GLint y, GLsizei width, GLsizei heig
     if(width > Vasnecov::cfg_worldWidthMin && width < Vasnecov::cfg_worldWidthMax &&
        height > Vasnecov::cfg_worldHeightMin && height < Vasnecov::cfg_worldHeightMax)
     {
-        QMutexLocker locker(mtx_data);
-
         GLboolean updated (false);
 
         if(m_parameters.raw().x != x)
@@ -893,8 +842,6 @@ GLboolean VasnecovWorld::setParameters(Vasnecov::WorldParameters parameters) // 
        (parameters.projection == Vasnecov::WorldTypePerspective ||
         parameters.projection == Vasnecov::WorldTypeOrthographic))
     {
-        QMutexLocker locker(mtx_data);
-
         GLboolean updated(false);
 
         updated = m_parameters.set(parameters);
@@ -929,8 +876,6 @@ GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfl
 {
     if((angle > 0.0f && angle < 180.0f) && frontBorder > 0.0f)
     {
-        QMutexLocker locker(mtx_data);
-
         GLboolean updated(false);
 
         if(!qFuzzyCompare(m_perspective.raw().frontBorder, frontBorder))
@@ -969,8 +914,6 @@ GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfl
 */
 void VasnecovWorld::setDepth()
 {
-    QMutexLocker locker(mtx_data);
-
     if(!m_parameters.raw().depth)
         m_parameters.editableRaw().depth = true;
 }
@@ -981,23 +924,17 @@ void VasnecovWorld::setDepth()
 */
 void VasnecovWorld::unsetDepth()
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_parameters.raw().depth)
         m_parameters.editableRaw().depth = false;
 }
 
 GLboolean VasnecovWorld::depth() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_parameters.raw().depth;
 }
 
 void VasnecovWorld::switchDepth()
 {
-    QMutexLocker locker(mtx_data);
-
     m_parameters.editableRaw().depth = !m_parameters.raw().depth;
 }
 
@@ -1008,8 +945,6 @@ void VasnecovWorld::switchDepth()
 */
 void VasnecovWorld::setLight()
 {
-    QMutexLocker locker(mtx_data);
-
     if(!m_parameters.raw().light)
         m_parameters.editableRaw().light = true;
 }
@@ -1020,23 +955,17 @@ void VasnecovWorld::setLight()
 */
 void VasnecovWorld::unsetLight()
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_parameters.editableRaw().light)
         m_parameters.editableRaw().light = false;
 }
 
 GLboolean VasnecovWorld::light() const
 {
-    QMutexLocker locker(mtx_data);
-
     return m_parameters.raw().light;
 }
 
 void VasnecovWorld::switchLight()
 {
-    QMutexLocker locker(mtx_data);
-
     m_parameters.editableRaw().light = !m_parameters.raw().light;
 }
 

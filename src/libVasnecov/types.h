@@ -37,7 +37,6 @@ class VasnecovMaterial;
 class VasnecovMesh;
 class VasnecovProduct;
 class VasnecovFigure;
-class QMutex;
 
 namespace Vasnecov
 {

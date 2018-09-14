@@ -19,14 +19,13 @@
  \brief
 
  \fn VasnecovProduct::VasnecovProduct
- \param mutex
  \param pipeline
  \param type
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, VasnecovProduct::ProductTypes type, VasnecovProduct* parent, GLuint level) :
-    VasnecovElement(mutex, pipeline),
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::ProductTypes type, VasnecovProduct* parent, GLuint level) :
+    VasnecovElement(pipeline),
     raw_M1(),
     raw_ownVisible(true),
 
@@ -47,15 +46,14 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, Vasn
  \brief
 
  \fn VasnecovProduct::VasnecovProduct
- \param mutex
  \param pipeline
  \param name
  \param type
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, const std::string& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
-    VasnecovElement(mutex, pipeline, name),
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
+    VasnecovElement(pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
 
@@ -75,15 +73,14 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, cons
  \brief
 
  \fn VasnecovProduct::VasnecovProduct
- \param mutex
  \param pipeline
  \param name
  \param mesh
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
-    VasnecovElement(mutex, pipeline, name),
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
+    VasnecovElement(pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
 
@@ -104,7 +101,6 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, cons
  \brief
 
  \fn VasnecovProduct::VasnecovProduct
- \param mutex
  \param pipeline
  \param name
  \param mesh
@@ -112,8 +108,8 @@ VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, cons
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(QMutex *mutex, VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
-    VasnecovElement(mutex, pipeline, name),
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
+    VasnecovElement(pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
 
@@ -148,8 +144,6 @@ VasnecovProduct::~VasnecovProduct()
 
 void VasnecovProduct::setVisible(GLboolean visible)
 {
-    QMutexLocker locker(mtx_data);
-
     designerOwnSetVisible(visible);
 }
 
@@ -159,15 +153,12 @@ void VasnecovProduct::setPositionFromElement(const VasnecovAbstractElement *elem
 
     if(element)
     {
-        QMutexLocker locker(mtx_data);
         designerUpdateChildrenMatrix();
     }
 }
 
 void VasnecovProduct::switchDrawingBox()
 {
-    QMutexLocker locker(mtx_data);
-
     m_drawingBox.set(!m_drawingBox.raw());
 }
 
@@ -416,8 +407,6 @@ void VasnecovProduct::setMaterial(VasnecovMaterial *material)
 {
     if(material)
     {
-        QMutexLocker locker(mtx_data);
-
         if(m_type.raw() == ProductTypePart)
         {
             m_material.set(material);
@@ -432,8 +421,6 @@ void VasnecovProduct::setMaterial(VasnecovMaterial *material)
 */
 VasnecovMaterial *VasnecovProduct::material() const
 {
-    QMutexLocker locker(mtx_data);
-
     VasnecovMaterial * material(m_material.raw());
     return material;
 }
@@ -447,8 +434,6 @@ void VasnecovProduct::setMesh(VasnecovMesh *mesh)
 {
     if(mesh)
     {
-        QMutexLocker locker(mtx_data);
-
         if(m_type.raw() == ProductTypePart)
         {
             m_mesh.set(mesh);
@@ -463,8 +448,6 @@ void VasnecovProduct::setMesh(VasnecovMesh *mesh)
 */
 VasnecovMesh *VasnecovProduct::mesh() const
 {
-    QMutexLocker locker(mtx_data);
-
     VasnecovMesh *mesh(m_mesh.raw());
     return mesh;
 }
@@ -477,8 +460,6 @@ VasnecovMesh *VasnecovProduct::mesh() const
 */
 GLuint VasnecovProduct::level() const
 {
-    QMutexLocker locker(mtx_data);
-
     GLuint level(m_level.raw());
     return level;
 }
@@ -490,8 +471,6 @@ GLuint VasnecovProduct::level() const
 */
 VasnecovProduct::ProductTypes VasnecovProduct::type() const
 {
-    QMutexLocker locker(mtx_data);
-
     VasnecovProduct::ProductTypes type(m_type.raw());
     return type;
 }
@@ -504,16 +483,12 @@ VasnecovProduct::ProductTypes VasnecovProduct::type() const
 */
 VasnecovProduct *VasnecovProduct::parent() const
 {
-    QMutexLocker locker(mtx_data);
-
     VasnecovProduct *parent(m_parent.raw());
     return parent;
 }
 
 void VasnecovProduct::changeParent(VasnecovProduct *newParent)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_parent.raw())
     {
         m_parent.raw()->designerRemoveChild(this);
@@ -537,8 +512,6 @@ void VasnecovProduct::changeParent(VasnecovProduct *newParent)
 */
 std::vector<VasnecovProduct *> VasnecovProduct::children() const
 {
-    QMutexLocker locker(mtx_data);
-
     std::vector<VasnecovProduct *> children(m_children.raw());
     return children;
 }
@@ -551,8 +524,6 @@ std::vector<VasnecovProduct *> VasnecovProduct::children() const
 */
 void VasnecovProduct::setColor(const QColor &color)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_color.raw() != color)
     {
         designerSetColorRecursively(color);
@@ -566,8 +537,6 @@ void VasnecovProduct::setColor(const QColor &color)
 */
 void VasnecovProduct::setCoordinates(const QVector3D &coordinates)
 {
-    QMutexLocker locker(mtx_data);
-
     if(raw_coordinates != coordinates)
     {
         raw_coordinates = coordinates;
@@ -587,8 +556,6 @@ void VasnecovProduct::incrementCoordinates(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
-        QMutexLocker locker(mtx_data);
-
         raw_coordinates += increment;
 
         designerUpdateMatrixMs();
@@ -603,8 +570,6 @@ void VasnecovProduct::incrementCoordinates(const QVector3D &increment)
 */
 QVector3D VasnecovProduct::globalCoordinates()
 {
-    QMutexLocker locker(mtx_data);
-
     QVector3D coordinates(m_Ms.raw()(0, 3), m_Ms.raw()(1, 3), m_Ms.raw()(2, 3));
     return coordinates;
 }
@@ -617,8 +582,6 @@ QVector3D VasnecovProduct::globalCoordinates()
 */
 void VasnecovProduct::setAngles(const QVector3D &angles)
 {
-    QMutexLocker locker(mtx_data);
-
     if(raw_angles != angles)
     {
         GLenum rotate(0);
@@ -660,8 +623,6 @@ void VasnecovProduct::incrementAngles(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
-        QMutexLocker locker(mtx_data);
-
         GLenum rotate(0);
 
         if(increment.x() != 0.0)
@@ -699,8 +660,6 @@ void VasnecovProduct::incrementAngles(const QVector3D &increment)
 */
 void VasnecovProduct::setScale(GLfloat scale)
 {
-    QMutexLocker locker(mtx_data);
-
     if(m_scale.set(scale))
     {
         designerUpdateMatrixMs();

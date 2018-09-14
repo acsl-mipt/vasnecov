@@ -75,22 +75,16 @@ class VasnecovUniverse
     class LoadingStatus
     {
     public:
-        LoadingStatus(QMutex* mutex, Vasnecov::MutualData<GLboolean>* loading) :
-            m_mutex(mutex),
+        LoadingStatus(Vasnecov::MutualData<GLboolean>* loading) :
             m_loading(loading)
         {
-            QMutexLocker locker(m_mutex);
-
             m_loading->set(true);
         }
         ~LoadingStatus()
         {
-            QMutexLocker locker(m_mutex);
-
             m_loading->set(false);
         }
     private:
-        QMutex* m_mutex;
         Vasnecov::MutualData<GLboolean>* m_loading;
 
         Q_DISABLE_COPY(LoadingStatus)
@@ -328,8 +322,6 @@ private:
     Vasnecov::UniverseAttributes raw_data;
     UniverseElementList m_elements;
 
-    QMutex mtx_data;
-
     enum Updated
     {
         Meshes			= 0x0000001,
@@ -368,8 +360,6 @@ inline void VasnecovUniverse::setContext(const QGLContext *context)
 {
     if(!context)
         return;
-
-    QMutexLocker locker(&mtx_data);
 
     m_context.set(context);
 }

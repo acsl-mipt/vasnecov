@@ -44,8 +44,7 @@ class VasnecovWorld : public Vasnecov::CoreObject
 
 
 public:
-    VasnecovWorld(QMutex* mutex,
-                  VasnecovPipeline* pipeline,
+    VasnecovWorld(VasnecovPipeline* pipeline,
                   GLint mx, GLint my,
                   GLsizei width, GLsizei height,
                   const std::string& name = std::string());
