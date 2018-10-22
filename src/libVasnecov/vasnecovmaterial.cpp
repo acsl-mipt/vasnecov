@@ -24,8 +24,8 @@ VasnecovMaterial::VasnecovMaterial(QMutex *mutex,
                                    VasnecovPipeline *pipeline,
                                    const std::string &name) :
     Vasnecov::CoreObject(mutex, pipeline, name),
-    m_textureD(raw_wasUpdated, TextureD, 0),
-    m_textureN(raw_wasUpdated, TextureN, 0),
+    m_textureD(raw_wasUpdated, TextureD, nullptr),
+    m_textureN(raw_wasUpdated, TextureN, nullptr),
 
     m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
     m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),

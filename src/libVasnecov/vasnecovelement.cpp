@@ -42,7 +42,7 @@ VasnecovAbstractElement::VasnecovAbstractElement(QMutex *mutex, VasnecovPipeline
     raw_qX(), raw_qY(), raw_qZ(),
 
     m_Ms(raw_wasUpdated, MatrixMs),
-    m_alienMs(raw_wasUpdated, AlienMatrix, 0)
+    m_alienMs(raw_wasUpdated, AlienMatrix, nullptr)
 {
     raw_qX = raw_qX.fromAxisAndAngle(1.0, 0.0, 0.0, raw_angles.x());
     raw_qY = raw_qY.fromAxisAndAngle(0.0, 1.0, 0.0, raw_angles.y());
@@ -87,7 +87,7 @@ void VasnecovAbstractElement::setCoordinates(GLfloat x, GLfloat y, GLfloat z)
 */
 void VasnecovAbstractElement::incrementCoordinates(const QVector3D &increment)
 {
-    if(increment.x() != 0.0 || increment.y() != 0.0 || increment.z() != 0.0)
+    if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
         QMutexLocker locker(mtx_data);
 
@@ -184,7 +184,7 @@ void VasnecovAbstractElement::setAngles(GLfloat x, GLfloat y, GLfloat z)
 */
 void VasnecovAbstractElement::incrementAngles(const QVector3D &increment)
 {
-    if(increment.x() != 0.0 || increment.y() != 0.0 || increment.z() != 0.0)
+    if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
     {
         QMutexLocker locker(mtx_data);
 
@@ -305,7 +305,7 @@ void VasnecovAbstractElement::detachFromOtherElement()
 {
     QMutexLocker locker(mtx_data);
 
-    m_alienMs.set(0);
+    m_alienMs.set(nullptr);
 }
 
 void VasnecovAbstractElement::attachToElement(const VasnecovAbstractElement *element)
@@ -523,7 +523,7 @@ GLboolean VasnecovElement::isTransparency() const
 {
     QMutexLocker locker(mtx_data);
 
-    GLfloat transparency(m_isTransparency.raw());
+    GLboolean transparency(m_isTransparency.raw());
     return transparency;
 }
 
@@ -568,7 +568,7 @@ void VasnecovElement::designerUpdateMatrixMs()
 
     newMatrix.rotate(qRot);
 
-    if(m_scale.raw() != 1.0)
+    if(m_scale.raw() != 1.0f)
     {
         newMatrix.scale(m_scale.raw(), m_scale.raw(), m_scale.raw());
     }

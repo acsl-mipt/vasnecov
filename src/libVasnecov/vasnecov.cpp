@@ -41,7 +41,7 @@
  \sa VasnecovWorld
 */
 
-Vasnecov::Version vVersion;
+static Vasnecov::Version vVersion;
 
 /*!
  \brief Выдает номер версии библиотеки (в виде строки).

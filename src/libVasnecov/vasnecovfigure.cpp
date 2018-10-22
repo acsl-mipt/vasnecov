@@ -315,7 +315,7 @@ GLboolean VasnecovFigure::optimization() const
 
 void VasnecovFigure::createLine(GLfloat length, const QColor &color)
 {
-    if(length > 0.0)
+    if(length > 0.0f)
     {
         QMutexLocker locker(mtx_data);
 
@@ -357,7 +357,7 @@ void VasnecovFigure::createLine(const Vasnecov::Line &line, const QColor &color)
 
 void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
 {
-    if(r > 0.0 && factor > 0)
+    if(r > 0.0f && factor > 0)
     {
         QMutexLocker locker(mtx_data);
 
@@ -374,9 +374,9 @@ void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
         QVector3D kt;
         for(GLuint i = 0; i < factor; ++i)
         {
-            GLfloat angle(2*M_PI*i/factor);
-            kt.setX(r*cos(angle));
-            kt.setY(r*sin(angle));
+            GLfloat angle(M_2PI*i/factor);
+            kt.setX(r * cos(angle));
+            kt.setY(r * sin(angle));
             circ.push_back(kt);
         }
         m_points.set(circ);
@@ -385,7 +385,7 @@ void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
 
 void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color, GLuint factor)
 {
-    if(r > 0.0 && spanAngle != 0.0 && factor > 0)
+    if(r > 0.0f && spanAngle != 0.0f && factor > 0)
     {
         QMutexLocker locker(mtx_data);
 
@@ -401,7 +401,7 @@ void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
 
         std::vector<QVector3D> circ;
         GLfloat endAngle = startAngle + spanAngle;
-        GLuint steps(std::abs(static_cast<float>(factor) * spanAngle / (2.0f*M_PI)));
+        GLuint steps(std::abs(static_cast<float>(factor) * spanAngle / M_2PI));
         if(steps == 0)
         {
             // Получается слишком маленький отрезок, поэтому он просто рисуется по двум точкам
@@ -416,11 +416,11 @@ void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
         {
             if(spanAngle > 0)
             {
-                pointAngle = 2*M_PI*i/factor;
+                pointAngle = M_2PI*i/factor;
             }
             else
             {
-                pointAngle = -2*M_PI*i/factor;
+                pointAngle = -M_2PI*i/factor;
             }
             kt.setX(r*cos(pointAngle));
             kt.setY(r*sin(pointAngle));
@@ -469,19 +469,19 @@ void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
         {
             if(spanAngle > 0)
             {
-                pointAngle = 2*M_PI*i/factor;
+                pointAngle = M_2PI*i/factor;
             }
             else
             {
-                pointAngle = -2*M_PI*i/factor;
+                pointAngle = -M_2PI*i/factor;
             }
-            kt.setX(r*cos(pointAngle));
-            kt.setY(r*sin(pointAngle));
+            kt.setX(r * cos(pointAngle));
+            kt.setY(r * sin(pointAngle));
             circ.push_back(kt);
         }
 
-        kt.setX(r*cos(endAngle));
-        kt.setY(r*sin(endAngle));
+        kt.setX(r * cos(endAngle));
+        kt.setY(r * sin(endAngle));
         circ.push_back(kt);
 
         m_points.set(circ);
@@ -607,7 +607,7 @@ GLenum VasnecovFigure::renderUpdateData()
     // Проверка прозрачности
     GLboolean transp = false;
 
-    if(m_color.raw().alphaF() < 1.0f)
+    if(m_color.raw().alphaF() < 1.0)
     {
         transp = true;
     }

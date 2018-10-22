@@ -29,7 +29,7 @@
 
  Производит базовые инициализации. Установка начального состония выполняется методом \a initialize()
 */
-VasnecovPipeline::VasnecovPipeline(QGLContext *context) :
+VasnecovPipeline::VasnecovPipeline(QGLContext* context) :
     m_context(context),
     m_backgroundColor(0, 0, 0, 255),
     m_color(255, 255, 255, 255),
@@ -271,8 +271,8 @@ QVector4D VasnecovPipeline::projectPoint(const QMatrix4x4 &MV, const QVector3D &
         pos.setZ(pos.z()*div);
         pos.setW(1.0f);
     }
-    pos.setX((pos.x() + 1)*0.5*m_viewWidth);
-    pos.setY((pos.y() + 1)*0.5*m_viewHeight);
+    pos.setX((pos.x() + 1)*0.5f*m_viewWidth);
+    pos.setY((pos.y() + 1)*0.5f*m_viewHeight);
 
     return pos;
 }

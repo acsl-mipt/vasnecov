@@ -621,9 +621,9 @@ void VasnecovMesh::calculateBox()
     m_borderBoxVertices[5].setX(m_borderBoxVertices[0].x()); m_borderBoxVertices[5].setY(m_borderBoxVertices[6].y()); m_borderBoxVertices[5].setZ(m_borderBoxVertices[6].z());
     m_borderBoxVertices[7].setX(m_borderBoxVertices[6].x()); m_borderBoxVertices[7].setY(m_borderBoxVertices[0].y()); m_borderBoxVertices[7].setZ(m_borderBoxVertices[6].z());
 
-    m_cm.setX((m_borderBoxVertices[0].x() + m_borderBoxVertices[6].x())*0.5);
-    m_cm.setY((m_borderBoxVertices[0].y() + m_borderBoxVertices[6].y())*0.5);
-    m_cm.setZ((m_borderBoxVertices[0].z() + m_borderBoxVertices[6].z())*0.5);
+    m_cm.setX((m_borderBoxVertices[0].x() + m_borderBoxVertices[6].x())*0.5f);
+    m_cm.setY((m_borderBoxVertices[0].y() + m_borderBoxVertices[6].y())*0.5f);
+    m_cm.setZ((m_borderBoxVertices[0].z() + m_borderBoxVertices[6].z())*0.5f);
 
 
     // Индексы для бокса
