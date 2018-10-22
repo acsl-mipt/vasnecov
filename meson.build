@@ -66,3 +66,6 @@ vasnecov_dep = declare_dependency(
   include_directories : include_directories('src', is_system : true),
   dependencies : [bmcl_dep, qt5_dep],
 )
+
+subdir('examples/bomber')
+subdir('examples/dronesformation')
