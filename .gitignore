@@ -3,4 +3,8 @@ subprojects/bmcl/
 CMakeLists.txt.user
 build-meson/
 examples/
-
+Vasnecov.config
+Vasnecov.creator
+Vasnecov.creator.user
+Vasnecov.files
+Vasnecov.includes
