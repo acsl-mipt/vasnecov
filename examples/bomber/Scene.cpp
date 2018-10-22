@@ -8,9 +8,9 @@
 Scene::Scene(VasnecovUniverse *universe, QObject *parent) :
     VasnecovScene(parent),
     m_universe(universe),
-    m_world(0),
-    m_bomberModel(0),
-    m_propellers{0}
+    m_world(nullptr),
+    m_bomberModel(nullptr),
+    m_propellers{nullptr}
 {
     if(!m_universe)
         qCritical("Wrong Universe!");

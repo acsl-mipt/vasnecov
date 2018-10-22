@@ -10,11 +10,11 @@
 
 Scene::Scene(VasnecovUniverse *univ, QObject *parent) :
     VasnecovScene(parent),
-    _world(0),
-    _bomberModel(0),
-    _bomberModel1(0),
-    _bomberModel2(0),
-    _ground(0),
+    _world(nullptr),
+    _bomberModel(nullptr),
+    _bomberModel1(nullptr),
+    _bomberModel2(nullptr),
+    _ground(nullptr),
     _bm1SignZ(1)
 {
     VasnecovScene::setUniverse(univ);
