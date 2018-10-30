@@ -210,7 +210,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         Vasnecov::Camera camera = m_world->camera();
         QQuaternion qua = QQuaternion::fromAxisAndAngle(QVector3D(0.0f, 0.0f, 1.0f), angle);
-        m_world->setCameraPosition(qua.rotatedVector(camera.position) + QVector3D(0.0f, 0.0f, z));
+        m_world->setCameraPosition(qua.rotatedVector(camera.position()) + QVector3D(0.0f, 0.0f, z));
     }
 
     VasnecovScene::mouseMoveEvent(event);
