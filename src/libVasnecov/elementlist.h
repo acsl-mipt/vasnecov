@@ -7,8 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef ELEMENTLIST_H
-#define ELEMENTLIST_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -278,4 +277,3 @@ namespace Vasnecov
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // ELEMENTLIST_H

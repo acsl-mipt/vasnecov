@@ -8,8 +8,7 @@
  */
 
 // Метка. Принцип билборда
-#ifndef VASNECOVLABEL_H
-#define VASNECOVLABEL_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -114,4 +113,3 @@ inline void VasnecovLabel::setSize(GLfloat width, GLfloat height)
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVLABEL_H

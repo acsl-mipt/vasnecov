@@ -8,8 +8,7 @@
  */
 
 // Базовый класс для всех элементов сцены, которые можно нарисовать
-#ifndef VASNECOVELEMENT_H
-#define VASNECOVELEMENT_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -205,8 +204,6 @@ inline GLboolean VasnecovElement::renderIsTransparency() const
     return m_isTransparency.pure();
 }
 
-
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVELEMENT_H

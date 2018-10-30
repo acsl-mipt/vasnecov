@@ -8,8 +8,7 @@
  */
 
 // "Виртуализация" конвейера OpenGL
-#ifndef VASNECOVPIPELINE_H
-#define VASNECOVPIPELINE_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -597,4 +596,3 @@ inline void VasnecovPipeline::setDrawingType(Vasnecov::PolygonDrawingTypes type,
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVPIPELINE_H

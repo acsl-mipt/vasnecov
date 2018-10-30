@@ -7,8 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef VASNECOV_H
-#define VASNECOV_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -27,4 +26,3 @@ Vasnecov::Version vasnecovVersion();
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOV_H

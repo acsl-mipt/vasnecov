@@ -10,8 +10,7 @@
 // Класс описания всех элементов, которые можно отобразить.
 // Очень условно, аналог Контроллера в модели MVC (ну, или как - расширение Модели).
 // Содержит основные массивы данных для отрисовки (меши, списки текстур, миры).
-#ifndef VASNECOV_UNIVERSE_H
-#define VASNECOV_UNIVERSE_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -442,4 +441,3 @@ const std::vector<T *> &VasnecovUniverse::ElementFullBox<T>::deleting() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOV_UNIVERSE_H

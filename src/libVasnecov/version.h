@@ -7,8 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef VASNECOV_VERSION_H
-#define VASNECOV_VERSION_H
+#pragma once
 
 #define VASNECOV_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
 
@@ -50,5 +49,3 @@ namespace Vasnecov
         }
     };
 }
-
-#endif

@@ -8,8 +8,7 @@
  */
 
 // Класс изделия (деталь или узел), описывающего реальный объект в 3D-мире
-#ifndef VASNECOVPRODUCT_H
-#define VASNECOVPRODUCT_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -238,4 +237,3 @@ inline const std::vector<VasnecovProduct *> *VasnecovProduct::renderChildren() c
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVPRODUCT_H

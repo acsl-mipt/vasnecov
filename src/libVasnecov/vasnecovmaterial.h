@@ -8,8 +8,7 @@
  */
 
 // Класс материала для наложения на меши
-#ifndef VASNECOVMATERIAL_H
-#define VASNECOVMATERIAL_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -139,4 +138,3 @@ inline GLfloat VasnecovMaterial::renderShininess() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVMATERIAL_H

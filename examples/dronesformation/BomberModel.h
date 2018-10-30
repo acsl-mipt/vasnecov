@@ -1,5 +1,4 @@
-#ifndef BOMBERMODEL_H
-#define BOMBERMODEL_H
+#pragma once
 
 #include "ProductModel.h"
 
@@ -56,5 +55,3 @@ private:
 private:
     Q_DISABLE_COPY(BomberModel)
 };
-
-#endif // BOMBERMODEL_H

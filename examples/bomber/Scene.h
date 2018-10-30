@@ -1,5 +1,4 @@
-#ifndef SCENE_H
-#define SCENE_H
+#pragma once
 
 #include <Vasnecov>
 
@@ -29,4 +28,3 @@ private:
     Q_DISABLE_COPY(Scene)
 };
 
-#endif // SCENE_H

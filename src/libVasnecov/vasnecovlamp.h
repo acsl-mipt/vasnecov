@@ -8,8 +8,7 @@
  */
 
 // Класс источников света
-#ifndef VASNECOVLAMP_H
-#define VASNECOVLAMP_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -139,4 +138,3 @@ inline GLuint VasnecovLamp::renderIndex() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVLAMP_H

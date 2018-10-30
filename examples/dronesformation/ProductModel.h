@@ -1,5 +1,4 @@
-#ifndef PRODUCTMODEL_H
-#define PRODUCTMODEL_H
+#pragma once
 
 #include <Vasnecov>
 
@@ -116,5 +115,3 @@ inline VasnecovProduct *ProductModel::modelParent() const
     }
     return 0;
 }
-
-#endif // PRODUCTMODEL_H

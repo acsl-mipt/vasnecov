@@ -8,8 +8,7 @@
  */
 
 // Класс фигур для мира
-#ifndef VASNECOVFIGURE_H
-#define VASNECOVFIGURE_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -465,4 +464,3 @@ inline GLboolean VasnecovFigure::renderLighting() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVFIGURE_H

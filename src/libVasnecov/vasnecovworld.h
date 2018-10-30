@@ -9,8 +9,7 @@
 
 // Класс представления 3D-мира.
 // Аналог Модели в модели MVC.
-#ifndef VASNECOV_WORLD_H
-#define VASNECOV_WORLD_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -267,4 +266,3 @@ inline const Vasnecov::Camera& VasnecovWorld::renderCamera() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOV_WORLD_H

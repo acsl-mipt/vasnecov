@@ -8,9 +8,7 @@
  */
 
 // Класс описания трехмерных объектов для рендеринга
-
-#ifndef VASNECOVMESH_H
-#define VASNECOVMESH_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -141,4 +139,3 @@ inline QVector3D VasnecovMesh :: cm() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVMESH_H

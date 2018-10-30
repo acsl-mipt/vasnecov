@@ -8,8 +8,7 @@
  */
 
 // Сцена для вывода OpenGL (для связки View-Scene)
-#ifndef VASNECOV_SCENE_H
-#define VASNECOV_SCENE_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -78,4 +77,3 @@ inline bool VasnecovScene::removeUniverse()
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOV_SCENE_H

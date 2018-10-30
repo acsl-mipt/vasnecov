@@ -8,8 +8,7 @@
  */
 
 // Описание текстур
-#ifndef VASNECOVTEXTURE_H
-#define VASNECOVTEXTURE_H
+#pragma once
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
@@ -90,4 +89,3 @@ inline GLboolean VasnecovTexture::isTransparency() const
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
-#endif // VASNECOVTEXTURE_H
