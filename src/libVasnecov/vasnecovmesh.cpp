@@ -16,9 +16,6 @@
 #include <sstream>
 #include <algorithm>
 #include "technologist.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -652,8 +649,3 @@ void VasnecovMesh::calculateBox()
     m_borderBoxIndices[22] = 3;
     m_borderBoxIndices[23] = 7;
 }
-
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

@@ -10,13 +10,7 @@
 // Описание текстур
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "types.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 #include <QImage>
 
@@ -85,7 +79,3 @@ inline GLboolean VasnecovTexture::isTransparency() const
 {
     return m_isTransparency;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

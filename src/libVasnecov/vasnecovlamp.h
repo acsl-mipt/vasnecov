@@ -10,13 +10,7 @@
 // Класс источников света
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "vasnecovelement.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 namespace Vasnecov
 {
@@ -134,7 +128,3 @@ inline GLuint VasnecovLamp::renderIndex() const
 {
     return pure_index;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

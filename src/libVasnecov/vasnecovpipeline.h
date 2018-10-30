@@ -10,16 +10,10 @@
 // "Виртуализация" конвейера OpenGL
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <vector>
 #include <QColor>
 #include <QMatrix4x4>
 #include "types.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class QGLContext;
 
@@ -592,7 +586,3 @@ inline void VasnecovPipeline::setDrawingType(Vasnecov::PolygonDrawingTypes type,
         }
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

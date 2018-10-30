@@ -11,9 +11,6 @@
 #include "technologist.h"
 #include <QFile>
 #include <QSize>
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -632,7 +629,3 @@ GLfloat VasnecovFigure::renderCalculateDistanceToPlane(const QVector3D &planePoi
 
     return pure_distance;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

@@ -10,15 +10,9 @@
 // Базовый класс для всех элементов сцены, которые можно нарисовать
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <QQuaternion>
 #include "coreobject.h"
 #include "vasnecovpipeline.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovAbstractElement : public Vasnecov::CoreObject
 {
@@ -203,7 +197,3 @@ inline GLboolean VasnecovElement::renderIsTransparency() const
 {
     return m_isTransparency.pure();
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

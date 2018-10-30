@@ -10,14 +10,8 @@
 // Сцена для вывода OpenGL (для связки View-Scene)
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <QGraphicsScene>
 #include "types.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovUniverse;
 class VasnecovWorld;
@@ -73,7 +67,3 @@ inline bool VasnecovScene::removeUniverse()
         return false;
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

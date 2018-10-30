@@ -10,14 +10,8 @@
 // Метка. Принцип билборда
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <QVector2D>
 #include "vasnecovelement.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovTexture;
 
@@ -107,9 +101,3 @@ inline void VasnecovLabel::setSize(GLfloat width, GLfloat height)
     raw_dataLabel.size.setX(width);
     raw_dataLabel.size.setY(height);
 }
-
-
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

@@ -17,9 +17,6 @@
 #include <GL/glu.h>
 #include "vasnecovmesh.h"
 #include <bmcl/Logging.h>
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
    \class VasnecovUniverse
@@ -1575,8 +1572,3 @@ Vasnecov::UniverseAttributes::~UniverseAttributes()
         rit->second = nullptr;
     }
 }
-
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

@@ -11,14 +11,8 @@
 // Аналог Модели в модели MVC.
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "elementlist.h"
 #include "vasnecovlamp.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovProduct;
 class VasnecovLabel;
@@ -241,8 +235,6 @@ inline void VasnecovWorld::renderSwitchLamps() const
     }
 }
 
-
-
 inline const Vasnecov::WorldParameters& VasnecovWorld::renderWorldParameters() const
 {
     return m_parameters.pure();
@@ -262,7 +254,3 @@ inline const Vasnecov::Camera& VasnecovWorld::renderCamera() const
 {
     return m_camera.pure();
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

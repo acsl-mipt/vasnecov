@@ -10,15 +10,9 @@
 // Класс описания трехмерных объектов для рендеринга
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <vector>
 #include "configuration.h"
 #include "vasnecovpipeline.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovMesh
 {
@@ -135,7 +129,3 @@ inline QVector3D VasnecovMesh :: cm() const
 {
     return m_cm;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

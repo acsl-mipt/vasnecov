@@ -9,20 +9,9 @@
 
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "vasnecovscene.h"
 #include "vasnecovuniverse.h"
 #include "version.h"
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
-
 QString showVasnecovVersion();
 Vasnecov::Version vasnecovVersion();
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

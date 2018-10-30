@@ -41,7 +41,7 @@ processed = qt5_mod.preprocess(
 
 cpp_args = []
 if cc.get_id() == 'clang' or cc.get_id() == 'gcc'
-  cpp_args = ['-Wall', '-Wextra', '-Wno-unused-parameter', '-Woverloaded-virtual', '-Weffc++']
+  cpp_args = ['-Wall', '-Wextra', '-Wno-unused-parameter', '-Woverloaded-virtual']
 endif
 
 libs = []

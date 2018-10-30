@@ -11,9 +11,6 @@
 #include <iostream>
 #include <sstream>
 #include <bmcl/Logging.h>
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 GLint Vasnecov::panic(const QString &problemText1, const QString &problemText2)
 {
@@ -55,7 +52,3 @@ GLint Vasnecov::problem(const QString &problemText1, GLfloat value)
     BMCL_WARNING() << "3D: "  << problemText1 << value;
     return 1;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

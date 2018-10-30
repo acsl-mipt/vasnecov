@@ -10,13 +10,7 @@
 // Класс фигур для мира
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "vasnecovelement.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 // Класс фигур (плоских, по сути)
 class VasnecovFigure : public VasnecovElement
@@ -460,7 +454,3 @@ inline GLboolean VasnecovFigure::renderLighting() const
 {
     return m_lighting.pure();
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

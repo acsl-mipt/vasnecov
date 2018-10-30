@@ -16,9 +16,6 @@
 #include "configuration.h"
 #include <QSize>
 #include <QRect>
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -994,8 +991,3 @@ VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
 
     return cameraAttr;
 }
-
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

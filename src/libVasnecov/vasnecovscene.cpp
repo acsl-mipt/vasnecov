@@ -10,9 +10,6 @@
 #include "vasnecovscene.h"
 #include "vasnecovuniverse.h"
 #include <QPainter>
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -60,7 +57,3 @@ void VasnecovScene::setUniverse(VasnecovUniverse *universe)
         m_universe->renderInitialize();
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

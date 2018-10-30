@@ -10,9 +10,6 @@
 #include "vasnecovlabel.h"
 #include <QImage>
 #include "vasnecovtexture.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -331,7 +328,3 @@ void VasnecovLabel::updaterRemoveOldPersonalTexture()
         m_personalTexture = false;
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

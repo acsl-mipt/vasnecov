@@ -11,9 +11,6 @@
 #include <algorithm>
 #include <QGLContext>
 #include "configuration.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
   \class VasnecovPipeline
@@ -479,7 +476,3 @@ void VasnecovPipeline::drawElements(VasnecovPipeline::ElementDrawingMethods meth
         glDisableClientState(GL_VERTEX_ARRAY);
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

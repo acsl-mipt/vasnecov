@@ -12,9 +12,6 @@
 // Содержит основные массивы данных для отрисовки (меши, списки текстур, миры).
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <QString>
 #include <QImage>
 #include <map>
@@ -25,9 +22,6 @@
 #include "vasnecovproduct.h"
 #include "vasnecovlabel.h"
 #include "elementlist.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovMaterial;
 
@@ -437,7 +431,3 @@ const std::vector<T *> &VasnecovUniverse::ElementFullBox<T>::deleting() const
 {
     return m_deleting;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

@@ -9,13 +9,7 @@
 
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "types.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 namespace Vasnecov
 {
@@ -42,7 +36,3 @@ inline GLfloat Vasnecov::trimAngle(GLfloat deg)
     }
     return deg;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

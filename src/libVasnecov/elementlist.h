@@ -9,15 +9,8 @@
 
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <vector>
 #include "technologist.h"
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovLamp;
 class VasnecovProduct;
@@ -273,7 +266,3 @@ namespace Vasnecov
         C<ELabel> m_labels;
     };
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

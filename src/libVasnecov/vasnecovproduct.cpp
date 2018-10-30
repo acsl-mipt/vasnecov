@@ -11,9 +11,6 @@
 #include "technologist.h"
 #include "vasnecovmaterial.h"
 #include "vasnecovmesh.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -735,6 +732,3 @@ void VasnecovProduct::designerSetMatrixM1Recursively(const QMatrix4x4 &M1)
     designerUpdateMatrixM1(M1);
     designerUpdateChildrenMatrix();
 }
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

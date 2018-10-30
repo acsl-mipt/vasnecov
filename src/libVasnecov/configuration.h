@@ -9,15 +9,9 @@
 
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <ctime>
 #include <QString>
 #include "types.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 namespace Vasnecov
 {
@@ -50,7 +44,3 @@ namespace Vasnecov
         return td;
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

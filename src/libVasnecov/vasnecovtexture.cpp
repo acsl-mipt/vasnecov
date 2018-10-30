@@ -11,7 +11,6 @@
 #include <QImage>
 #include <GL/glu.h>
 #include "technologist.h"
-#pragma GCC diagnostic warning "-Weffc++"
 
 /*!
  \brief
@@ -155,5 +154,3 @@ VasnecovTextureNormal::VasnecovTextureNormal(const QImage& image) :
     VasnecovTextureInterface(image)
 {
 }
-
-#pragma GCC diagnostic ignored "-Weffc++"

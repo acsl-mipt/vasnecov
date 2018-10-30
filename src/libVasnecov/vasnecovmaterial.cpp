@@ -9,9 +9,6 @@
 
 #include "vasnecovmaterial.h"
 #include "vasnecovpipeline.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -285,7 +282,3 @@ void VasnecovMaterial::renderDraw()
         pure_pipeline->disableTexture2D();
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

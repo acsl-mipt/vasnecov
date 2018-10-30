@@ -8,9 +8,6 @@
  */
 
 #include "vasnecov.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \mainpage Статическая библиотека простенького 3D движка.
@@ -61,7 +58,3 @@ Vasnecov::Version vasnecovVersion()
 {
     return vVersion;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

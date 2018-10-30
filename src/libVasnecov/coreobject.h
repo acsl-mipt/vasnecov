@@ -9,14 +9,8 @@
 
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "types.h"
 #include "vasnecovpipeline.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 namespace Vasnecov
 {
@@ -257,7 +251,3 @@ namespace Vasnecov
         return m_isHidden.pure();
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

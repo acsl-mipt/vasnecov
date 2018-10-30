@@ -8,9 +8,6 @@
  */
 
 #include "vasnecovlamp.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 /*!
  \brief
@@ -317,7 +314,3 @@ void VasnecovLamp::renderDraw()
         pure_pipeline->disableConcreteLamp(pure_index);
     }
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

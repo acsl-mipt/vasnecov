@@ -10,13 +10,7 @@
 // Класс изделия (деталь или узел), описывающего реальный объект в 3D-мире
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include "vasnecovelement.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovMaterial;
 class VasnecovMesh;
@@ -233,7 +227,3 @@ inline const std::vector<VasnecovProduct *> *VasnecovProduct::renderChildren() c
 {
     return &m_children.pure();
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

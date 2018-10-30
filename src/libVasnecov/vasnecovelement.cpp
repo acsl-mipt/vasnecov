@@ -9,10 +9,6 @@
 
 #include "vasnecovelement.h"
 #include "technologist.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
-
 
 /*!
   \class VasnecovAbstractElement
@@ -587,7 +583,3 @@ GLfloat VasnecovElement::renderCalculateDistanceToPlane(const QVector3D &planePo
 
     return pure_distance;
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

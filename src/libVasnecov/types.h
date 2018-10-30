@@ -9,9 +9,6 @@
 
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #ifdef _MSC_VER
     #include <windows.h>
     #define _USE_MATH_DEFINES
@@ -22,9 +19,6 @@
 #include <QVector3D>
 #include <QtGlobal>
 #include <cmath>
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 const GLfloat M_2PI = static_cast<GLfloat>(M_PI * 2.0);
 
@@ -269,6 +263,3 @@ namespace Vasnecov
         QVector3D m_p1, m_p2;
     };
 }
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif

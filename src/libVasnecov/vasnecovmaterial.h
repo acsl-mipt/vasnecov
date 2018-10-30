@@ -10,15 +10,9 @@
 // Класс материала для наложения на меши
 #pragma once
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
 #include <QColor>
 #include "coreobject.h"
 #include "vasnecovtexture.h"
-#ifndef _MSC_VER
-    #pragma GCC diagnostic warning "-Weffc++"
-#endif
 
 class VasnecovTexture;
 class VasnecovPipeline;
@@ -134,7 +128,3 @@ inline GLfloat VasnecovMaterial::renderShininess() const
 {
     return m_shininess.pure();
 }
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic ignored "-Weffc++"
-#endif
