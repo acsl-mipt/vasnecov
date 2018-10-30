@@ -197,13 +197,27 @@ public:
     void setBackgroundColor(const QColor& color);
     void setBackgroundColor(QRgb rgb);
 
+    // Загрузка ресурсов
+    /*
+     * Загрузка ресурсов происходит из директории ресурсов,
+     * [pathToApp]/stuff/ - по умолчанию.
+     * Имена ресурсов соответствуют адресу файла из этой директории.
+     */
+    // TODO: Unloading resources with full cleaning Worlds's content
+    GLboolean setTexturesDir(const QString& dir);
+    GLboolean setMeshesDir(const QString& dir);
+
+    void loadAll(); // Загрузка всех ресурсов из своих директорий
+
+    GLboolean loadMesh(const QString& fileName); // Загрузка конкретного меша
+    GLuint loadMeshes(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
+    GLboolean loadTexture(const QString& fileName);
+    GLuint loadTextures(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех текстур
+
     QString info(GLuint type = 0);
 
 protected:
     // Методы, вызываемые из внешних потоков (работают с сырыми данными)
-    VasnecovMesh* designerFindMesh(const QString& name);
-    VasnecovTexture* designerFindTexture(const QString& name);
-
     GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs);
 
 protected:

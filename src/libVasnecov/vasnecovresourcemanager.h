@@ -19,6 +19,9 @@ public:
     explicit VasnecovResourceManager();
     ~VasnecovResourceManager();
 
+    GLboolean setTexturesDir(const QString& dir);
+    GLboolean setMeshesDir(const QString& dir);
+
     GLboolean loadMeshFile(const QString& fileName);
     GLboolean loadTextureFile(const QString& fileName);
 
@@ -31,12 +34,17 @@ private:
     GLboolean addTexture(VasnecovTexture* texture, const QString& fileId);
     GLboolean addMesh(VasnecovMesh* mesh, const QString& fileId);
 
+    VasnecovMesh* designerFindMesh(const QString& name);
+    VasnecovTexture* designerFindTexture(const QString& name);
+
     // Работа с файлами ресурсов
     GLuint handleFilesInDir(const QString& dirPref,
                             const QString& targetDir,
                             const QString& format,
                             GLboolean (VasnecovResourceManager::*workFun)(const QString&),
                             GLboolean withSub = true); // Поиск файлов в директории и выполнение с ними метода
+
+    bool renderUpdate();
 
 private:
     enum Updated
@@ -62,5 +70,9 @@ private:
     std::vector<VasnecovMesh*>      meshesForLoading;
     std::vector<VasnecovTexture*>   texturesForLoading;
 
+    friend class VasnecovUniverse;
+
     Q_DISABLE_COPY(VasnecovResourceManager)
 };
+
+

@@ -313,7 +313,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
     {
         QString corMeshName = VasnecovResourceManager::correctFileId(meshName, Vasnecov::cfg_meshFormat);
         // Поиск меша в списке
-        mesh = designerFindMesh(corMeshName);
+        mesh = m_resourceManager->designerFindMesh(corMeshName);
 
         if(!mesh)
         {
@@ -325,7 +325,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
                 return nullptr;
             }
 
-            mesh = designerFindMesh(corMeshName);
+            mesh = m_resourceManager->designerFindMesh(corMeshName);
 
             if(!mesh)
             {
@@ -763,7 +763,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
         // Поиск текстуры в списке
         QString corTextureName = VasnecovResourceManager::correctFileId(textureName, Vasnecov::cfg_textureFormat);
 
-        texture = designerFindTexture(corTextureName);
+        texture = m_resourceManager->designerFindTexture(corTextureName);
 
         if(!texture)
         {
@@ -775,7 +775,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
                 return nullptr;
             }
 
-            texture = designerFindTexture(corTextureName);
+            texture = m_resourceManager->designerFindTexture(corTextureName);
 
             if(!texture)
             {
@@ -850,7 +850,7 @@ VasnecovTexture *VasnecovUniverse::textureByName(const QString& textureName, Vas
             newName = textureName;
     }
 
-    texture = designerFindTexture(newName);
+    texture = m_resourceManager->designerFindTexture(newName);
 
     return texture;
 }
@@ -882,7 +882,7 @@ void VasnecovUniverse::setBackgroundColor(QRgb rgb)
 */
 GLboolean VasnecovUniverse::setTexturesDir(const QString& dir)
 {
-    return setDirectory(dir, raw_data.dirTextures);
+    return m_resourceManager->setTexturesDir(dir);
 }
 /*!
  \brief
@@ -892,7 +892,7 @@ GLboolean VasnecovUniverse::setTexturesDir(const QString& dir)
 */
 GLboolean VasnecovUniverse::setMeshesDir(const QString& dir)
 {
-    return setDirectory(dir, raw_data.dirMeshes);
+    return m_resourceManager->setMeshesDir(dir);
 }
 
 /*!
@@ -922,7 +922,7 @@ GLboolean VasnecovUniverse::loadMesh(const QString& fileName)
     LoadingStatus lStatus(&m_loading);
     GLboolean res(false);
 
-    res = loadMeshFile(fileName);
+    res = m_resourceManager->loadMeshFile(fileName);
 
     return res;
 }
@@ -957,7 +957,7 @@ GLboolean VasnecovUniverse::loadTexture(const QString& fileName)
     LoadingStatus lStatus(&m_loading);
     GLboolean res(false);
 
-    res = loadTextureFile(fileName);
+    res = m_resourceManager->loadTextureFile(fileName);
 
     return res;
 }
@@ -1044,37 +1044,6 @@ void VasnecovUniverse::renderInitialize()
     m_techExtensions.set(exts);
 }
 
-
-VasnecovMesh *VasnecovUniverse::designerFindMesh(const QString &name)
-{
-    if(raw_data.meshes.count(name))
-    {
-        return raw_data.meshes[name];
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
-/*!
- \brief
-
- \param name
- \return VasnecovTexture
-*/
-VasnecovTexture *VasnecovUniverse::designerFindTexture(const QString &name)
-{
-    if(raw_data.textures.count(name))
-    {
-        return raw_data.textures[name];
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
 GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
     GLboolean res(false);
@@ -1132,38 +1101,9 @@ GLenum VasnecovUniverse::renderUpdateData()
         }
     }
 
-    if(raw_data.wasUpdated)
+    if(m_resourceManager->renderUpdate())
     {
-        // Загрузка (догрузка) ресурсов
-        // Всё это делается с захваченным мьютексом, поэтому при больших загрузках стоять будет всё
-        if(raw_data.isUpdateFlag(Meshes))
-        {
-            if(!raw_data.meshesForLoading.empty())
-            {
-//				for(std::vector<VasnecovMesh *>::iterator mit = raw_data.meshesForLoading.begin();
-//					mit != raw_data.meshesForLoading.end(); ++mit)
-//				{
-
-//				}
-            }
-        }
-        if(raw_data.isUpdateFlag(Textures))
-        {
-            if(!raw_data.texturesForLoading.empty())
-            {
-                for(std::vector<VasnecovTexture *>::iterator tit = raw_data.texturesForLoading.begin();
-                    tit != raw_data.texturesForLoading.end(); ++tit)
-                {
-                    if(!(*tit)->loadImage())
-                    {
-                        // TODO: remove wrong textures from raw_data.textures and all objects
-                    }
-                }
-                raw_data.texturesForLoading.clear();
-                glBindTexture(GL_TEXTURE_2D, m_pipeline.m_texture2D); // Возврат текущей текстуры
-            }
-        }
-
+        glBindTexture(GL_TEXTURE_2D, m_pipeline.m_texture2D); // Возврат текущей текстуры
         wasUpdated = true;
     }
 

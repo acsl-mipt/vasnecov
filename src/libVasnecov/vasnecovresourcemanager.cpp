@@ -35,6 +35,16 @@ VasnecovResourceManager::~VasnecovResourceManager()
     }
 }
 
+GLboolean VasnecovResourceManager::setTexturesDir(const QString& dir)
+{
+    return setDirectory(dir, dirTextures);
+}
+
+GLboolean VasnecovResourceManager::setMeshesDir(const QString& dir)
+{
+    return setDirectory(dir, dirMeshes);
+}
+
 GLboolean VasnecovResourceManager::loadMeshFile(const QString& fileName)
 {
     QString path = dirMeshes + fileName; // Путь файла с расширением
@@ -222,6 +232,30 @@ GLboolean VasnecovResourceManager::addMesh(VasnecovMesh* mesh, const QString& fi
     return false;
 }
 
+VasnecovMesh*VasnecovResourceManager::designerFindMesh(const QString& name)
+{
+    if(meshes.count(name))
+    {
+        return meshes[name];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+VasnecovTexture*VasnecovResourceManager::designerFindTexture(const QString& name)
+{
+    if(textures.count(name))
+    {
+        return textures[name];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 GLuint VasnecovResourceManager::handleFilesInDir(const QString& dirPref, const QString& targetDir, const QString& format, GLboolean (VasnecovResourceManager::*workFun)(const QString&), GLboolean withSub)
 {
     GLuint res(0);
@@ -255,4 +289,45 @@ GLuint VasnecovResourceManager::handleFilesInDir(const QString& dirPref, const Q
         }
     }
     return res;
+}
+
+bool VasnecovResourceManager::renderUpdate()
+{
+    bool wasUpdated(false);
+
+    if(raw_data.wasUpdated)
+    {
+        // Загрузка (догрузка) ресурсов
+        // Всё это делается с захваченным мьютексом, поэтому при больших загрузках стоять будет всё
+        if(raw_data.isUpdateFlag(Meshes))
+        {
+            if(!meshesForLoading.empty())
+            {
+//				for(std::vector<VasnecovMesh *>::iterator mit = raw_data.meshesForLoading.begin();
+//					mit != raw_data.meshesForLoading.end(); ++mit)
+//				{
+
+//				}
+            }
+        }
+        if(raw_data.isUpdateFlag(Textures))
+        {
+            if(!texturesForLoading.empty())
+            {
+                for(std::vector<VasnecovTexture *>::iterator tit = texturesForLoading.begin();
+                    tit != texturesForLoading.end(); ++tit)
+                {
+                    if(!(*tit)->loadImage())
+                    {
+                        // TODO: remove wrong textures from raw_data.textures and all objects
+                    }
+                }
+                texturesForLoading.clear();
+            }
+        }
+
+        wasUpdated = true;
+    }
+
+    return wasUpdated;
 }
