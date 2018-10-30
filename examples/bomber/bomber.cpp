@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    VasnecovUniverse *universe = new VasnecovUniverse;
+    VasnecovUniverse *universe = new VasnecovUniverse();
 
     QGLWidget *widget = new QGLWidget(QGLFormat(QGL::SampleBuffers));
     widget->makeCurrent();

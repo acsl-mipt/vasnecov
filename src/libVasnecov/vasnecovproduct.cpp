@@ -217,7 +217,7 @@ GLfloat VasnecovProduct::renderCalculateDistanceToPlane(const QVector3D &planePo
     QVector3D centerPoint;
     if(m_mesh.pure())
     {
-        centerPoint = m_mesh.pure()->cm();
+        centerPoint = m_mesh.pure()->massCenter();
     }
 
     if(m_alienMs.pure())
@@ -303,9 +303,9 @@ void VasnecovProduct::renderDraw()
 
         if(m_drawingBox.pure())
         {
-            m_mesh.pure()->drawBorderBox();
+            m_mesh.pure()->drawBorderBox(pure_pipeline);
         }
-        m_mesh.pure()->drawModel();
+        m_mesh.pure()->drawModel(pure_pipeline);
     }
 }
 

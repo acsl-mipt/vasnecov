@@ -26,10 +26,11 @@ const GLfloat c_radToDeg = static_cast<GLfloat>(180.0 / M_PI); // Радианы
 const GLfloat c_degToRad = static_cast<GLfloat>(M_PI / 180.0); // Градусы в радианы
 
 class VasnecovElement;
+class VasnecovFigure;
 class VasnecovMaterial;
 class VasnecovMesh;
 class VasnecovProduct;
-class VasnecovFigure;
+class VasnecovTexture;
 
 namespace Vasnecov
 {

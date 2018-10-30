@@ -17,22 +17,21 @@
 class VasnecovMesh
 {
 public:
-    VasnecovMesh(const QString& meshPath, VasnecovPipeline* pipeline, const QString& name = "");
+    explicit VasnecovMesh(const QString& meshPath, const QString& name = QString());
 
     void setName(const QString& name); // Задать имя меша (необязательный параметр)
     VasnecovPipeline::ElementDrawingMethods type() const;
     GLboolean loadModel(GLboolean readFromMTL = Vasnecov::cfg_readFromMTL);
     GLboolean loadModel(const QString& path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
-    void drawModel(); // Отрисовка модели
-    QVector3D cm() const;
-    void drawBorderBox(); // Рисовать ограничивающий бокс
+    void drawModel(VasnecovPipeline* pipeline); // Отрисовка модели
+    void drawBorderBox(VasnecovPipeline* pipeline); // Рисовать ограничивающий бокс
+    const QVector3D& massCenter() const;
 
 protected:
     void optimizeData();
     void calculateBox();
 
 protected:
-    VasnecovPipeline* const m_pipeline;
     VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки
     QString m_name; // Имя меша (то, что пишется в мап мешей). Необязательный атрибут, для текстур и т.п.
     GLboolean m_isHidden; // Флаг на отрисовку
@@ -46,9 +45,9 @@ protected:
 
     GLboolean m_hasTexture; // Флаг наличия внешней текстуры
 
-    std::vector <QVector3D> m_borderBoxVertices; // Координаты ограничивающего бокса
-    std::vector <GLuint> m_borderBoxIndices; // Индексы для ограничивающего бокса
-    QVector3D m_cm; // Координата центра масс (по вершинам ограничивающей коробки)
+    std::vector<QVector3D> m_borderBoxVertices; // Координаты ограничивающего бокса
+    std::vector<GLuint> m_borderBoxIndices; // Индексы для ограничивающего бокса
+    QVector3D m_massCenter; // Координата центра масс (по вершинам ограничивающей коробки)
 
 private:
     struct QuadsIndices
@@ -125,7 +124,7 @@ inline VasnecovPipeline::ElementDrawingMethods VasnecovMesh::type() const
     return m_type;
 }
 
-inline QVector3D VasnecovMesh :: cm() const
+inline const QVector3D& VasnecovMesh::massCenter() const
 {
-    return m_cm;
+    return m_massCenter;
 }

@@ -14,6 +14,7 @@
 
 #include <QString>
 #include <QImage>
+#include <bmcl/Rc.h>
 #include <map>
 #include "configuration.h"
 #include "vasnecovmaterial.h"
@@ -24,44 +25,8 @@
 #include "elementlist.h"
 
 class VasnecovMaterial;
+class VasnecovResourceManager;
 
-namespace Vasnecov
-{
-    struct UniverseAttributes : public Attributes
-    {
-        // Данные, используемые только в потоке управления
-        std::map<QString, VasnecovMesh*> meshes;
-        std::map<QString, VasnecovTexture*> textures;
-
-        QString dirMeshes; // Основная директория мешей
-        QString dirTextures; // Основная директория текстур
-        QString dirTexturesDPref;
-        QString dirTexturesNPref;
-        QString dirTexturesIPref;
-
-        // Списки для загрузки
-        // Поскольку используется только один OpenGL контекст (в основном потоке), приходится использовать списки действий.
-        std::vector<VasnecovMesh*> meshesForLoading;
-        std::vector<VasnecovTexture*> texturesForLoading;
-
-        UniverseAttributes() :
-            Attributes(),
-            meshes(),
-            textures(),
-
-            dirMeshes(Vasnecov::cfg_dirMeshes),
-            dirTextures(Vasnecov::cfg_dirTextures),
-            dirTexturesDPref(Vasnecov::cfg_dirTexturesDPref),
-            dirTexturesNPref(Vasnecov::cfg_dirTexturesNPref),
-            dirTexturesIPref(Vasnecov::cfg_dirTexturesIPref),
-
-            meshesForLoading(),
-            texturesForLoading()
-        {
-        }
-        ~UniverseAttributes();
-    };
-}
 class VasnecovUniverse
 {
     // Управление индикатором загрузки
@@ -167,6 +132,7 @@ class VasnecovUniverse
 
 
 public:
+    explicit VasnecovUniverse(VasnecovResourceManager* resourceManager, const QGLContext* context = nullptr);
     explicit VasnecovUniverse(const QGLContext* context = nullptr);
     ~VasnecovUniverse();
 
@@ -231,39 +197,7 @@ public:
     void setBackgroundColor(const QColor& color);
     void setBackgroundColor(QRgb rgb);
 
-    // Загрузка ресурсов
-    /*
-     * Загрузка ресурсов происходит из директории ресурсов,
-     * [pathToApp]/stuff/ - по умолчанию.
-     * Имена ресурсов соответствуют адресу файла из этой директории.
-     */
-    // TODO: Unloading resources with full cleaning Worlds's content
-    GLboolean setTexturesDir(const QString& dir);
-    GLboolean setMeshesDir(const QString& dir);
-
-    void loadAll(); // Загрузка всех ресурсов из своих директорий
-
-    GLboolean loadMesh(const QString& fileName); // Загрузка конкретного меша
-    GLuint loadMeshes(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
-    GLboolean loadTexture(const QString& fileName);
-    GLuint loadTextures(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех текстур
-
     QString info(GLuint type = 0);
-
-protected:
-    // Блокирует мьютекс, но вызывается из других методов
-    // TODO: make abstract class Resource for textures, meshes, may be shaders. And use with template like an Element
-    GLboolean addTexture(VasnecovTexture* texture, const QString& fileId);
-    GLboolean addMesh(VasnecovMesh* mesh, const QString& fileId);
-
-    // Работа с файлами ресурсов
-    GLuint handleFilesInDir(const QString& dirPref,
-                            const QString& targetDir,
-                            const QString& format,
-                            GLboolean (VasnecovUniverse::*workFun)(const QString&),
-                            GLboolean withSub = true); // Поиск файлов в директории и выполнение с ними метода
-    GLboolean loadMeshFile(const QString& fileName);
-    GLboolean loadTextureFile(const QString& fileName);
 
 protected:
     // Методы, вызываемые из внешних потоков (работают с сырыми данными)
@@ -271,12 +205,6 @@ protected:
     VasnecovTexture* designerFindTexture(const QString& name);
 
     GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs);
-
-protected:
-    // Вспомогательные (не привязаны к внутренним данным)
-    GLboolean setDirectory(const QString& newDir, QString& oldDir) const;
-    GLboolean correctPath(QString& path, QString& fileId, const QString& format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
-    QString correctFileId(const QString& fileId, const QString& format) const; // Удаляет формат из имени
 
 protected:
     GLenum renderUpdateData(); // Единственный метод, который лочит мьютекс из основного потока (потока отрисовки)
@@ -290,10 +218,8 @@ protected:
     template <typename T>
     static void renderUpdateElementData(T* element)
     {
-        if(element)
-        {
+        if(element != nullptr)
             element->renderUpdateData();
-        }
     }
 
 private:
@@ -312,13 +238,12 @@ private:
 
     // Списки миров
     // Списки общих (между мирами) данных
-    Vasnecov::UniverseAttributes raw_data;
-    UniverseElementList m_elements;
+    Vasnecov::Attributes                raw_data;
+    bmcl::Rc<VasnecovResourceManager>   m_resourceManager;
+    UniverseElementList                 m_elements;
 
     enum Updated
     {
-        Meshes			= 0x0000001,
-        Textures		= 0x0000002,
         Worlds			= 0x0000004,
         Materials		= 0x0000008,
         Products		= 0x0000010,

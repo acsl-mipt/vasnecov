@@ -24,8 +24,7 @@
  \param meshPath
  \param name
 */
-VasnecovMesh::VasnecovMesh(const QString &meshPath, VasnecovPipeline *pipeline, const QString &name) :
-    m_pipeline(pipeline),
+VasnecovMesh::VasnecovMesh(const QString &meshPath, const QString &name) :
     m_type(VasnecovPipeline::Points),
     m_name(name),
     m_isHidden(true),
@@ -40,7 +39,7 @@ VasnecovMesh::VasnecovMesh(const QString &meshPath, VasnecovPipeline *pipeline, 
     m_hasTexture(false),
     m_borderBoxVertices(8),
     m_borderBoxIndices(24),
-    m_cm()
+    m_massCenter()
 {
 }
 
@@ -454,12 +453,15 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
  \fn VasnecovMesh::drawModel
  \param scale
 */
-void VasnecovMesh::drawModel()
+void VasnecovMesh::drawModel(VasnecovPipeline* pipeline)
 {
+    if(pipeline == nullptr)
+        return;
+
     if(!m_isHidden && m_isLoaded)
     {
-        std::vector<QVector3D> *norms(0);
-        std::vector<QVector2D> *texts(0);
+        std::vector<QVector3D> *norms(nullptr);
+        std::vector<QVector2D> *texts(nullptr);
 
         if(!m_normals.empty())
         {
@@ -470,11 +472,11 @@ void VasnecovMesh::drawModel()
             texts = &m_textures;
         }
 
-        m_pipeline->drawElements(m_type,
-                                 &m_indices,
-                                 &m_vertices,
-                                 norms,
-                                 texts);
+        pipeline->drawElements(m_type,
+                               &m_indices,
+                               &m_vertices,
+                               norms,
+                               texts);
     }
 }
 
@@ -483,11 +485,14 @@ void VasnecovMesh::drawModel()
 
  \fn VasnecovMesh::drawBorderBox
 */
-void VasnecovMesh::drawBorderBox()
+void VasnecovMesh::drawBorderBox(VasnecovPipeline* pipeline)
 {
+    if(pipeline == nullptr)
+        return;
+
     if(!m_isHidden && m_isLoaded)
     {
-        m_pipeline->drawElements(VasnecovPipeline::Lines, &m_borderBoxIndices, &m_borderBoxVertices);
+        pipeline->drawElements(VasnecovPipeline::Lines, &m_borderBoxIndices, &m_borderBoxVertices);
     }
 }
 
@@ -618,9 +623,9 @@ void VasnecovMesh::calculateBox()
     m_borderBoxVertices[5].setX(m_borderBoxVertices[0].x()); m_borderBoxVertices[5].setY(m_borderBoxVertices[6].y()); m_borderBoxVertices[5].setZ(m_borderBoxVertices[6].z());
     m_borderBoxVertices[7].setX(m_borderBoxVertices[6].x()); m_borderBoxVertices[7].setY(m_borderBoxVertices[0].y()); m_borderBoxVertices[7].setZ(m_borderBoxVertices[6].z());
 
-    m_cm.setX((m_borderBoxVertices[0].x() + m_borderBoxVertices[6].x())*0.5f);
-    m_cm.setY((m_borderBoxVertices[0].y() + m_borderBoxVertices[6].y())*0.5f);
-    m_cm.setZ((m_borderBoxVertices[0].z() + m_borderBoxVertices[6].z())*0.5f);
+    m_massCenter.setX((m_borderBoxVertices[0].x() + m_borderBoxVertices[6].x())*0.5f);
+    m_massCenter.setY((m_borderBoxVertices[0].y() + m_borderBoxVertices[6].y())*0.5f);
+    m_massCenter.setZ((m_borderBoxVertices[0].z() + m_borderBoxVertices[6].z())*0.5f);
 
 
     // Индексы для бокса
