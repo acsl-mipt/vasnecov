@@ -37,6 +37,9 @@ private:
     VasnecovMesh* designerFindMesh(const QString& name);
     VasnecovTexture* designerFindTexture(const QString& name);
 
+    bool handleMeshesDir(const QString& dirName, GLboolean withSub);
+    bool handleTexturesDir(const QString& dirName, GLboolean withSub);
+
     // Работа с файлами ресурсов
     GLuint handleFilesInDir(const QString& dirPref,
                             const QString& targetDir,
@@ -45,6 +48,10 @@ private:
                             GLboolean withSub = true); // Поиск файлов в директории и выполнение с ними метода
 
     bool renderUpdate();
+
+    const QString& texturesDPref() const {return dirTexturesDPref;}
+    const QString& texturesNPref() const {return dirTexturesNPref;}
+    const QString& texturesIPref() const {return dirTexturesIPref;}
 
 private:
     enum Updated

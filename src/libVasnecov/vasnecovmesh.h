@@ -11,6 +11,8 @@
 #pragma once
 
 #include <vector>
+#include <QVector2D>
+#include <QVector3D>
 #include "configuration.h"
 #include "vasnecovpipeline.h"
 

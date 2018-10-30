@@ -256,6 +256,22 @@ VasnecovTexture*VasnecovResourceManager::designerFindTexture(const QString& name
     }
 }
 
+bool VasnecovResourceManager::handleMeshesDir(const QString& dirName, GLboolean withSub)
+{
+    return handleFilesInDir(dirMeshes, dirName, Vasnecov::cfg_meshFormat, &VasnecovResourceManager::loadMeshFile, withSub);
+}
+
+bool VasnecovResourceManager::handleTexturesDir(const QString& dirName, GLboolean withSub)
+{
+    GLuint res(0);
+
+    res  = handleFilesInDir(dirTextures, dirTexturesDPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
+    res += handleFilesInDir(dirTextures, dirTexturesIPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
+    res += handleFilesInDir(dirTextures, dirTexturesNPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
+
+    return res;
+}
+
 GLuint VasnecovResourceManager::handleFilesInDir(const QString& dirPref, const QString& targetDir, const QString& format, GLboolean (VasnecovResourceManager::*workFun)(const QString&), GLboolean withSub)
 {
     GLuint res(0);

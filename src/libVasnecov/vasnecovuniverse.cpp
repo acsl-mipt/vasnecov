@@ -403,7 +403,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
 {
     if(!textureName.isEmpty())
     {
-        return addPart(name, world, meshName, addMaterial(raw_data.dirTexturesDPref + textureName), parent);
+        return addPart(name, world, meshName, addMaterial(m_resourceManager->texturesDPref() + textureName), parent);
     }
     else
     {
@@ -636,19 +636,19 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
     {
         QString corTextureName = VasnecovResourceManager::correctFileId(textureName, Vasnecov::cfg_textureFormat);
 
-        texture = designerFindTexture(raw_data.dirTexturesIPref + corTextureName);
+        texture = m_resourceManager->designerFindTexture(m_resourceManager->texturesIPref() + corTextureName);
 
         if(!texture)
         {
             // Попытка загрузить насильно
             // Метод загрузки сам управляет мьютексом
-            if(!m_resourceManager->loadTextureFile(raw_data.dirTexturesIPref + corTextureName))
+            if(!m_resourceManager->loadTextureFile(m_resourceManager->texturesIPref() + corTextureName))
             {
                 Vasnecov::problem("Не найдена заданная текстура");
                 return nullptr;
             }
 
-            texture = designerFindTexture(raw_data.dirTexturesIPref + corTextureName);
+            texture = m_resourceManager->designerFindTexture(m_resourceManager->texturesIPref() + corTextureName);
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
@@ -838,13 +838,13 @@ VasnecovTexture *VasnecovUniverse::textureByName(const QString& textureName, Vas
     switch(type)
     {
         case Vasnecov::TextureTypeDiffuse:
-            newName = raw_data.dirTexturesDPref + textureName;
+            newName = m_resourceManager->texturesDPref() + textureName;
             break;
         case Vasnecov::TextureTypeInterface:
-            newName = raw_data.dirTexturesIPref + textureName;
+            newName = m_resourceManager->texturesIPref() + textureName;
             break;
         case Vasnecov::TextureTypeNormal:
-            newName = raw_data.dirTexturesNPref + textureName;
+            newName = m_resourceManager->texturesNPref() + textureName;
             break;
         default: // Использовать путь без префиксов
             newName = textureName;
@@ -938,7 +938,7 @@ GLuint VasnecovUniverse::loadMeshes(const QString& dirName, GLboolean withSub)
     LoadingStatus lStatus(&m_loading);
     GLuint res(0);
 
-    res = handleFilesInDir(raw_data.dirMeshes, dirName, Vasnecov::cfg_meshFormat, &VasnecovUniverse::loadMeshFile, withSub);
+    res = m_resourceManager->handleMeshesDir(dirName, withSub);
 
     return res;
 }
@@ -973,9 +973,7 @@ GLuint VasnecovUniverse::loadTextures(const QString& dirName, GLboolean withSub)
     LoadingStatus lStatus(&m_loading);
     GLuint res(0);
 
-    res  = handleFilesInDir(raw_data.dirTextures, raw_data.dirTexturesDPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovUniverse::loadTextureFile, withSub);
-    res += handleFilesInDir(raw_data.dirTextures, raw_data.dirTexturesIPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovUniverse::loadTextureFile, withSub);
-    res += handleFilesInDir(raw_data.dirTextures, raw_data.dirTexturesNPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovUniverse::loadTextureFile, withSub);
+    res = m_resourceManager->handleTexturesDir(dirName, withSub);
 
     return res;
 }

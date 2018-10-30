@@ -24,13 +24,14 @@ src = [
   'src/libVasnecov/vasnecovlabel.cpp',
   'src/libVasnecov/vasnecovlamp.cpp',
   'src/libVasnecov/vasnecovmaterial.cpp',
-  'src/libVasnecov/vasnecovtexture.cpp',
-  'src/libVasnecov/vasnecovuniverse.cpp',
-  'src/libVasnecov/vasnecovworld.cpp',
   'src/libVasnecov/vasnecovmesh.cpp',
   'src/libVasnecov/vasnecovpipeline.cpp',
   'src/libVasnecov/vasnecovproduct.cpp',
+  'src/libVasnecov/vasnecovresourcemanager.cpp',
   'src/libVasnecov/vasnecovscene.cpp',
+  'src/libVasnecov/vasnecovtexture.cpp',
+  'src/libVasnecov/vasnecovuniverse.cpp',
+  'src/libVasnecov/vasnecovworld.cpp',
 ]
 
 processed = qt5_mod.preprocess(
