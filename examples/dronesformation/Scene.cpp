@@ -33,7 +33,7 @@ void Scene::drawBackground(QPainter *painter, const QRectF &rect)
     if(_world)
     {
         Vasnecov::WorldParameters params = _world->worldParameters();
-        int w(params.width), h(params.height);
+        int w(params.width()), h(params.height());
 
         if(windowWidth() != w || windowHeight() != h)
         {

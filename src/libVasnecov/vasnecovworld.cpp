@@ -41,10 +41,10 @@ VasnecovWorld::VasnecovWorld(VasnecovPipeline* pipeline,
 
     m_elements()
 {
-    m_parameters.editableRaw().x = mx;
-    m_parameters.editableRaw().y = my;
-    m_parameters.editableRaw().width = width;
-    m_parameters.editableRaw().height = height;
+    m_parameters.editableRaw().setX(mx);
+    m_parameters.editableRaw().setY(my);
+    m_parameters.editableRaw().setWidth(width);
+    m_parameters.editableRaw().setHeight(height);
 
     // Перспективная проекция
     m_perspective.editableRaw().ratio = static_cast<GLfloat>(width)/height;
@@ -341,14 +341,14 @@ void VasnecovWorld::renderDraw()
         pure_pipeline->clearZBuffer();
 
         // Задание характеристик мира
-        pure_pipeline->activateDepth(m_parameters.pure().depth);
-        pure_pipeline->setDrawingType(m_parameters.pure().drawingType);
+        pure_pipeline->activateDepth(m_parameters.pure().depth());
+        pure_pipeline->setDrawingType(m_parameters.pure().drawingType());
         pure_pipeline->setColor(QColor(255, 255, 255, 255));
 
         // Проецирование и установка камеры
-        pure_pipeline->setViewport(m_parameters.pure().x, m_parameters.pure().y, m_parameters.pure().width, m_parameters.pure().height);
+        pure_pipeline->setViewport(m_parameters.pure().x(), m_parameters.pure().y(), m_parameters.pure().width(), m_parameters.pure().height());
 
-        if(m_parameters.pure().projection == Vasnecov::WorldTypePerspective) // Перспективная проекция
+        if(m_parameters.pure().projection() == Vasnecov::WorldTypePerspective) // Перспективная проекция
         {
             pure_pipeline->setPerspective(m_perspective.pure(), renderCalculateCamera());
         }
@@ -365,7 +365,7 @@ void VasnecovWorld::renderDraw()
         pure_pipeline->disableLamps();
 
         GLboolean lampsWork(false);
-        if(m_elements.hasPureLamps() && m_parameters.pure().light)
+        if(m_elements.hasPureLamps() && m_parameters.pure().light())
         {
             pure_pipeline->setAmbientColor(m_lightModel.ambientColor());
             pure_pipeline->enableLamps();
@@ -562,33 +562,33 @@ Vasnecov::WorldParameters VasnecovWorld::worldParameters() const
 
 Vasnecov::WorldTypes VasnecovWorld::projection() const
 {
-    Vasnecov::WorldTypes projection(m_parameters.raw().projection);
+    Vasnecov::WorldTypes projection(m_parameters.raw().projection());
     return projection;
 }
 
 GLint VasnecovWorld::x() const
 {
-    return m_parameters.raw().x;
+    return m_parameters.raw().x();
 }
 
 GLint VasnecovWorld::y() const
 {
-    return m_parameters.raw().y;
+    return m_parameters.raw().y();
 }
 
 GLsizei VasnecovWorld::width() const
 {
-    return m_parameters.raw().width;
+    return m_parameters.raw().width();
 }
 
 GLsizei VasnecovWorld::height() const
 {
-    return m_parameters.raw().height;
+    return m_parameters.raw().height();
 }
 
 QSize VasnecovWorld::size() const
 {
-    return QSize(m_parameters.raw().width, m_parameters.raw().height);
+    return QSize(m_parameters.raw().width(), m_parameters.raw().height());
 }
 /*!
  \brief
@@ -598,10 +598,10 @@ QSize VasnecovWorld::size() const
 */
 QRect VasnecovWorld::window() const
 {
-    return QRect(m_parameters.raw().x,
-                 m_parameters.raw().y,
-                 m_parameters.raw().width,
-                 m_parameters.raw().height);
+    return QRect(m_parameters.raw().x(),
+                 m_parameters.raw().y(),
+                 m_parameters.raw().width(),
+                 m_parameters.raw().height());
 }
 /*!
  \brief
@@ -611,9 +611,9 @@ QRect VasnecovWorld::window() const
 */
 void VasnecovWorld::setDrawingType(Vasnecov::PolygonDrawingTypes type)
 {
-    if(m_parameters.raw().drawingType != type)
+    if(m_parameters.raw().drawingType() != type)
     {
-        m_parameters.editableRaw().drawingType = type;
+        m_parameters.editableRaw().setDrawingType(type);
     }
 }
 
@@ -688,19 +688,19 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QPointF &point)
 
 Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 {
-    if(x >= m_parameters.raw().x &&
-       y >= m_parameters.raw().y &&
-       x <= (m_parameters.raw().x + m_parameters.raw().width) &&
-       y <= (m_parameters.raw().y + m_parameters.raw().height) &&
-       m_parameters.raw().width > 0.0f &&
-       m_parameters.raw().height > 0.0f)
+    if(x >= m_parameters.raw().x() &&
+       y >= m_parameters.raw().y() &&
+       x <= (m_parameters.raw().x() + m_parameters.raw().width()) &&
+       y <= (m_parameters.raw().y() + m_parameters.raw().height()) &&
+       m_parameters.raw().width() > 0.0f &&
+       m_parameters.raw().height() > 0.0f)
     {
         // Поскольку камера умножается только на проективную матрицу, то матрица модели-вида здесь не нужна
         QMatrix4x4 matInverted = m_projectionMatrix.raw().inverted();
 
         // z [0; 1]
-        QVector4D viewVector((x - m_parameters.raw().x) * 2.0f / m_parameters.raw().width - 1.0f,
-                             (y - m_parameters.raw().y) * 2.0f / m_parameters.raw().height - 1.0f,
+        QVector4D viewVector((x - m_parameters.raw().x()) * 2.0f / m_parameters.raw().width() - 1.0f,
+                             (y - m_parameters.raw().y()) * 2.0f / m_parameters.raw().height() - 1.0f,
                              -1.0f,
                              1.0f);
 
@@ -755,9 +755,9 @@ GLboolean VasnecovWorld::setProjection(Vasnecov::WorldTypes type)
 {
     if(type == Vasnecov::WorldTypePerspective || type == Vasnecov::WorldTypeOrthographic)
     {
-        if(m_parameters.raw().projection != type)
+        if(m_parameters.raw().projection() != type)
         {
-            m_parameters.editableRaw().projection = type;
+            m_parameters.editableRaw().setProjection(type);
         }
         return 1;
     }
@@ -783,27 +783,27 @@ GLboolean VasnecovWorld::setWindow(GLint x, GLint y, GLsizei width, GLsizei heig
     {
         GLboolean updated (false);
 
-        if(m_parameters.raw().x != x)
+        if(m_parameters.raw().x() != x)
         {
-            m_parameters.editableRaw().x = x;
+            m_parameters.editableRaw().setX(x);
             updated = true;
         }
 
-        if(m_parameters.raw().y != y)
+        if(m_parameters.raw().y() != y)
         {
-            m_parameters.editableRaw().y = y;
+            m_parameters.editableRaw().setY(y);
             updated = true;
         }
 
-        if(m_parameters.raw().width != width)
+        if(m_parameters.raw().width() != width)
         {
-            m_parameters.editableRaw().width = width;
+            m_parameters.editableRaw().setWidth(width);
             updated = true;
         }
 
-        if(m_parameters.raw().height != height)
+        if(m_parameters.raw().height() != height)
         {
-            m_parameters.editableRaw().height = height;
+            m_parameters.editableRaw().setHeight(height);
             updated = true;
         }
 
@@ -834,18 +834,18 @@ GLboolean VasnecovWorld::setWindow(GLint x, GLint y, GLsizei width, GLsizei heig
 */
 GLboolean VasnecovWorld::setParameters(Vasnecov::WorldParameters parameters) // TODO: to different parameters
 {
-    if(parameters.width > Vasnecov::cfg_worldWidthMin && parameters.width < Vasnecov::cfg_worldWidthMax &&
-       parameters.height > Vasnecov::cfg_worldHeightMin && parameters.height < Vasnecov::cfg_worldHeightMax &&
-       (parameters.projection == Vasnecov::WorldTypePerspective ||
-        parameters.projection == Vasnecov::WorldTypeOrthographic))
+    if(parameters.width() > Vasnecov::cfg_worldWidthMin && parameters.width() < Vasnecov::cfg_worldWidthMax &&
+       parameters.height() > Vasnecov::cfg_worldHeightMin && parameters.height() < Vasnecov::cfg_worldHeightMax &&
+       (parameters.projection() == Vasnecov::WorldTypePerspective ||
+        parameters.projection() == Vasnecov::WorldTypeOrthographic))
     {
         GLboolean updated(false);
 
         updated = m_parameters.set(parameters);
 
-        if(!qFuzzyCompare(m_perspective.raw().ratio, static_cast<GLfloat>(parameters.width)/parameters.height))
+        if(!qFuzzyCompare(m_perspective.raw().ratio, static_cast<GLfloat>(parameters.width())/parameters.height()))
         {
-            m_perspective.editableRaw().ratio = static_cast<GLfloat>(parameters.width)/parameters.height;
+            m_perspective.editableRaw().ratio = static_cast<GLfloat>(parameters.width())/parameters.height();
             updated = true;
         }
 
@@ -911,8 +911,8 @@ GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfl
 */
 void VasnecovWorld::setDepth()
 {
-    if(!m_parameters.raw().depth)
-        m_parameters.editableRaw().depth = true;
+    if(!m_parameters.raw().depth())
+        m_parameters.editableRaw().setDepth(true);
 }
 /*!
  \brief
@@ -921,18 +921,18 @@ void VasnecovWorld::setDepth()
 */
 void VasnecovWorld::unsetDepth()
 {
-    if(m_parameters.raw().depth)
-        m_parameters.editableRaw().depth = false;
+    if(m_parameters.raw().depth())
+        m_parameters.editableRaw().setDepth(false);
 }
 
 GLboolean VasnecovWorld::depth() const
 {
-    return m_parameters.raw().depth;
+    return m_parameters.raw().depth();
 }
 
 void VasnecovWorld::switchDepth()
 {
-    m_parameters.editableRaw().depth = !m_parameters.raw().depth;
+    m_parameters.editableRaw().setDepth(!m_parameters.raw().depth());
 }
 
 /*!
@@ -942,8 +942,8 @@ void VasnecovWorld::switchDepth()
 */
 void VasnecovWorld::setLight()
 {
-    if(!m_parameters.raw().light)
-        m_parameters.editableRaw().light = true;
+    if(!m_parameters.raw().light())
+        m_parameters.editableRaw().setLight(true);
 }
 /*!
  \brief
@@ -952,18 +952,18 @@ void VasnecovWorld::setLight()
 */
 void VasnecovWorld::unsetLight()
 {
-    if(m_parameters.editableRaw().light)
-        m_parameters.editableRaw().light = false;
+    if(m_parameters.editableRaw().light())
+        m_parameters.editableRaw().setLight(false);
 }
 
 GLboolean VasnecovWorld::light() const
 {
-    return m_parameters.raw().light;
+    return m_parameters.raw().light();
 }
 
 void VasnecovWorld::switchLight()
 {
-    m_parameters.editableRaw().light = !m_parameters.raw().light;
+    m_parameters.editableRaw().setLight(!m_parameters.raw().light());
 }
 
 VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const

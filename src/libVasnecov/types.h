@@ -55,46 +55,72 @@ namespace Vasnecov
         PolygonDrawingTypePoints = GL_POINT
     };
     // Характеристики вида
-    struct WorldParameters
+    class WorldParameters
     {
-        Vasnecov::WorldTypes projection; // Тип проекции (орто/перспектива)
-        GLint x, y; // координаты мира (окна просмотра) в плоскости экрана
-        GLsizei width, height;	// ширина, высота окна просмотра
-        Vasnecov::PolygonDrawingTypes drawingType; // GL_FILL, GL_LINE, GL_POINT
-        GLboolean depth; // Тест глубины
-        GLboolean light;
-
-        WorldParameters() :
-            projection(WorldTypePerspective),
-            x(0), y(0),
-            width(320), height(280),
-            drawingType(Vasnecov::PolygonDrawingTypeNormal),
-            depth(true),
-            light(true)
+    public:
+        explicit WorldParameters() :
+            m_projection(WorldTypePerspective),
+            m_x(0), m_y(0),
+            m_width(320), m_height(280),
+            m_drawingType(Vasnecov::PolygonDrawingTypeNormal),
+            m_depth(true),
+            m_light(true)
         {
         }
         bool operator!=(const WorldParameters& other) const
         {
-            return projection != other.projection ||
-                   x != other.x ||
-                   y != other.y ||
-                   width != other.width ||
-                   height != other.height ||
-                   drawingType != other.drawingType ||
-                   depth != other.depth ||
-                   light != other.light;
+            return m_projection != other.m_projection ||
+                   m_x != other.m_x ||
+                   m_y != other.m_y ||
+                   m_width != other.m_width ||
+                   m_height != other.m_height ||
+                   m_drawingType != other.m_drawingType ||
+                   m_depth != other.m_depth ||
+                   m_light != other.m_light;
         }
         bool operator==(const WorldParameters& other) const
         {
-            return projection == other.projection &&
-                   x == other.x &&
-                   y == other.y &&
-                   width == other.width &&
-                   height == other.height &&
-                   drawingType == other.drawingType &&
-                   depth == other.depth &&
-                   light == other.light;
+            return m_projection == other.m_projection &&
+                   m_x == other.m_x &&
+                   m_y == other.m_y &&
+                   m_width == other.m_width &&
+                   m_height == other.m_height &&
+                   m_drawingType == other.m_drawingType &&
+                   m_depth == other.m_depth &&
+                   m_light == other.m_light;
         }
+
+        Vasnecov::WorldTypes projection() const;
+        void setProjection(const Vasnecov::WorldTypes& projection);
+
+        GLint x() const;
+        void setX(const GLint& x);
+
+        GLint y() const;
+        void setY(const GLint& y);
+
+        GLsizei width() const;
+        void setWidth(const GLsizei& width);
+
+        GLsizei height() const;
+        void setHeight(const GLsizei& height);
+
+        Vasnecov::PolygonDrawingTypes drawingType() const;
+        void setDrawingType(const Vasnecov::PolygonDrawingTypes& drawingType);
+
+        GLboolean depth() const;
+        void setDepth(const GLboolean& depth);
+
+        GLboolean light() const;
+        void setLight(const GLboolean& light);
+
+    private:
+        Vasnecov::WorldTypes            m_projection; // Тип проекции (орто/перспектива)
+        GLint                           m_x, m_y; // координаты мира (окна просмотра) в плоскости экрана
+        GLsizei                         m_width, m_height;	// ширина, высота окна просмотра
+        Vasnecov::PolygonDrawingTypes   m_drawingType; // GL_FILL, GL_LINE, GL_POINT
+        GLboolean                       m_depth; // Тест глубины
+        GLboolean                       m_light;
     };
     struct Perspective
     {
@@ -270,4 +296,85 @@ namespace Vasnecov
     private:
         QVector3D m_p1, m_p2;
     };
+
+inline Vasnecov::WorldTypes WorldParameters::projection() const
+{
+    return m_projection;
+}
+
+inline void WorldParameters::setProjection(const Vasnecov::WorldTypes& projection)
+{
+    m_projection = projection;
+}
+
+inline GLint WorldParameters::x() const
+{
+    return m_x;
+}
+
+inline void WorldParameters::setX(const GLint& x)
+{
+    m_x = x;
+}
+
+inline GLint WorldParameters::y() const
+{
+    return m_y;
+}
+
+inline void WorldParameters::setY(const GLint& y)
+{
+    m_y = y;
+}
+
+inline GLsizei WorldParameters::width() const
+{
+    return m_width;
+}
+
+inline void WorldParameters::setWidth(const GLsizei& width)
+{
+    m_width = width;
+}
+
+inline GLsizei WorldParameters::height() const
+{
+    return m_height;
+}
+
+inline void WorldParameters::setHeight(const GLsizei& height)
+{
+    m_height = height;
+}
+
+inline Vasnecov::PolygonDrawingTypes WorldParameters::drawingType() const
+{
+    return m_drawingType;
+}
+
+inline void WorldParameters::setDrawingType(const Vasnecov::PolygonDrawingTypes& drawingType)
+{
+    m_drawingType = drawingType;
+}
+
+inline GLboolean WorldParameters::depth() const
+{
+    return m_depth;
+}
+
+inline void WorldParameters::setDepth(const GLboolean& depth)
+{
+    m_depth = depth;
+}
+
+inline GLboolean WorldParameters::light() const
+{
+    return m_light;
+}
+
+inline void WorldParameters::setLight(const GLboolean& light)
+{
+    m_light = light;
+}
+
 }

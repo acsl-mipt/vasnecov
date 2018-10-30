@@ -225,7 +225,7 @@ inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel* label)
 
 inline void VasnecovWorld::renderSwitchLamps() const
 {
-    if(m_parameters.pure().light)
+    if(m_parameters.pure().light())
     {
         pure_pipeline->enableLamps();
     }
