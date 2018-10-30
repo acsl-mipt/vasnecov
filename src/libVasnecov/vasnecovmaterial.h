@@ -30,11 +30,11 @@ class VasnecovMaterial : public Vasnecov::CoreObject
 {
 public:
     VasnecovMaterial(VasnecovPipeline* pipeline,
-                     const std::string& name = std::string());
+                     const QString& name = QString());
     VasnecovMaterial(VasnecovPipeline* pipeline,
                      VasnecovTexture* textureD,
                      VasnecovTexture* textureN = nullptr,
-                     const std::string& name = std::string());
+                     const QString& name = QString());
 
 public:
     void setTextureD(VasnecovTexture* textureD);

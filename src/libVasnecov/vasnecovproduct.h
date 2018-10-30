@@ -39,18 +39,18 @@ public:
                     GLuint level = 0);
 
     VasnecovProduct(VasnecovPipeline* pipeline,
-                    const std::string& name,
+                    const QString& name,
                     VasnecovProduct::ProductTypes type,
                     VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
 
     VasnecovProduct(VasnecovPipeline* pipeline,
-                    const std::string& name,
+                    const QString& name,
                     VasnecovMesh* mesh,
                     VasnecovProduct* parent = nullptr,
                     GLuint level = 0);
     VasnecovProduct(VasnecovPipeline* pipeline,
-                    const std::string& name,
+                    const QString& name,
                     VasnecovMesh* mesh,
                     VasnecovMaterial* material,
                     VasnecovProduct* parent = nullptr,

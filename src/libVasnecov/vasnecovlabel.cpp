@@ -23,7 +23,7 @@
  \param size
  \param texture
 */
-VasnecovLabel::VasnecovLabel(VasnecovPipeline *pipeline, const std::string &name, const QVector2D &size, VasnecovTexture *texture) :
+VasnecovLabel::VasnecovLabel(VasnecovPipeline *pipeline, const QString &name, const QVector2D &size, VasnecovTexture *texture) :
     VasnecovElement(pipeline, name),
     m_position(size.x() * 0.5f, size.y() * 0.5f),
     m_texturePosition(),

@@ -52,7 +52,7 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::Pr
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -79,7 +79,7 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& 
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
     raw_M1(),
     raw_ownVisible(true),
@@ -108,7 +108,7 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& 
  \param parent
  \param level
 */
-VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
+VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
     raw_M1(),
     raw_ownVisible(true),

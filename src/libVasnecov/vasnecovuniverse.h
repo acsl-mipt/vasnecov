@@ -37,14 +37,14 @@ namespace Vasnecov
     struct UniverseAttributes : public Attributes
     {
         // Данные, используемые только в потоке управления
-        std::map<std::string, VasnecovMesh*> meshes;
-        std::map<std::string, VasnecovTexture*> textures;
+        std::map<QString, VasnecovMesh*> meshes;
+        std::map<QString, VasnecovTexture*> textures;
 
-        std::string dirMeshes; // Основная директория мешей
-        std::string dirTextures; // Основная директория текстур
-        std::string dirTexturesDPref;
-        std::string dirTexturesNPref;
-        std::string dirTexturesIPref;
+        QString dirMeshes; // Основная директория мешей
+        QString dirTextures; // Основная директория текстур
+        QString dirTexturesDPref;
+        QString dirTexturesNPref;
+        QString dirTexturesIPref;
 
         // Списки для загрузки
         // Поскольку используется только один OpenGL контекст (в основном потоке), приходится использовать списки действий.
@@ -182,55 +182,55 @@ public:
     // Но это не критично, т.к. поток отрисовки использует tryLock и просто не обновляет данные, рисуя старые
     VasnecovWorld* addWorld(GLint posX, GLint posY, GLsizei width, GLsizei height);
 
-    VasnecovLamp* addLamp(const std::string& name,
+    VasnecovLamp* addLamp(const QString& name,
                           VasnecovWorld* world,
                           VasnecovLamp::LampTypes type = VasnecovLamp::LampTypeCelestial);
     VasnecovLamp* referLampToWorld(VasnecovLamp* lamp, VasnecovWorld* world);
 
     // Добавление новых продуктов
-    VasnecovProduct* addAssembly(const std::string& name,
+    VasnecovProduct* addAssembly(const QString& name,
                                   VasnecovWorld* world,
                                   VasnecovProduct* parent = nullptr);
 
-    VasnecovProduct* addPart(const std::string& name,
+    VasnecovProduct* addPart(const QString& name,
                               VasnecovWorld* world,
-                              const std::string& meshName,
+                              const QString& meshName,
                               VasnecovProduct* parent = nullptr); // Материал по умолчанию
 
-    VasnecovProduct* addPart(const std::string& name,
+    VasnecovProduct* addPart(const QString& name,
                               VasnecovWorld* world,
-                              const std::string& meshName,
+                              const QString& meshName,
                               VasnecovMaterial* material,
                               VasnecovProduct* parent = nullptr);
 
-    VasnecovProduct* addPart(const std::string& name,
+    VasnecovProduct* addPart(const QString& name,
                               VasnecovWorld* world,
-                              const std::string& meshName,
-                              const std::string& textureName,
+                              const QString& meshName,
+                              const QString& textureName,
                               VasnecovProduct* parent = nullptr); // Материал по умолчанию с указанной текстурой
     VasnecovProduct* referProductToWorld(VasnecovProduct* product, VasnecovWorld* world); // Сделать дубликат изделия в заданный мир
     GLboolean removeProduct(VasnecovProduct* product);
 
-    VasnecovFigure* addFigure(const std::string& name,
+    VasnecovFigure* addFigure(const QString& name,
                               VasnecovWorld* world);
     GLboolean removeFigure(VasnecovFigure* figure);
 
-    VasnecovLabel* addLabel(const std::string& name,
+    VasnecovLabel* addLabel(const QString& name,
                             VasnecovWorld* world,
                             GLfloat width,
                             GLfloat height);
-    VasnecovLabel* addLabel(const std::string& name,
+    VasnecovLabel* addLabel(const QString& name,
                             VasnecovWorld* world,
                             GLfloat width,
                             GLfloat height,
-                            const std::string& textureName);
+                            const QString& textureName);
     VasnecovLabel* referLabelToWorld(VasnecovLabel* label, VasnecovWorld* world);
     GLboolean removeLabel(VasnecovLabel* label);
 
     // Добавление материала
-    VasnecovMaterial* addMaterial(const std::string& textureName);
+    VasnecovMaterial* addMaterial(const QString& textureName);
     VasnecovMaterial* addMaterial();
-    VasnecovTexture* textureByName(const std::string& textureName, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
+    VasnecovTexture* textureByName(const QString& textureName, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
 
 
     // Настройки рендеринга
@@ -245,45 +245,45 @@ public:
      * Имена ресурсов соответствуют адресу файла из этой директории.
      */
     // TODO: Unloading resources with full cleaning Worlds's content
-    GLboolean setTexturesDir(const std::string& dir);
-    GLboolean setMeshesDir(const std::string& dir);
+    GLboolean setTexturesDir(const QString& dir);
+    GLboolean setMeshesDir(const QString& dir);
 
     void loadAll(); // Загрузка всех ресурсов из своих директорий
 
-    GLboolean loadMesh(const std::string& fileName); // Загрузка конкретного меша
-    GLuint loadMeshes(const std::string& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
-    GLboolean loadTexture(const std::string& fileName);
-    GLuint loadTextures(const std::string& dirName = "", GLboolean withSub = true); // Загрузка всех текстур
+    GLboolean loadMesh(const QString& fileName); // Загрузка конкретного меша
+    GLuint loadMeshes(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
+    GLboolean loadTexture(const QString& fileName);
+    GLuint loadTextures(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех текстур
 
     QString info(GLuint type = 0);
 
 protected:
     // Блокирует мьютекс, но вызывается из других методов
     // TODO: make abstract class Resource for textures, meshes, may be shaders. And use with template like an Element
-    GLboolean addTexture(VasnecovTexture* texture, const std::string& fileId);
-    GLboolean addMesh(VasnecovMesh* mesh, const std::string& fileId);
+    GLboolean addTexture(VasnecovTexture* texture, const QString& fileId);
+    GLboolean addMesh(VasnecovMesh* mesh, const QString& fileId);
 
     // Работа с файлами ресурсов
-    GLuint handleFilesInDir(const std::string& dirPref,
-                            const std::string& targetDir,
-                            const std::string& format,
-                            GLboolean (VasnecovUniverse::*workFun)(const std::string&),
+    GLuint handleFilesInDir(const QString& dirPref,
+                            const QString& targetDir,
+                            const QString& format,
+                            GLboolean (VasnecovUniverse::*workFun)(const QString&),
                             GLboolean withSub = true); // Поиск файлов в директории и выполнение с ними метода
-    GLboolean loadMeshFile(const std::string& fileName);
-    GLboolean loadTextureFile(const std::string& fileName);
+    GLboolean loadMeshFile(const QString& fileName);
+    GLboolean loadTextureFile(const QString& fileName);
 
 protected:
     // Методы, вызываемые из внешних потоков (работают с сырыми данными)
-    VasnecovMesh* designerFindMesh(const std::string& name);
-    VasnecovTexture* designerFindTexture(const std::string& name);
+    VasnecovMesh* designerFindMesh(const QString& name);
+    VasnecovTexture* designerFindTexture(const QString& name);
 
     GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs);
 
 protected:
     // Вспомогательные (не привязаны к внутренним данным)
-    GLboolean setDirectory(const std::string& newDir, std::string& oldDir) const;
-    GLboolean correctPath(std::string& path, std::string& fileId, const std::string& format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
-    std::string correctFileId(const std::string& fileId, const std::string& format) const; // Удаляет формат из имени
+    GLboolean setDirectory(const QString& newDir, QString& oldDir) const;
+    GLboolean correctPath(QString& path, QString& fileId, const QString& format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
+    QString correctFileId(const QString& fileId, const QString& format) const; // Удаляет формат из имени
 
 protected:
     GLenum renderUpdateData(); // Единственный метод, который лочит мьютекс из основного потока (потока отрисовки)

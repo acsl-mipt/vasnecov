@@ -60,8 +60,8 @@ public:
     void setCoordinates(const QVector3D &coord);
     void setAngles(const QVector3D &angles);
 
-    virtual bool create(const std::string &name, VasnecovProduct *parent = 0);
-    bool create(const std::string &name, ProductModel *parent);
+    virtual bool create(const QString &name, VasnecovProduct *parent = 0);
+    bool create(const QString &name, ProductModel *parent);
     virtual void clear() {removeModel();}
     void removeModel(); // Удаление элементов
 

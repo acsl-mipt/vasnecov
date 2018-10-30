@@ -62,14 +62,14 @@ void Scene::createModels()
                     if(i>1)
                         yS = -1.0;
 
-                    m_propellers[i] = m_universe->addPart("Propeller " + QString::number(i).toStdString(), m_world, "bomber_propeller", m_bomberModel);
+                    m_propellers[i] = m_universe->addPart("Propeller " + QString::number(i), m_world, "bomber_propeller", m_bomberModel);
                     if(m_propellers[i])
                     {
                         m_propellers[i]->setColor(QColor(0, 155, 155, 255));
                         m_propellers[i]->setCoordinates(QVector3D(135.f*0.001 * xS, 135.f*0.001 * yS, 40.f*0.001));
                     }
 
-                    VasnecovProduct *motor = m_universe->addPart("Motor " + QString::number(i).toStdString(), m_world, "bomber_motor", m_bomberModel);
+                    VasnecovProduct *motor = m_universe->addPart("Motor " + QString::number(i), m_world, "bomber_motor", m_bomberModel);
                     if(motor)
                     {
                         motor->setCoordinates(QVector3D(135.f*0.001 * xS, 135.f*0.001 * yS, 5.f*0.001));

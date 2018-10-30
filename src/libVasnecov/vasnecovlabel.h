@@ -46,7 +46,7 @@ class VasnecovLabel : public VasnecovElement
 {
 public:
     VasnecovLabel(VasnecovPipeline* pipeline,
-                  const std::string& name,
+                  const QString& name,
                   const QVector2D& size,
                   VasnecovTexture* texture = nullptr);
     ~VasnecovLabel();

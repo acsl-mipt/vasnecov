@@ -55,7 +55,7 @@ public:
     };
 
 public:
-    VasnecovLamp(VasnecovPipeline* pipeline, const std::string& name, VasnecovLamp::LampTypes type, GLuint index);
+    VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, VasnecovLamp::LampTypes type, GLuint index);
 
 public:
     void setType(LampTypes type);

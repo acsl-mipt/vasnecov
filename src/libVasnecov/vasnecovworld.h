@@ -47,7 +47,7 @@ public:
     VasnecovWorld(VasnecovPipeline* pipeline,
                   GLint mx, GLint my,
                   GLsizei width, GLsizei height,
-                  const std::string& name = std::string());
+                  const QString& name = QString());
     ~VasnecovWorld();
 
 public:

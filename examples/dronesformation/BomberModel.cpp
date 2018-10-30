@@ -141,7 +141,7 @@ void BomberModel::setAngles(const QVector3D &angles)
     }
 }
 
-bool BomberModel::create(const std::string &name, VasnecovProduct *parent)
+bool BomberModel::create(const QString &name, VasnecovProduct *parent)
 {
     if(ProductModel::create(name, parent))
     {
@@ -173,14 +173,14 @@ bool BomberModel::create(const std::string &name, VasnecovProduct *parent)
             if(i>1)
                 yS = -1.0;
 
-            _propellers[i] = universe()->addPart("Propeller " + QString::number(i).toStdString(), world(), "bomber_propeller", model());
+            _propellers[i] = universe()->addPart("Propeller " + QString::number(i), world(), "bomber_propeller", model());
             if(_propellers[i])
             {
                 _propellers[i]->setColor(QColor(0, 155, 155, 255));
                 _propellers[i]->setCoordinates(QVector3D(135.f*0.001 * xS, 135.f*0.001 * yS, 40.f*0.001));
             }
 
-            _motors[i] = universe()->addPart("Motor " + QString::number(i).toStdString(), world(), "bomber_motor", model());
+            _motors[i] = universe()->addPart("Motor " + QString::number(i), world(), "bomber_motor", model());
             if(_motors[i])
             {
                 _motors[i]->setColor(QColor(30, 30, 30, 255));

@@ -33,7 +33,7 @@
 VasnecovWorld::VasnecovWorld(VasnecovPipeline* pipeline,
                              GLint mx, GLint my,
                              GLsizei width, GLsizei height,
-                             const std::string& name) :
+                             const QString& name) :
     Vasnecov::CoreObject(pipeline, name),
     m_parameters(raw_wasUpdated, Parameters),
     m_perspective(raw_wasUpdated, Perspective),

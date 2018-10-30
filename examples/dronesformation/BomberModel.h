@@ -17,7 +17,7 @@ public:
     void setCoordinates(const QVector3D &coord);
     void setAngles(const QVector3D &angles);
 
-    bool create(const std::string &name,
+    bool create(const QString &name,
                 VasnecovProduct *parent = 0);
     void clear();
     void rotatePropellers(float angle);

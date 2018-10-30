@@ -106,7 +106,7 @@ namespace Vasnecov
     {
     public:
         CoreObject(VasnecovPipeline* pipeline,
-                   const std::string& name = std::string()) :
+                   const QString& name = QString()) :
             raw_wasUpdated(false),
 
             m_name(raw_wasUpdated, Name, name),
@@ -118,8 +118,8 @@ namespace Vasnecov
 
     public:
         // Название
-        void setName(const std::string& name);
-        std::string name() const;
+        void setName(const QString& name);
+        QString name() const;
 
         // Видимость
         virtual void setVisible(GLboolean visible = true);
@@ -147,7 +147,7 @@ namespace Vasnecov
     protected:
         // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
         // Для их сокрытия методы объявлены protected, а класс Рендерера сделан friend
-        std::string renderName() const;
+        QString renderName() const;
 
         GLboolean renderIsVisible() const;
         GLboolean renderIsHidden() const;
@@ -155,7 +155,7 @@ namespace Vasnecov
     protected:
         GLenum raw_wasUpdated;
 
-        MutualData<std::string> m_name; // Наименование
+        MutualData<QString> m_name; // Наименование
         MutualData<GLboolean> m_isHidden; // Флаг на отрисовку
 
         VasnecovPipeline* const pure_pipeline; // Указатель конвейера, через который ведётся отрисовка
@@ -170,13 +170,13 @@ namespace Vasnecov
     };
 
 
-    inline void CoreObject::setName(const std::string &name)
+    inline void CoreObject::setName(const QString &name)
     {
         m_name.set(name);
     }
-    inline std::string CoreObject::name() const
+    inline QString CoreObject::name() const
     {
-        std::string name(m_name.raw());
+        QString name(m_name.raw());
         return name;
     }
 
@@ -245,7 +245,7 @@ namespace Vasnecov
         raw_wasUpdated = raw_wasUpdated &~ flag;
     }
 
-    inline std::string CoreObject::renderName() const
+    inline QString CoreObject::renderName() const
     {
         return m_name.pure();
     }

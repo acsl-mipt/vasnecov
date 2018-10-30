@@ -121,11 +121,11 @@ void ProductModel::setAngles(const QVector3D &angles)
     }
 }
 
-bool ProductModel::create(const std::string &name, VasnecovProduct *parent)
+bool ProductModel::create(const QString &name, VasnecovProduct *parent)
 {
     if(_model)
     {
-        qWarning("%s: 3D-model is exist", name.c_str());
+        qWarning("%s: 3D-model is exist", qPrintable(name));
         return false;
     }
 
@@ -136,14 +136,14 @@ bool ProductModel::create(const std::string &name, VasnecovProduct *parent)
         {
             return true;
         }
-        qWarning("%s: can't create node 3D-model", name.c_str());
+        qWarning("%s: can't create node 3D-model", qPrintable(name));
     }
 
-    qWarning("%s: need to set tools for creating", name.c_str());
+    qWarning("%s: need to set tools for creating",qPrintable(name));
     return false;
 }
 
-bool ProductModel::create(const std::string &name, ProductModel *parent)
+bool ProductModel::create(const QString &name, ProductModel *parent)
 {
     return create(name, parent->model());
 }

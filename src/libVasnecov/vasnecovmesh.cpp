@@ -27,7 +27,7 @@
  \param meshPath
  \param name
 */
-VasnecovMesh::VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeline, const std::string &name) :
+VasnecovMesh::VasnecovMesh(const QString &meshPath, VasnecovPipeline *pipeline, const QString &name) :
     m_pipeline(pipeline),
     m_type(VasnecovPipeline::Points),
     m_name(name),
@@ -56,7 +56,7 @@ VasnecovMesh::VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeli
 */
 GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
 {
-    if(!m_meshPath.empty())
+    if(!m_meshPath.isEmpty())
     {
         return loadModel(m_meshPath, readFromMTL);
     }
@@ -74,7 +74,7 @@ GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
  \return GLboolean
 */
 
-GLboolean VasnecovMesh::loadModel(const std::string &path, GLboolean readFromMTL)
+GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 {
     m_meshPath = path;
     m_type = VasnecovPipeline::Points;
@@ -86,7 +86,7 @@ GLboolean VasnecovMesh::loadModel(const std::string &path, GLboolean readFromMTL
     std::vector <QVector3D> rawNormals; // Координаты нормалей
     std::vector <QVector2D> rawTextures; // Координаты текстур
 
-    QFile objFile(QString::fromStdString(path));
+    QFile objFile(path);
     if(!objFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         Vasnecov::problem("Не удалось открыть файл модели: " + m_meshPath);

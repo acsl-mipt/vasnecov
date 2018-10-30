@@ -20,7 +20,7 @@
  \param pipeline
 */
 VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
-                                   const std::string &name) :
+                                   const QString &name) :
     Vasnecov::CoreObject(pipeline, name),
     m_textureD(raw_wasUpdated, TextureD, nullptr),
     m_textureN(raw_wasUpdated, TextureN, nullptr),
@@ -51,7 +51,7 @@ VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
 VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
                                    VasnecovTexture *textureD,
                                    VasnecovTexture *textureN,
-                                   const std::string &name) :
+                                   const QString &name) :
     Vasnecov::CoreObject(pipeline, name),
     m_textureD(raw_wasUpdated, TextureD, textureD),
     m_textureN(raw_wasUpdated, TextureN, textureN),

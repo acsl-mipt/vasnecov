@@ -19,10 +19,10 @@
     #include <math.h>
 #endif
 #include <GL/gl.h>
-#include <string>
-#include <cmath>
-#include <QtGlobal>
+#include <QString>
 #include <QVector3D>
+#include <QtGlobal>
+#include <cmath>
 #ifndef _MSC_VER
     #pragma GCC diagnostic warning "-Weffc++"
 #endif

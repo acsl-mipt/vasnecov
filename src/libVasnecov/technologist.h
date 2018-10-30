@@ -20,13 +20,13 @@
 
 namespace Vasnecov
 {
-    GLint panic(const std::string &problemText1, const std::string &problemText2 = ""); // Функция сообщения и архивирования критических ошибок
-    GLint panic(const std::string &problemText1, GLint errorCode); // Функция сообщения и архивирования критических ошибок
-    GLint panic(const std::string &problemText1, GLfloat value); // Функция сообщения и архивирования критических ошибок
+    GLint panic(const QString &problemText1, const QString &problemText2 = ""); // Функция сообщения и архивирования критических ошибок
+    GLint panic(const QString &problemText1, GLint errorCode); // Функция сообщения и архивирования критических ошибок
+    GLint panic(const QString &problemText1, GLfloat value); // Функция сообщения и архивирования критических ошибок
 
-    GLint problem(const std::string &problemText1, const std::string &problemText2 = ""); // Функция сообщения и архивирования системных ошибок
-    GLint problem(const std::string &problemText1, GLint errorCode); // Функция сообщения и архивирования системных ошибок
-    GLint problem(const std::string &problemText1, GLfloat value); // Функция сообщения и архивирования системных ошибок
+    GLint problem(const QString &problemText1, const QString &problemText2 = ""); // Функция сообщения и архивирования системных ошибок
+    GLint problem(const QString &problemText1, GLint errorCode); // Функция сообщения и архивирования системных ошибок
+    GLint problem(const QString &problemText1, GLfloat value); // Функция сообщения и архивирования системных ошибок
 
     GLfloat trimAngle(GLfloat deg);
 }
