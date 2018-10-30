@@ -17,7 +17,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 private:
-    std::vector<QVector3D> figureFromObj(const QString &fileName);
+    std::vector<QVector3D> figureFromObj(const QString& fileName);
 
 private:
     VasnecovUniverse *m_universe;

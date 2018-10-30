@@ -140,7 +140,7 @@ namespace Vasnecov
     protected:
         // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
         // Для их сокрытия методы объявлены protected, а класс Рендерера сделан friend
-        QString renderName() const;
+        const QString& renderName() const;
 
         GLboolean renderIsVisible() const;
         GLboolean renderIsHidden() const;
@@ -163,7 +163,7 @@ namespace Vasnecov
     };
 
 
-    inline void CoreObject::setName(const QString &name)
+    inline void CoreObject::setName(const QString& name)
     {
         m_name.set(name);
     }
@@ -238,7 +238,7 @@ namespace Vasnecov
         raw_wasUpdated = raw_wasUpdated &~ flag;
     }
 
-    inline QString CoreObject::renderName() const
+    inline const QString& CoreObject::renderName() const
     {
         return m_name.pure();
     }

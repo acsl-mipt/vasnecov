@@ -19,7 +19,7 @@
  \param pipeline
  \param imya_
 */
-VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString &name) :
+VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString& name) :
     VasnecovElement(pipeline, name),
     m_type(raw_wasUpdated, Type, VasnecovPipeline::LoopLine),
     m_points(raw_wasUpdated, Points, true),
@@ -37,7 +37,7 @@ VasnecovFigure::~VasnecovFigure()
 {
 }
 
-std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const QString &fileName)
+std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const QString& fileName)
 {
     std::vector<QVector3D> points;
 
@@ -500,7 +500,7 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
     }
 }
 
-void VasnecovFigure::createMeshFromFile(const QString &fileName, const QColor &color)
+void VasnecovFigure::createMeshFromFile(const QString& fileName, const QColor &color)
 {
     designerSetType(VasnecovFigure::TypeLines);
 

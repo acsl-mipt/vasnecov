@@ -13,5 +13,5 @@
 #include "vasnecovuniverse.h"
 #include "version.h"
 
-QString showVasnecovVersion();
+const QString& showVasnecovVersion();
 Vasnecov::Version vasnecovVersion();

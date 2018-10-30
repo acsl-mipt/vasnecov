@@ -216,7 +216,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     VasnecovScene::mouseMoveEvent(event);
 }
 
-std::vector<QVector3D> Scene::figureFromObj(const QString &fileName)
+std::vector<QVector3D> Scene::figureFromObj(const QString& fileName)
 {
     std::vector<QVector3D> points;
 

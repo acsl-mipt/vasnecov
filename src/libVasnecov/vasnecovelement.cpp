@@ -30,7 +30,7 @@
 
  \sa VasnecovPipeline
 */
-VasnecovAbstractElement::VasnecovAbstractElement(VasnecovPipeline *pipeline, const QString &name) :
+VasnecovAbstractElement::VasnecovAbstractElement(VasnecovPipeline *pipeline, const QString& name) :
     Vasnecov::CoreObject(pipeline, name),
     raw_coordinates(),
     raw_angles(),
@@ -340,7 +340,7 @@ GLenum VasnecovAbstractElement::renderUpdateData()
  \param pipeline
  \param name
 */
-VasnecovElement::VasnecovElement(VasnecovPipeline *pipeline, const QString &name) :
+VasnecovElement::VasnecovElement(VasnecovPipeline *pipeline, const QString& name) :
     VasnecovAbstractElement(pipeline, name),
     m_color(raw_wasUpdated, Color, QColor(255, 255, 255, 255)),
     m_scale(raw_wasUpdated, Scale, 1.0f),

@@ -18,7 +18,7 @@
  \param type
  \param index
 */
-VasnecovLamp::VasnecovLamp(VasnecovPipeline *pipeline, const QString &name, VasnecovLamp::LampTypes type, GLuint index) :
+VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, VasnecovLamp::LampTypes type, GLuint index) :
     VasnecovAbstractElement(pipeline, name),
     m_type(raw_wasUpdated, Type, type),
 

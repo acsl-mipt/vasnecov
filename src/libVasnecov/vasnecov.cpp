@@ -45,7 +45,7 @@ static Vasnecov::Version vVersion;
 
  \return QString строка с номером версии.
 */
-QString showVasnecovVersion()
+const QString& showVasnecovVersion()
 {
     return vVersion.versionText;
 }
