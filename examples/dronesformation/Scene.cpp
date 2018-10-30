@@ -232,7 +232,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         Vasnecov::Camera camera = _world->camera();
         QQuaternion qua = QQuaternion::fromAxisAndAngle(QVector3D(0.0f, 0.0f, 1.0f), angle);
-        QVector3D newPos = qua.rotatedVector(camera.position) + QVector3D(0.0f, 0.0f, z);
+        QVector3D newPos = qua.rotatedVector(camera.position()) + QVector3D(0.0f, 0.0f, z);
 
         if(newPos.z() < 0.0f)
             newPos.setZ(0.0f);
@@ -255,11 +255,11 @@ bool Scene::zoomView(float zoom)
     if(_world)
     {
 
-        float dist = _world->camera().position.length();
+        float dist = _world->camera().position().length();
 
         if(dist > 0 && zoom != 0.0)
         {
-            QVector3D pos = _world->camera().position;
+            QVector3D pos = _world->camera().position();
             float d = dist;
 
             float dArg = pow(d / 0.5e-6, 0.25f);

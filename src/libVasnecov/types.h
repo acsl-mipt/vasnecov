@@ -192,36 +192,44 @@ namespace Vasnecov
     };
 
     // Камера
-    struct Camera
+    class Camera
     {
-        QVector3D position; // Позиция камеры в пространстве
-        QVector3D target; // Позиция точки, на которую сфокусирована камера
-        GLfloat roll;
-
-        Camera() :
-            position(0.0f, 0.0f, 1.85f),
-            target(),
-            roll(0.0f)
-        {
-        }
+    public:
+        explicit Camera() :
+            m_position(0.0f, 0.0f, 1.85f),
+            m_target(),
+            m_roll(0.0f)
+        {}
         bool operator!=(const Camera& other) const
         {
-            return position != other.position ||
-                   target != other.target ||
-                   roll != other.roll;
+            return m_position != other.m_position ||
+                   m_target != other.m_target ||
+                   m_roll != other.m_roll;
         }
         bool operator==(const Camera& other) const
         {
-            return position == other.position &&
-                   target == other.target &&
-                   roll == other.roll;
+            return m_position == other.m_position &&
+                   m_target == other.m_target &&
+                   m_roll == other.m_roll;
         }
+        const QVector3D& position() const {return m_position;}
+        const QVector3D& target() const {return m_target;}
+        GLfloat roll() const {return m_roll;}
+
+        void setTarget(const QVector3D& target) {m_target = target;}
+        void setPosition(const QVector3D& position) {m_position = position;}
+        void setRoll(GLfloat roll) {m_roll = roll;}
+
+    private:
+        QVector3D m_position; // Позиция камеры в пространстве
+        QVector3D m_target; // Позиция точки, на которую сфокусирована камера
+        GLfloat   m_roll;
     };
 
     class Line
     {
     public:
-        Line()
+        explicit Line()
             : m_p1(), m_p2()
         {}
         Line(const QVector3D &p1, const QVector3D &p2)
@@ -230,8 +238,8 @@ namespace Vasnecov
 
         bool isNull() const {return m_p1 == m_p2;}
         bool isEmpty() const {return m_p1.isNull() && m_p2.isNull();}
-        QVector3D p1() const {return m_p1;}
-        QVector3D p2() const {return m_p2;}
+        const QVector3D& p1() const {return m_p1;}
+        const QVector3D& p2() const {return m_p2;}
 
         GLfloat x1() const {return m_p1.x();}
         GLfloat y1() const {return m_p1.y();}

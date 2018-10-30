@@ -72,7 +72,7 @@ void VasnecovWorld::designerUpdateOrtho()
 {
     // Ортогональная проекция (по данным перспективной и положению камеры)
     GLfloat dist;
-    dist = (m_camera.raw().target - m_camera.raw().position).length();
+    dist = (m_camera.raw().target() - m_camera.raw().position()).length();
 
     if(dist == 0)
     {
@@ -108,12 +108,12 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
     vec = qYaw.rotatedVector(vec);
     vec = qPitch.rotatedVector(vec);
 
-    vec *= (m_camera.raw().target - m_camera.raw().position).length(); // Увеличение на длину
+    vec *= (m_camera.raw().target() - m_camera.raw().position()).length(); // Увеличение на длину
 
-    QVector3D target = vec + m_camera.raw().position;
-    if(m_camera.raw().target != target)
+    QVector3D target = vec + m_camera.raw().position();
+    if(m_camera.raw().target() != target)
     {
-        m_camera.editableRaw().target = target;
+        m_camera.editableRaw().setTarget(target);
         designerUpdateOrtho();
     }
 }
@@ -127,9 +127,9 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
 */
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
-    if(m_camera.raw().roll != roll)
+    if(m_camera.raw().roll() != roll)
     {
-        m_camera.editableRaw().roll = roll;
+        m_camera.editableRaw().setRoll(roll);
     }
 
     setCameraAngles(yaw, pitch);
@@ -138,7 +138,7 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll)
 void VasnecovWorld::flyCamera(const QVector3D &step)
 {
 
-    QVector3D forward = (m_camera.raw().target - m_camera.raw().position).normalized();
+    QVector3D forward = (m_camera.raw().target() - m_camera.raw().position()).normalized();
 
     bool updated(false);
     QVector3D target, position;
@@ -147,8 +147,8 @@ void VasnecovWorld::flyCamera(const QVector3D &step)
     {
         forward *= step.x();
 
-        target = forward + m_camera.raw().target;
-        position = forward + m_camera.raw().position;
+        target = forward + m_camera.raw().target();
+        position = forward + m_camera.raw().position();
 
         updated = true;
     }
@@ -157,15 +157,15 @@ void VasnecovWorld::flyCamera(const QVector3D &step)
         QVector3D side = QVector3D::crossProduct(QVector3D(0, 0, 1), forward).normalized();
         side *= step.y();
 
-        target = side + m_camera.raw().target;
-        position = side + m_camera.raw().position;
+        target = side + m_camera.raw().target();
+        position = side + m_camera.raw().position();
 
         updated = true;
     }
     if(step.z())
     {
-        target = QVector3D(0, 0, 1)*step.z() + m_camera.raw().target;
-        position = QVector3D(0, 0, 1)*step.z() + m_camera.raw().position;
+        target = QVector3D(0, 0, 1)*step.z() + m_camera.raw().target();
+        position = QVector3D(0, 0, 1)*step.z() + m_camera.raw().position();
 
         updated = true;
     }
@@ -174,14 +174,14 @@ void VasnecovWorld::flyCamera(const QVector3D &step)
     {
         GLboolean orth(false);
 
-        if(m_camera.raw().target != target)
+        if(m_camera.raw().target() != target)
         {
-            m_camera.editableRaw().target = target;
+            m_camera.editableRaw().setTarget(target);
             orth = true;
         }
-        if(m_camera.raw().position != position)
+        if(m_camera.raw().position() != position)
         {
-            m_camera.editableRaw().position = position;
+            m_camera.editableRaw().setPosition(position);
             orth = true;
         }
 
@@ -204,7 +204,7 @@ void VasnecovWorld::moveCamera(const QVector3D &step)
     if(step.x() || step.y())
     {
         // Направление на цель в горизональной плоскости (x)
-        QVector3D forward = (m_camera.raw().target - m_camera.raw().position);
+        QVector3D forward = (m_camera.raw().target() - m_camera.raw().position());
         forward.setZ(0);
         forward.normalize();
         // Направление вбок (y)
@@ -214,16 +214,16 @@ void VasnecovWorld::moveCamera(const QVector3D &step)
         forward *= step.x();
         side *= step.y();
 
-        target = forward + side + m_camera.raw().target;
-        position = forward + side + m_camera.raw().position;
+        target = forward + side + m_camera.raw().target();
+        position = forward + side + m_camera.raw().position();
 
         updated = true;
 
     }
     if(step.z())
     {
-        target = QVector3D(0, 0, 1)*step.z() + m_camera.raw().target;
-        position = QVector3D(0, 0, 1)*step.z() + m_camera.raw().position;
+        target = QVector3D(0, 0, 1)*step.z() + m_camera.raw().target();
+        position = QVector3D(0, 0, 1)*step.z() + m_camera.raw().position();
 
         updated = true;
     }
@@ -232,14 +232,14 @@ void VasnecovWorld::moveCamera(const QVector3D &step)
     {
         GLboolean orth(false);
 
-        if(m_camera.raw().target != target)
+        if(m_camera.raw().target() != target)
         {
-            m_camera.editableRaw().target = target;
+            m_camera.editableRaw().setTarget(target);
             orth = true;
         }
-        if(m_camera.raw().position != position)
+        if(m_camera.raw().position() != position)
         {
-            m_camera.editableRaw().position = position;
+            m_camera.editableRaw().setPosition(position);
             orth = true;
         }
 
@@ -255,7 +255,7 @@ void VasnecovWorld::moveCamera(GLfloat x, GLfloat y, GLfloat z)
 
 void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch)
 {
-    QVector3D vec = m_camera.raw().target - m_camera.raw().position;
+    QVector3D vec = m_camera.raw().target() - m_camera.raw().position();
 
     QQuaternion qYaw = QQuaternion::fromAxisAndAngle(0, 0, 1, yaw);
     QQuaternion qPitch = QQuaternion::fromAxisAndAngle(QVector3D::crossProduct(QVector3D(0, 0, 1), vec).normalized(), pitch);
@@ -263,19 +263,19 @@ void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch)
     vec = qYaw.rotatedVector(vec);
     vec = qPitch.rotatedVector(vec);
 
-    QVector3D target = vec + m_camera.raw().position;
-    if(m_camera.raw().target != target)
+    QVector3D target = vec + m_camera.raw().position();
+    if(m_camera.raw().target() != target)
     {
-        m_camera.editableRaw().target = target;
+        m_camera.editableRaw().setTarget(target);
         designerUpdateOrtho();
     }
 }
 
 void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
-    if(m_camera.raw().roll != roll)
+    if(m_camera.raw().roll() != roll)
     {
-        m_camera.editableRaw().roll = roll;
+        m_camera.editableRaw().setRoll(roll);
     }
 
     rotateCamera(yaw, pitch);
@@ -283,9 +283,9 @@ void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll)
 
 void VasnecovWorld::setCameraRoll(GLfloat roll)
 {
-    if(m_camera.raw().roll != roll)
+    if(m_camera.raw().roll() != roll)
     {
-        m_camera.editableRaw().roll = roll;
+        m_camera.editableRaw().setRoll(roll);
         designerUpdateOrtho();
     }
 }
@@ -294,7 +294,7 @@ void VasnecovWorld::tiltCamera(GLfloat roll)
 {
     if(roll != 0.0f)
     {
-        m_camera.editableRaw().roll = m_camera.raw().roll + roll;
+        m_camera.editableRaw().setRoll(m_camera.raw().roll() + roll);
         designerUpdateOrtho();
     }
 }
@@ -451,8 +451,8 @@ void VasnecovWorld::renderDraw()
         {
             if(Vasnecov::cfg_sortTransparency)
             {
-                QVector3D viewVector = (m_camera.pure().target - m_camera.pure().position).normalized();
-                QVector3D viewPoint = m_camera.pure().position;
+                QVector3D viewVector = (m_camera.pure().target() - m_camera.pure().position()).normalized();
+                QVector3D viewPoint = m_camera.pure().position();
 
                 for(std::vector<VasnecovProduct *>::const_iterator pit = transProducts.begin();
                     pit != transProducts.end(); ++pit)
@@ -483,8 +483,8 @@ void VasnecovWorld::renderDraw()
         {
             if(Vasnecov::cfg_sortTransparency)
             {
-                QVector3D viewVector = (m_camera.pure().target - m_camera.pure().position).normalized();
-                QVector3D viewPoint = m_camera.pure().position;
+                QVector3D viewVector = (m_camera.pure().target() - m_camera.pure().position()).normalized();
+                QVector3D viewPoint = m_camera.pure().position();
 
                 for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
                     fit != transFigures.end(); ++fit)
@@ -619,9 +619,9 @@ void VasnecovWorld::setDrawingType(Vasnecov::PolygonDrawingTypes type)
 
 void VasnecovWorld::setCameraPosition(const QVector3D &position)
 {
-    if(m_camera.raw().position != position)
+    if(m_camera.raw().position() != position)
     {
-        m_camera.editableRaw().position = position;
+        m_camera.editableRaw().setPosition(position);
         designerUpdateOrtho();
     }
 }
@@ -639,9 +639,9 @@ void VasnecovWorld::setCameraPosition(GLfloat x, GLfloat y, GLfloat z)
 }
 void VasnecovWorld::setCameraTarget(const QVector3D &target)
 {
-    if(m_camera.raw().target != target)
+    if(m_camera.raw().target() != target)
     {
-        m_camera.editableRaw().target = target;
+        m_camera.editableRaw().setTarget(target);
         designerUpdateOrtho();
     }
 }
@@ -970,14 +970,14 @@ VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
 {
     // Расчет направлений камеры
     VasnecovPipeline::CameraAttributes cameraAttr;
-    QVector3D forward = (m_camera.pure().target - m_camera.pure().position).normalized();
+    QVector3D forward = (m_camera.pure().target() - m_camera.pure().position()).normalized();
 
-    cameraAttr.eye = m_camera.pure().position;
-    cameraAttr.center = m_camera.pure().target;
+    cameraAttr.eye = m_camera.pure().position();
+    cameraAttr.center = m_camera.pure().target();
 
     // Камере (lookAt) не нужен строгий вектор направления вверх. LookAt всё равно берет с него проекцию.
     // Если вектор направления взгляда вертикален, то up-вектор просто направляем по X
-    if(m_camera.pure().position.x() == m_camera.pure().target.x() && m_camera.pure().position.y() == m_camera.pure().target.y())
+    if(m_camera.pure().position().x() == m_camera.pure().target().x() && m_camera.pure().position().y() == m_camera.pure().target().y())
     {
         cameraAttr.up = QVector3D(1.0f, 0.0f, 0.0f);
     }
@@ -987,7 +987,7 @@ VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
     }
 
     // Вращение вокруг вектора взгляда
-    cameraAttr.up = QQuaternion::fromAxisAndAngle(forward, m_camera.pure().roll).rotatedVector(cameraAttr.up);
+    cameraAttr.up = QQuaternion::fromAxisAndAngle(forward, m_camera.pure().roll()).rotatedVector(cameraAttr.up);
 
     return cameraAttr;
 }
