@@ -66,7 +66,7 @@ public:
 
     VasnecovProduct* parent() const;
     void changeParent(VasnecovProduct* newParent);
-    std::vector<VasnecovProduct*> children() const;
+    const std::vector<VasnecovProduct*>& children() const;
 
     // Изменение цвета
     void setColor(const QColor& color); // Задаёт общий цвет продукта. Если есть материал, то передается в ambient и diffuse материала
@@ -125,21 +125,21 @@ protected:
     GLuint renderLevel() const;
 
     VasnecovProduct* renderParent() const;
-    const std::vector<VasnecovProduct*>* renderChildren() const;
+    const std::vector<VasnecovProduct*>& renderChildren() const;
 
 protected:
     QMatrix4x4 raw_M1; // Матрица родительских трансформаций
     bool raw_ownVisible;
 
-    Vasnecov::MutualData<ProductTypes> m_type; // тип: узел, деталь
-    Vasnecov::MutualData<VasnecovProduct*> m_parent; // Индекс родительского элемента (если уровень больше нуля, иначе 0)
-    Vasnecov::MutualData<GLuint> m_level; // отсчет от нуля (нулевой уровень - корень дерева)
+    ProductTypes m_type; // тип: узел, деталь
+    VasnecovProduct* m_parent; // Индекс родительского элемента (если уровень больше нуля, иначе 0)
+    GLuint m_level; // отсчет от нуля (нулевой уровень - корень дерева)
 
-    Vasnecov::MutualData<VasnecovMesh*> m_mesh; // Меш (для детали) - геометрия отрисовки
-    Vasnecov::MutualData<VasnecovMaterial*> m_material; // Материал меша
+    VasnecovMesh* m_mesh; // Меш (для детали) - геометрия отрисовки
+    VasnecovMaterial* m_material; // Материал меша
 
-    Vasnecov::MutualData<std::vector<VasnecovProduct*> > m_children; // Список дочерних объектов (для узла)
-    Vasnecov::MutualData<GLboolean> m_drawingBox; // TODO: to enum with configuration flags
+    std::vector<VasnecovProduct*> m_children; // Список дочерних объектов (для узла)
+    GLboolean m_drawingBox; // TODO: to enum with configuration flags
 
     enum Updated // Дополнительные флаги изменений. При множественном наследовании могут быть проблемы
     {
@@ -162,18 +162,18 @@ private:
 
 inline void VasnecovProduct::init()
 {
-    if(!m_parent.raw() && m_level.raw())
+    if(!m_parent && m_level)
     {
-        m_level.set(0);
+        m_level = 0;
     }
 }
 inline GLboolean VasnecovProduct::designerRemoveThisMaterial(const VasnecovMaterial *material)
 {
-    if(m_material.raw() != material)
+    if(m_material != material)
     {
-        if(m_type.raw() == ProductTypePart)
+        if(m_type == ProductTypePart)
         {
-            m_material.set(nullptr);
+            m_material = nullptr;
             return true;
         }
     }
@@ -182,15 +182,15 @@ inline GLboolean VasnecovProduct::designerRemoveThisMaterial(const VasnecovMater
 
 inline GLuint VasnecovProduct::designerLevel() const
 {
-    return m_level.raw();
+    return m_level;
 }
 inline VasnecovProduct *VasnecovProduct::designerParent() const
 {
-    return m_parent.raw();
+    return m_parent;
 }
 inline VasnecovMaterial *VasnecovProduct::designerMaterial() const
 {
-    return m_material.raw();
+    return m_material;
 }
 
 inline void VasnecovProduct::designerUpdateMatrixM1(const QMatrix4x4 &M1)
@@ -201,29 +201,29 @@ inline void VasnecovProduct::designerUpdateMatrixM1(const QMatrix4x4 &M1)
 }
 inline VasnecovMaterial *VasnecovProduct::renderMaterial() const
 {
-    return m_material.pure();
+    return m_material;
 }
 inline VasnecovMesh *VasnecovProduct::renderMesh() const
 {
-    return m_mesh.pure();
+    return m_mesh;
 }
 
 inline VasnecovProduct::ProductTypes VasnecovProduct::renderType() const
 {
-    return m_type.pure();
+    return m_type;
 }
 
 inline GLuint VasnecovProduct::renderLevel() const
 {
-    return m_level.pure();
+    return m_level;
 }
 
 inline VasnecovProduct *VasnecovProduct::renderParent() const
 {
-    return m_parent.pure();
+    return m_parent;
 }
 
-inline const std::vector<VasnecovProduct *> *VasnecovProduct::renderChildren() const
+inline const std::vector<VasnecovProduct *>& VasnecovProduct::renderChildren() const
 {
-    return &m_children.pure();
+    return m_children;
 }

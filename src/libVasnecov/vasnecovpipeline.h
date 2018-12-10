@@ -92,7 +92,7 @@ public:
     void setIdentityMatrixP();
     void setMatrixP(const QMatrix4x4& P);
     void addMatrixP(const QMatrix4x4& P); // Домножение на матрицу
-    const QMatrix4x4 matrixP() const;
+    const QMatrix4x4& matrixP() const;
 
     void setIdentityMatrixMV(); // Задание единичной модельно-видовой матрицы
     void setMatrixMV(const QMatrix4x4& MV);
@@ -252,7 +252,7 @@ inline void VasnecovPipeline::addMatrixP(const QMatrix4x4 &P)
     glLoadMatrixf(m_P.constData());
     glMatrixMode(GL_MODELVIEW);
 }
-inline const QMatrix4x4 VasnecovPipeline::matrixP() const
+inline const QMatrix4x4& VasnecovPipeline::matrixP() const
 {
     return m_P;
 }
