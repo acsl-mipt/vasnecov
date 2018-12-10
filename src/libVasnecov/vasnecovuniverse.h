@@ -52,10 +52,6 @@ namespace Vasnecov
         std::vector<VasnecovTexture*> texturesForLoading;
 
         UniverseAttributes() :
-            Attributes(),
-            meshes(),
-            textures(),
-
             dirMeshes(Vasnecov::cfg_dirMeshes),
             dirTextures(Vasnecov::cfg_dirTextures),
             dirTexturesDPref(Vasnecov::cfg_dirTexturesDPref),
@@ -66,7 +62,7 @@ namespace Vasnecov
             texturesForLoading()
         {
         }
-        ~UniverseAttributes();
+        ~UniverseAttributes() override;
     };
 }
 class VasnecovUniverse
@@ -75,17 +71,16 @@ class VasnecovUniverse
     class LoadingStatus
     {
     public:
-        LoadingStatus(Vasnecov::MutualData<GLboolean>* loading) :
-            m_loading(loading)
+        LoadingStatus(GLboolean* loading) : m_loading(loading)
         {
-            m_loading->set(true);
+            *m_loading = true;
         }
         ~LoadingStatus()
         {
-            m_loading->set(false);
+            *m_loading = false;
         }
     private:
-        Vasnecov::MutualData<GLboolean>* m_loading;
+        GLboolean* m_loading;
 
         Q_DISABLE_COPY(LoadingStatus)
     };
@@ -96,10 +91,10 @@ class VasnecovUniverse
     {
     public:
         ElementFullBox();
-        ~ElementFullBox();
+        ~ElementFullBox() override;
 
-        virtual GLboolean synchronize();
-        GLboolean removeElement(T* element);
+        GLboolean synchronize() override;
+        GLboolean removeElement(const T* element);
         const std::vector<T*>& deleting() const;
 
     protected:
@@ -110,8 +105,6 @@ class VasnecovUniverse
     class UniverseElementList : public Vasnecov::ElementList<ElementFullBox>
     {
     public:
-        UniverseElementList();
-
         VasnecovWorld* findRawElement(VasnecovWorld* world) const {return m_worlds.findElement(world);}
         VasnecovMaterial* findRawElement(VasnecovMaterial* material) const {return m_materials.findElement(material);}
         using Vasnecov::ElementList<ElementFullBox>::findRawElement;
@@ -131,11 +124,11 @@ class VasnecovUniverse
         GLboolean synchronizeWorlds() {return m_worlds.synchronize();}
         GLboolean synchronizeMaterials() {return m_materials.synchronize();}
 
-        const std::vector<VasnecovWorld*>& rawWorlds() const {return m_worlds.raw();}
-        const std::vector<VasnecovMaterial*>& rawMaterials() const {return m_materials.raw();}
+        const ElementFullBox<VasnecovWorld>& rawWorlds() const {return m_worlds;}
+        const ElementFullBox<VasnecovMaterial>& rawMaterials() const {return m_materials;}
 
-        const std::vector<VasnecovWorld*>& pureWorlds() const {return m_worlds.pure();}
-        const std::vector<VasnecovMaterial*>& pureMaterials() const {return m_materials.pure();}
+        const ElementFullBox<VasnecovWorld>& pureWorlds() const {return m_worlds;}
+        const ElementFullBox<VasnecovMaterial>& pureMaterials() const {return m_materials;}
 
         GLboolean hasPureWorlds() const {return m_worlds.hasPure();}
         GLboolean hasPureMaterials() const {return m_materials.hasPure();}
@@ -150,7 +143,7 @@ class VasnecovUniverse
 
         virtual GLboolean synchronizeAll()
         {
-            GLboolean res(false);
+            GLboolean res = false;
 
             res |= m_worlds.synchronize();
             res |= m_materials.synchronize();
@@ -305,14 +298,15 @@ protected:
 
 private:
     VasnecovPipeline m_pipeline;
-    Vasnecov::MutualData<const QGLContext*> m_context;
-    Vasnecov::MutualData<QColor> m_backgroundColor;
+    const QGLContext* m_context;
+    QColor m_backgroundColor;
 
     GLsizei m_width, m_height; // Размеры окна вывода
 
     // Картинка для индикации загрузки
-    Vasnecov::MutualData<GLboolean> m_loading;
-    QImage m_loadingImage0, m_loadingImage1;
+    GLboolean m_loading;
+    QImage m_loadingImage0;
+    QImage m_loadingImage1;
     timespec m_loadingImageTimer;
 
     GLuint m_lampsCountMax;
@@ -344,10 +338,10 @@ private:
     };
 
     // Технологическая информация (raw - из потока ренедеринга, pure - во внешнем)
-    Vasnecov::MutualData<QString> m_techRenderer;
-    Vasnecov::MutualData<QString> m_techVersion;
-    Vasnecov::MutualData<QString> m_techSL;
-    Vasnecov::MutualData<QString> m_techExtensions;
+    QString m_techRenderer;
+    QString m_techVersion;
+    QString m_techSL;
+    QString m_techExtensions;
 
     friend class VasnecovScene;
     friend class VasnecovWidget;
@@ -361,7 +355,7 @@ inline void VasnecovUniverse::setContext(const QGLContext *context)
     if(!context)
         return;
 
-    m_context.set(context);
+    m_context = context;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -410,21 +404,20 @@ GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
 }
 
 template <typename T>
-GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(T *element)
+GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(const T *element)
 {
     if(element)
     {
-        for(typename std::vector<T *>::iterator eit = this->m_raw.begin();
-            eit != this->m_raw.end(); ++eit)
+        for(typename std::vector<T *>::iterator eit = m_raw.begin(); eit != m_raw.end(); ++eit)
         {
             if((*eit) == element)
             {
                 m_deleting.push_back(*eit);
 
-                this->m_raw.erase(eit);
-                this->m_buffer = this->m_raw;
+                m_raw.erase(eit);
+                m_buffer = m_raw;
 
-                this->m_wasUpdated = true;
+                m_wasUpdated = true;
                 return true;
             }
         }

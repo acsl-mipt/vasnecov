@@ -19,85 +19,6 @@
     #pragma GCC diagnostic warning "-Weffc++"
 #endif
 
-namespace Vasnecov
-{
-    // Обёртка для данных, используемых в нескольких потоках
-    // Используемый тип должен иметь операторы присваивания и !=
-    template <typename T>
-    class MutualData
-    {
-    public:
-        MutualData(GLenum &wasUpdated, const GLenum flag) :
-            m_raw(),
-            m_pure(),
-            m_flag(flag),
-            m_wasUpdated(wasUpdated)
-        {}
-        MutualData(GLenum &wasUpdated, const GLenum flag, const T &data) :
-            m_raw(data),
-            m_pure(data),
-            m_flag(flag),
-            m_wasUpdated(wasUpdated)
-        {}
-        GLboolean set(const T &value)
-        {
-            if(m_raw != value)
-            {
-                m_raw = value;
-                m_wasUpdated |= m_flag; // Добавка своего флага в общий (внешний)
-                return true;
-            }
-            return false;
-        }
-        MutualData<T> &operator=(const T &value)
-        {
-            set(value);
-            return *this;
-        }
-        void synchronizeRaw()
-        {
-            m_raw = m_pure;
-        }
-        GLenum update()
-        {
-            if((m_wasUpdated & m_flag) != 0)
-            {
-                m_pure = m_raw;
-                m_wasUpdated = m_wasUpdated &~ m_flag; // Удаление своего флага из общего
-                return m_flag;
-            }
-            return 0;
-        }
-        const T &raw() const
-        {
-            return m_raw;
-        }
-        // Для прямого изменения сложных типов
-        T &editableRaw()
-        {
-            m_wasUpdated |= m_flag;
-            return m_raw;
-        }
-        T &editablePure()
-        {
-            m_wasUpdated |= m_flag;
-            return m_pure;
-        }
-
-        const T &pure() const
-        {
-            return m_pure;
-        }
-
-    private:
-        T m_raw; // Грязные данные - из внешнего потока
-        T m_pure; // Чистые - для рендеринга
-        const GLenum m_flag; // Флаг. Идентификатор, выдаваемый результатом синхронизации update()
-        GLenum &m_wasUpdated; // Ссылка на общий флаг обновлений
-    };
-
-}
-
 class VasnecovPipeline;
 
 namespace Vasnecov
@@ -105,12 +26,10 @@ namespace Vasnecov
     class CoreObject
     {
     public:
-        CoreObject(VasnecovPipeline* pipeline,
-                   const std::string& name = std::string()) :
+        CoreObject(VasnecovPipeline* pipeline, const std::string& name = std::string()) :
             raw_wasUpdated(false),
-
-            m_name(raw_wasUpdated, Name, name),
-            m_isHidden(raw_wasUpdated, Flags, false),
+            m_name(name),
+            m_isHidden(false),
 
             pure_pipeline(pipeline)
         {}
@@ -155,8 +74,8 @@ namespace Vasnecov
     protected:
         GLenum raw_wasUpdated;
 
-        MutualData<std::string> m_name; // Наименование
-        MutualData<GLboolean> m_isHidden; // Флаг на отрисовку
+        std::string m_name; // Наименование
+        GLboolean   m_isHidden; // Флаг на отрисовку
 
         VasnecovPipeline* const pure_pipeline; // Указатель конвейера, через который ведётся отрисовка
 
@@ -172,17 +91,16 @@ namespace Vasnecov
 
     inline void CoreObject::setName(const std::string &name)
     {
-        m_name.set(name);
+        m_name = name;
     }
     inline std::string CoreObject::name() const
     {
-        std::string name(m_name.raw());
-        return name;
+        return m_name;
     }
 
     inline void CoreObject::setVisible(GLboolean visible)
     {
-        m_isHidden.set(!visible);
+        m_isHidden = !visible;
     }
     inline void CoreObject::setHidden(GLboolean hidden)
     {
@@ -198,8 +116,7 @@ namespace Vasnecov
     }
     inline GLboolean CoreObject::isVisible() const
     {
-        GLboolean visible(!m_isHidden.raw());
-        return visible;
+        return !m_isHidden;
     }
     inline GLboolean CoreObject::isHidden() const
     {
@@ -208,19 +125,15 @@ namespace Vasnecov
 
     inline GLboolean CoreObject::designerIsVisible() const
     {
-        return !m_isHidden.raw();
+        return !m_isHidden;
     }
 
     inline GLenum CoreObject::renderUpdateData()
     {
-        GLenum updated(raw_wasUpdated);
+        GLenum updated = raw_wasUpdated;
 
         if(raw_wasUpdated)
         {
-            // Копирование сырых данных в основные
-            m_name.update();
-            m_isHidden.update();
-
             raw_wasUpdated = 0;
             pure_pipeline->setSomethingWasUpdated();
         }
@@ -247,15 +160,15 @@ namespace Vasnecov
 
     inline std::string CoreObject::renderName() const
     {
-        return m_name.pure();
+        return m_name;
     }
     inline GLboolean CoreObject::renderIsVisible() const
     {
-        return !m_isHidden.pure();
+        return !m_isHidden;
     }
     inline GLboolean CoreObject::renderIsHidden() const
     {
-        return m_isHidden.pure();
+        return m_isHidden;
     }
 }
 

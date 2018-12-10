@@ -83,20 +83,20 @@ protected:
     GLuint renderIndex() const;
 
 protected:
-    Vasnecov::MutualData<LampTypes> m_type;
+    LampTypes m_type;
 
-    Vasnecov::MutualData<QColor> m_ambientColor;
-    Vasnecov::MutualData<QColor> m_diffuseColor;
-    Vasnecov::MutualData<QColor> m_specularColor;
+    QColor m_ambientColor;
+    QColor m_diffuseColor;
+    QColor m_specularColor;
 
-    Vasnecov::MutualData<QVector3D> m_spotDirection;
-    Vasnecov::MutualData<GLfloat> m_spotExponent;
-    Vasnecov::MutualData<GLfloat> m_spotAngle;
-    Vasnecov::MutualData<GLfloat> m_spotCosAngle;
+    QVector3D m_spotDirection;
+    GLfloat m_spotExponent;
+    GLfloat m_spotAngle;
+    GLfloat m_spotCosAngle;
 
-    Vasnecov::MutualData<GLfloat> m_constantAttenuation;
-    Vasnecov::MutualData<GLfloat> m_linearAttenuation;
-    Vasnecov::MutualData<GLfloat> m_quadraticAttenuation;
+    GLfloat m_constantAttenuation;
+    GLfloat m_linearAttenuation;
+    GLfloat m_quadraticAttenuation;
 
     GLuint pure_index; // Индекс источника (GL_LIGHT0 + n)
 

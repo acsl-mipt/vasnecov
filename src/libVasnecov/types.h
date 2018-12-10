@@ -174,8 +174,7 @@ namespace Vasnecov
     {
         GLenum wasUpdated;
 
-        Attributes() :
-            wasUpdated(false)
+        Attributes() : wasUpdated(false)
         {
         }
         virtual ~Attributes(){}
@@ -205,35 +204,22 @@ namespace Vasnecov
         QVector3D target; // Позиция точки, на которую сфокусирована камера
         GLfloat roll;
 
-        Camera() :
-            position(0.0f, 0.0f, 1.85f),
-            target(),
-            roll(0.0f)
-        {
-        }
+        Camera() : position(0.0f, 0.0f, 1.85f), roll(0.0f) { }
         bool operator!=(const Camera& other) const
         {
-            return position != other.position ||
-                   target != other.target ||
-                   roll != other.roll;
+            return position != other.position || target != other.target || roll != other.roll;
         }
         bool operator==(const Camera& other) const
         {
-            return position == other.position &&
-                   target == other.target &&
-                   roll == other.roll;
+            return position == other.position && target == other.target && roll == other.roll;
         }
     };
 
     class Line
     {
     public:
-        Line()
-            : m_p1(), m_p2()
-        {}
-        Line(const QVector3D &p1, const QVector3D &p2)
-            : m_p1(p1), m_p2(p2)
-        {}
+        Line() {}
+        Line(const QVector3D &p1, const QVector3D &p2) : m_p1(p1), m_p2(p2) {}
 
         bool isNull() const {return m_p1 == m_p2;}
         bool isEmpty() const {return m_p1.isNull() && m_p2.isNull();}
@@ -257,17 +243,16 @@ namespace Vasnecov
 
         bool operator!=(const Line& other) const
         {
-            return m_p1 != other.m_p1 ||
-                   m_p2 != other.m_p2;
+            return m_p1 != other.m_p1 || m_p2 != other.m_p2;
         }
         bool operator==(const Line& other) const
         {
-            return m_p1 == other.m_p1 &&
-                   m_p2 == other.m_p2;
+            return m_p1 == other.m_p1 && m_p2 == other.m_p2;
         }
 
     private:
-        QVector3D m_p1, m_p2;
+        QVector3D m_p1;
+        QVector3D m_p2;
     };
 }
 #ifndef _MSC_VER

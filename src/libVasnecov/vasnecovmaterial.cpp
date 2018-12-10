@@ -19,17 +19,16 @@
  \fn VasnecovMaterial::VasnecovMaterial
  \param pipeline
 */
-VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
-                                   const std::string &name) :
+VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline, const std::string &name) :
     Vasnecov::CoreObject(pipeline, name),
-    m_textureD(raw_wasUpdated, TextureD, nullptr),
-    m_textureN(raw_wasUpdated, TextureN, nullptr),
+    m_textureD(nullptr),
+    m_textureN(nullptr),
 
-    m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
-    m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
-    m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
-    m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
-    m_shininess(raw_wasUpdated, Shininess, 0)
+    m_ambientColor(51, 51, 51, 255),
+    m_diffuseColor(204, 204, 204, 255),
+    m_specularColor(0, 0, 0, 255),
+    m_emissionColor(0, 0, 0, 255),
+    m_shininess(0)
 {
 //	QColor c;
 
@@ -53,14 +52,14 @@ VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
                                    VasnecovTexture *textureN,
                                    const std::string &name) :
     Vasnecov::CoreObject(pipeline, name),
-    m_textureD(raw_wasUpdated, TextureD, textureD),
-    m_textureN(raw_wasUpdated, TextureN, textureN),
+    m_textureD(textureD),
+    m_textureN(textureN),
 
-    m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
-    m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
-    m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
-    m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
-    m_shininess(raw_wasUpdated, Shininess, 0)
+    m_ambientColor(51, 51, 51, 255),
+    m_diffuseColor(204, 204, 204, 255),
+    m_specularColor(0, 0, 0, 255),
+    m_emissionColor(0, 0, 0, 255),
+    m_shininess(0)
 {
 }
 
@@ -72,7 +71,7 @@ VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
 */
 void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 {
-    m_textureD.set(textureD);
+    m_textureD = textureD;
 }
 
 /*!
@@ -83,7 +82,7 @@ void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 */
 VasnecovTexture *VasnecovMaterial::textureD() const
 {
-    VasnecovTexture *texture(m_textureD.raw());
+    VasnecovTexture *texture(m_textureD);
     return texture;
 }
 
@@ -95,7 +94,7 @@ VasnecovTexture *VasnecovMaterial::textureD() const
 */
 void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 {
-    m_textureN.set(textureN);
+    m_textureN = textureN;
 }
 
 /*!
@@ -106,7 +105,7 @@ void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 */
 VasnecovTexture *VasnecovMaterial::textureN() const
 {
-    VasnecovTexture *texture(m_textureN.raw());
+    VasnecovTexture *texture(m_textureN);
     return texture;
 }
 
@@ -118,7 +117,7 @@ VasnecovTexture *VasnecovMaterial::textureN() const
 */
 void VasnecovMaterial::setAmbientColor(const QColor &color)
 {
-    m_ambientColor.set(color);
+    m_ambientColor = color;
 }
 
 /*!
@@ -129,7 +128,7 @@ void VasnecovMaterial::setAmbientColor(const QColor &color)
 */
 void VasnecovMaterial::setDiffuseColor(const QColor &color)
 {
-    m_diffuseColor.set(color);
+    m_diffuseColor = color;
 }
 
 /*!
@@ -140,7 +139,7 @@ void VasnecovMaterial::setDiffuseColor(const QColor &color)
 */
 void VasnecovMaterial::setSpecularColor(const QColor &color)
 {
-    m_specularColor.set(color);
+    m_specularColor = color;
 }
 
 /*!
@@ -151,7 +150,7 @@ void VasnecovMaterial::setSpecularColor(const QColor &color)
 */
 void VasnecovMaterial::setEmissionColor(const QColor &color)
 {
-    m_emissionColor.set(color);
+    m_emissionColor = color;
 }
 
 /*!
@@ -162,7 +161,7 @@ void VasnecovMaterial::setEmissionColor(const QColor &color)
 */
 void VasnecovMaterial::setShininess(GLfloat shininess)
 {
-    m_shininess.set(shininess);
+    m_shininess = shininess;
 }
 
 /*!
@@ -173,8 +172,7 @@ void VasnecovMaterial::setShininess(GLfloat shininess)
 */
 QColor VasnecovMaterial::ambientColor() const
 {
-    QColor color(m_ambientColor.raw());
-    return color;
+    return m_ambientColor;
 }
 /*!
  \brief
@@ -184,8 +182,7 @@ QColor VasnecovMaterial::ambientColor() const
 */
 QColor VasnecovMaterial::diffuseColor() const
 {
-    QColor color(m_diffuseColor.raw());
-    return color;
+    return m_diffuseColor;
 }
 /*!
  \brief
@@ -195,8 +192,7 @@ QColor VasnecovMaterial::diffuseColor() const
 */
 QColor VasnecovMaterial::specularColor() const
 {
-    QColor color(m_specularColor.raw());
-    return color;
+    return m_specularColor;
 }
 /*!
  \brief
@@ -206,8 +202,7 @@ QColor VasnecovMaterial::specularColor() const
 */
 QColor VasnecovMaterial::emissionColor() const
 {
-    QColor color(m_emissionColor.raw());
-    return color;
+    return m_emissionColor;
 }
 /*!
  \brief
@@ -217,8 +212,7 @@ QColor VasnecovMaterial::emissionColor() const
 */
 GLfloat VasnecovMaterial::shininess() const
 {
-    GLfloat shininess(m_shininess.raw());
-    return shininess;
+    return m_shininess;
 }
 
 /*!
@@ -229,8 +223,8 @@ GLfloat VasnecovMaterial::shininess() const
 */
 void VasnecovMaterial::designerSetAmbientAndDiffuseColor(const QColor &color)
 {
-    m_ambientColor.set(color);
-    m_diffuseColor.set(color);
+    m_ambientColor = color;
+    m_diffuseColor = color;
 }
 
 /*!
@@ -241,22 +235,11 @@ void VasnecovMaterial::designerSetAmbientAndDiffuseColor(const QColor &color)
 */
 GLenum VasnecovMaterial::renderUpdateData()
 {
-    GLenum updated(raw_wasUpdated);
+    GLenum updated = raw_wasUpdated;
 
     if(raw_wasUpdated)
     {
         pure_pipeline->setSomethingWasUpdated();
-
-        // Копирование сырых данных в основные
-        m_textureD.update();
-        m_textureN.update();
-
-        m_ambientColor.update();
-        m_diffuseColor.update();
-        m_specularColor.update();
-        m_emissionColor.update();
-        m_shininess.update();
-
         Vasnecov::CoreObject::renderUpdateData();
     }
 
@@ -270,15 +253,15 @@ GLenum VasnecovMaterial::renderUpdateData()
 */
 void VasnecovMaterial::renderDraw()
 {
-    pure_pipeline->setMaterialColors(m_ambientColor.pure(),
-                                     m_diffuseColor.pure(),
-                                     m_specularColor.pure(),
-                                     m_emissionColor.pure(),
-                                     m_shininess.pure());
+    pure_pipeline->setMaterialColors(m_ambientColor,
+                                     m_diffuseColor,
+                                     m_specularColor,
+                                     m_emissionColor,
+                                     m_shininess);
 
-    if(m_textureD.pure())
+    if(m_textureD)
     {
-        pure_pipeline->enableTexture2D(m_textureD.pure()->id());
+        pure_pipeline->enableTexture2D(m_textureD->id());
     }
     else
     {

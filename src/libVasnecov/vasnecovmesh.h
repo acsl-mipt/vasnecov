@@ -32,7 +32,7 @@ public:
     GLboolean loadModel(GLboolean readFromMTL = Vasnecov::cfg_readFromMTL);
     GLboolean loadModel(const std::string& path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
     void drawModel(); // Отрисовка модели
-    QVector3D cm() const;
+    const QVector3D& cm() const;
     void drawBorderBox(); // Рисовать ограничивающий бокс
 
 protected:
@@ -133,7 +133,7 @@ inline VasnecovPipeline::ElementDrawingMethods VasnecovMesh::type() const
     return m_type;
 }
 
-inline QVector3D VasnecovMesh :: cm() const
+inline const QVector3D& VasnecovMesh :: cm() const
 {
     return m_cm;
 }
