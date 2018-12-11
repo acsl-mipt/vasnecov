@@ -29,7 +29,7 @@ class VasnecovFigure : public VasnecovElement
         VertexManager(GLenum& wasUpdated, const GLenum flag, GLboolean optimize = true) :
             m_flag(flag),
             m_wasUpdated(wasUpdated),
-            m_optimize(optimize),
+            m_optimize(optimize)
         {}
         void setOptimization(GLboolean optimize) { m_optimize = optimize; }
         GLboolean optimization() const { return m_optimize; }

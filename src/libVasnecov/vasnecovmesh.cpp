@@ -37,7 +37,7 @@ VasnecovMesh::VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeli
 
     m_hasTexture(false),
     m_borderBoxVertices(8),
-    m_borderBoxIndices(24),
+    m_borderBoxIndices(24)
 {
 }
 

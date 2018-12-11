@@ -142,17 +142,17 @@ GLboolean VasnecovLabel::setTexture(VasnecovTexture *texture, GLfloat x, GLfloat
 */
 GLboolean VasnecovLabel::setImage(const QImage &image)
 {
-    if(!image.isNull())
-    {
-        if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
-        {
-            // Делается копия картинки на куче (которая удалится сама текстурой после загрузки), чтобы не было проблем с многопоточностью
-            QImage newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
+    if (image.isNull())
+        return false;
 
-            raw_dataLabel.texture = new VasnecovTextureInterface(newImage);
-            updaterSetUpdateFlag(Image);
-            return true;
-        }
+    if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
+    {
+        // Делается копия картинки на куче (которая удалится сама текстурой после загрузки), чтобы не было проблем с многопоточностью
+        QImage newImage = image.copy(); // Необходимо вызывать именно copy() из-за особенностей копирования QImage
+
+        raw_dataLabel.texture = new VasnecovTextureInterface(newImage);
+        updaterSetUpdateFlag(Image);
+        return true;
     }
     return false;
 }

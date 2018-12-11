@@ -43,7 +43,7 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
 
     m_loading(false),
     m_loadingImageTimer(Vasnecov::timeDefault()),
-    m_lampsCountMax(Vasnecov::cfg_lampsCountMax),
+    m_lampsCountMax(Vasnecov::cfg_lampsCountMax)
 {
     Q_INIT_RESOURCE(vasnecov);
 
