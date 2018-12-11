@@ -30,26 +30,10 @@ class VasnecovFigure : public VasnecovElement
             m_flag(flag),
             m_wasUpdated(wasUpdated),
             m_optimize(optimize),
-            raw_vertices(),
-            raw_indices(),
-            pure_vertices(),
-            pure_indices(),
-            raw_cm(),
-            pure_cm()
         {}
-        void setOptimization(GLboolean optimize)
-        {
-            m_optimize = optimize;
-        }
-        GLboolean optimization() const
-        {
-            return m_optimize;
-        }
-
-        GLuint rawVerticesSize() const
-        {
-            return static_cast<GLuint>(raw_vertices.size());
-        }
+        void setOptimization(GLboolean optimize) { m_optimize = optimize; }
+        GLboolean optimization() const { return m_optimize; }
+        GLuint rawVerticesSize() const { return static_cast<GLuint>(raw_vertices.size()); }
 
         void set(const std::vector<QVector3D>& points)
         {
@@ -247,18 +231,9 @@ class VasnecovFigure : public VasnecovElement
             return 0;
         }
 
-        const std::vector<QVector3D>& pureVertices() const
-        {
-            return pure_vertices;
-        }
-        const std::vector<GLuint>& pureIndices() const
-        {
-            return pure_indices;
-        }
-        const QVector3D& cm() const
-        {
-            return pure_cm;
-        }
+        const std::vector<QVector3D>& pureVertices() const { return pure_vertices; }
+        const std::vector<GLuint>& pureIndices() const { return pure_indices; }
+        const QVector3D& cm() const { return pure_cm; }
 
     private:
         GLboolean optimizedIndex(const QVector3D& vert, GLuint& fIndex) const

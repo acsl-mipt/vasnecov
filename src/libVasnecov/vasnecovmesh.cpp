@@ -35,15 +35,9 @@ VasnecovMesh::VasnecovMesh(const std::string &meshPath, VasnecovPipeline *pipeli
     m_meshPath(meshPath),
     m_isLoaded(false),
 
-    m_indices(),
-    m_vertices(),
-    m_normals(),
-    m_textures(),
-
     m_hasTexture(false),
     m_borderBoxVertices(8),
     m_borderBoxIndices(24),
-    m_cm()
 {
 }
 

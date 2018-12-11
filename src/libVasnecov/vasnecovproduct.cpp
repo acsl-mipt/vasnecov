@@ -26,7 +26,6 @@
 */
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::ProductTypes type, VasnecovProduct* parent, GLuint level) :
     VasnecovElement(pipeline),
-    raw_M1(),
     raw_ownVisible(true),
 
     m_type(type),
@@ -35,7 +34,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::Pr
 
     m_mesh(nullptr),
     m_material(nullptr),
-    m_children(),
 
     m_drawingBox(false)
 {
@@ -54,7 +52,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::Pr
 */
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
-    raw_M1(),
     raw_ownVisible(true),
 
     m_type(type),
@@ -63,7 +60,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& 
 
     m_mesh(nullptr),
     m_material(nullptr),
-    m_children(),
 
     m_drawingBox(false)
 {
@@ -81,7 +77,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& 
 */
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
-    raw_M1(),
     raw_ownVisible(true),
 
     m_type(ProductTypePart), // т.к. меш может быть только у детали
@@ -90,7 +85,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& 
 
     m_mesh(mesh),
     m_material(nullptr),
-    m_children(),
 
     m_drawingBox(false)
 {
@@ -110,7 +104,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& 
 */
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const std::string& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
-    raw_M1(),
     raw_ownVisible(true),
 
     m_type(ProductTypePart), // т.к. меш может быть только у детали

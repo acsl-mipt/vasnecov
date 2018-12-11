@@ -56,10 +56,7 @@ namespace Vasnecov
             dirTextures(Vasnecov::cfg_dirTextures),
             dirTexturesDPref(Vasnecov::cfg_dirTexturesDPref),
             dirTexturesNPref(Vasnecov::cfg_dirTexturesNPref),
-            dirTexturesIPref(Vasnecov::cfg_dirTexturesIPref),
-
-            meshesForLoading(),
-            texturesForLoading()
+            dirTexturesIPref(Vasnecov::cfg_dirTexturesIPref)
         {
         }
         ~UniverseAttributes() override;

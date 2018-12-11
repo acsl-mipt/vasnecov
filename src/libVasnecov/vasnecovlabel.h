@@ -27,12 +27,13 @@ namespace Vasnecov
     struct LabelAttributes
     {
         QVector2D size;
-        QVector2D texturePoint, textureZone; // поцизия на текстуре, размер зоны
+        QVector2D texturePoint;// поцизия на текстуре, 
+        QVector2D textureZone; // размер зоны
         VasnecovTexture* texture;
 
         LabelAttributes(VasnecovTexture* p_texture, QVector2D p_size) :
             size(p_size),
-            texturePoint(), textureZone(p_size),
+            textureZone(p_size),
             texture(p_texture)
         {
         }

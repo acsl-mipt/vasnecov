@@ -35,7 +35,6 @@
  \brief Конструктор Вселенной.
 */
 VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
-    m_pipeline(),
     m_context(context),
     m_backgroundColor(0, 0, 0, 255),
 
@@ -43,18 +42,8 @@ VasnecovUniverse::VasnecovUniverse(const QGLContext *context) :
     m_height(Vasnecov::cfg_displayHeightDefault),
 
     m_loading(false),
-    m_loadingImage0(),
-    m_loadingImage1(),
     m_loadingImageTimer(Vasnecov::timeDefault()),
     m_lampsCountMax(Vasnecov::cfg_lampsCountMax),
-
-    raw_data(),
-    m_elements(),
-
-    m_techRenderer(),
-    m_techVersion(),
-    m_techSL(),
-    m_techExtensions()
 {
     Q_INIT_RESOURCE(vasnecov);
 

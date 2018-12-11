@@ -73,11 +73,7 @@ public:
         QVector3D center;
         QVector3D up;
 
-        CameraAttributes():
-            eye(),
-            center(),
-            up(0.0f, 0.0f, 1.0f)
-        {}
+        CameraAttributes(): up(0.0f, 0.0f, 1.0f) {}
     };
 
 public:

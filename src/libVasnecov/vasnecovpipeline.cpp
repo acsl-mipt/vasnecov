@@ -35,12 +35,10 @@ VasnecovPipeline::VasnecovPipeline(QGLContext* context) :
     m_color(255, 255, 255, 255),
     m_drawingType(Vasnecov::PolygonDrawingTypeNormal),
     m_texture2D(0),
-    m_P(),
     m_viewX(0),
     m_viewY(0),
     m_viewWidth(Vasnecov::cfg_displayWidthDefault),
     m_viewHeight(Vasnecov::cfg_displayHeightDefault),
-    m_activatedLamps(),
 
     m_flagTexture2D(false),
     m_flagLight(false),
