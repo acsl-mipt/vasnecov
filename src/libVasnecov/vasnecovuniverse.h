@@ -380,43 +380,39 @@ VasnecovUniverse::ElementFullBox<T>::~ElementFullBox()
 template <typename T>
 GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
 {
-    if(this->m_wasUpdated)
-    {
-        this->m_pure.swap(this->m_buffer);
-        this->m_wasUpdated = false;
+    if(!this->m_wasUpdated)
+        return false;
 
-        if(!m_deleting.empty())
+    this->m_pure.swap(this->m_raw);
+    this->m_wasUpdated = false;
+
+    if(!m_deleting.empty())
+    {
+        for(typename std::vector<T *>::iterator eit = m_deleting.begin(); eit != m_deleting.end(); ++eit)
         {
-            for(typename std::vector<T *>::iterator eit = m_deleting.begin();
-                eit != m_deleting.end(); ++eit)
-            {
-                delete (*eit);
-                (*eit) = nullptr;
-            }
-            m_deleting.clear();
+            delete (*eit);
+            (*eit) = nullptr;
         }
-        return true;
+        m_deleting.clear();
     }
-    return false;
+    return true;
 }
 
 template <typename T>
 GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(T *element)
 {
-    if(element)
+    if (!element)
+        return false;
+
+    for(typename std::vector<T *>::iterator eit = this->m_raw.begin(); eit != this->m_raw.end(); ++eit)
     {
-        for(typename std::vector<T *>::iterator eit = this->m_raw.begin(); eit != this->m_raw.end(); ++eit)
+        if((*eit) == element)
         {
-            if((*eit) == element)
-            {
-                m_deleting.push_back(*eit);
+            m_deleting.push_back(*eit);
 
-                this->m_raw.erase(eit);
-                this->m_buffer = this->m_raw;
-
-                this->m_wasUpdated = true;
-                return true;
-            }
+            this->m_raw.erase(eit);
+            this->m_wasUpdated = true;
+            return true;
         }
     }
 

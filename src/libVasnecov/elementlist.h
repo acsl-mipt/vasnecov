@@ -73,27 +73,22 @@ namespace Vasnecov
     template <typename T>
     GLboolean ElementBox<T>::addElement(T *element, GLboolean check)
     {
-        if(element)
-        {
-            GLboolean added = true;
-            if(check)
+        if (!element)
+            return false;
+
+        if(check)
+        {   // Поиск дубликатов
+            if(m_raw.end() != find(m_raw.begin(), m_raw.end(), element))
             {
-                // Поиск дубликатов
-                if(m_raw.end() != find(m_raw.begin(), m_raw.end(), element))
-                {
-                    added = false;
-                }
-            }
-            if(added)
-            {
-                m_raw.push_back(element);
-                m_buffer = m_raw;
-                m_wasUpdated = true;
-                return true;
+                Vasnecov::problem("Неверный элемент либо дублирование данных");
+                return false;
             }
         }
-        Vasnecov::problem("Неверный элемент либо дублирование данных");
-        return false;
+
+        m_raw.push_back(element);
+        m_buffer = m_raw;
+        m_wasUpdated = true;
+        return true;
     }
 
     template <typename T>

@@ -153,7 +153,7 @@ inline void VasnecovAbstractElement::renderApplyTranslation() const
     // Если есть чужая матрица трансформаций, то перемножается со своей, иначе используем только свою.
     if(m_alienMs)
     {
-        pure_pipeline->setMatrixMV(m_alienMs);
+        pure_pipeline->setMatrixMV(*m_alienMs);
         pure_pipeline->addMatrixMV(m_Ms);
     }
     else

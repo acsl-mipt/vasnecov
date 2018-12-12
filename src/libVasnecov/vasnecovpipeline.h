@@ -99,9 +99,7 @@ public:
 
     void setIdentityMatrixMV(); // Задание единичной модельно-видовой матрицы
     void setMatrixMV(const QMatrix4x4& MV);
-    void setMatrixMV(const QMatrix4x4* MV);
     void addMatrixMV(const QMatrix4x4& MV);
-    void addMatrixMV(const QMatrix4x4* MV);
     void setMatrixOrtho2D(const QMatrix4x4& MV);
     QVector4D projectPoint(const QMatrix4x4& MV, const QVector3D& point = QVector3D());
 
@@ -267,17 +265,9 @@ inline void VasnecovPipeline::setMatrixMV(const QMatrix4x4 &MV)
 {
     glLoadMatrixf(MV.constData());
 }
-inline void VasnecovPipeline::setMatrixMV(const QMatrix4x4 *MV)
-{
-    setMatrixMV(*MV);
-}
 inline void VasnecovPipeline::addMatrixMV(const QMatrix4x4 &MV)
 {
     glMultMatrixf(MV.constData());
-}
-inline void VasnecovPipeline::addMatrixMV(const QMatrix4x4 *MV)
-{
-    addMatrixMV(*MV);
 }
 inline void VasnecovPipeline::setBackgroundColor(const QColor &color)
 {
