@@ -185,44 +185,42 @@ GLboolean VasnecovLabel::setImage(const QImage &image, GLfloat x, GLfloat y, GLf
 */
 bool VasnecovLabel::updaterCalculateTexturePosition()
 {
-    if(m_texture)
+    if(!m_texture)
+        return true;
+
+    if(!m_texture->id()) // Текстура еще не загрузилась, значит будем пробовать в следующий раз
+        return false;
+
+    GLfloat texWidth = m_texture->width();
+    GLfloat texHeight = m_texture->height();
+
+    if (texWidth == 0.0f || texHeight == 0.0f)
+        return true;
+
+    GLfloat width(raw_dataLabel.textureZone.x());
+    GLfloat height(raw_dataLabel.textureZone.y());
+
+    if(raw_dataLabel.textureZone.isNull())
     {
-        GLfloat texWidth = m_texture->width();
-        GLfloat texHeight = m_texture->height();
-
-        if(!m_texture->id()) // Текстура еще не загрузилась, значит будем пробовать в следующий раз
-        {
-            return false;
-        }
-
-        if(texWidth != 0.0f && texHeight != 0.0f)
-        {
-            GLfloat width(raw_dataLabel.textureZone.x());
-            GLfloat height(raw_dataLabel.textureZone.y());
-
-            if(raw_dataLabel.textureZone.isNull())
-            {
-                // Размеры зоны текстуры по размеру самой метки
-                width = raw_dataLabel.size.x();
-                height = raw_dataLabel.size.y();
-            }
-
-            m_texturePosition[0].setX(raw_dataLabel.texturePoint.x()/texWidth);
-            m_texturePosition[0].setY((texHeight-(raw_dataLabel.texturePoint.y() + height))/texHeight);
-            m_texturePosition[1].setY((texHeight-raw_dataLabel.texturePoint.y())/texHeight);
-            m_texturePosition[1].setX((raw_dataLabel.texturePoint.x() + width)/texWidth);
-
-            m_vertices[0] = QVector3D(-m_position.x(), -m_position.y(), 0.0f);
-            m_vertices[1] = QVector3D(m_position.x(), -m_position.y(), 0.0f);
-            m_vertices[2] = QVector3D(m_position.x(), m_position.y(), 0.0f);
-            m_vertices[3] = QVector3D(-m_position.x(), m_position.y(), 0.0f);
-
-            m_textures[0] = QVector2D(m_texturePosition[0].x(), m_texturePosition[1].y());
-            m_textures[1] = QVector2D(m_texturePosition[1].x(), m_texturePosition[1].y());
-            m_textures[2] = QVector2D(m_texturePosition[1].x(), m_texturePosition[0].y());
-            m_textures[3] = QVector2D(m_texturePosition[0].x(), m_texturePosition[0].y());
-        }
+        // Размеры зоны текстуры по размеру самой метки
+        width = raw_dataLabel.size.x();
+        height = raw_dataLabel.size.y();
     }
+
+    m_texturePosition[0].setX(raw_dataLabel.texturePoint.x()/texWidth);
+    m_texturePosition[0].setY((texHeight-(raw_dataLabel.texturePoint.y() + height))/texHeight);
+    m_texturePosition[1].setY((texHeight-raw_dataLabel.texturePoint.y())/texHeight);
+    m_texturePosition[1].setX((raw_dataLabel.texturePoint.x() + width)/texWidth);
+
+    m_vertices[0] = QVector3D(-m_position.x(), -m_position.y(), 0.0f);
+    m_vertices[1] = QVector3D(m_position.x(), -m_position.y(), 0.0f);
+    m_vertices[2] = QVector3D(m_position.x(), m_position.y(), 0.0f);
+    m_vertices[3] = QVector3D(-m_position.x(), m_position.y(), 0.0f);
+
+    m_textures[0] = QVector2D(m_texturePosition[0].x(), m_texturePosition[1].y());
+    m_textures[1] = QVector2D(m_texturePosition[1].x(), m_texturePosition[1].y());
+    m_textures[2] = QVector2D(m_texturePosition[1].x(), m_texturePosition[0].y());
+    m_textures[3] = QVector2D(m_texturePosition[0].x(), m_texturePosition[0].y());
 
     return true;
 }
