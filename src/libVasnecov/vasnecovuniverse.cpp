@@ -955,7 +955,7 @@ QString VasnecovUniverse::info(GLuint type)
             break;
 #ifndef _MSC_VER
         case GL_SHADING_LANGUAGE_VERSION:
-            m_techSL.update();
+            //m_techSL.update();
             res = m_techSL;
             break;
 #endif
@@ -992,7 +992,7 @@ void VasnecovUniverse::renderInitialize()
     m_techRenderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
     m_techVersion = reinterpret_cast<const char *>(glGetString(GL_VERSION));
 #ifndef _MSC_VER
-    m_techSL.set(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    m_techSL = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 #endif
     m_techExtensions = exts;
 }

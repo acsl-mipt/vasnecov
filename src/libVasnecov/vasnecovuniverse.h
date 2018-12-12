@@ -91,7 +91,7 @@ class VasnecovUniverse
         ~ElementFullBox() override;
 
         GLboolean synchronize() override;
-        GLboolean removeElement(const T* element);
+        GLboolean removeElement(T* element) override;
         const std::vector<T*>& deleting() const;
 
     protected:
@@ -401,20 +401,20 @@ GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
 }
 
 template <typename T>
-GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(const T *element)
+GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(T *element)
 {
     if(element)
     {
-        for(typename std::vector<T *>::iterator eit = m_raw.begin(); eit != m_raw.end(); ++eit)
+        for(typename std::vector<T *>::iterator eit = this->m_raw.begin(); eit != this->m_raw.end(); ++eit)
         {
             if((*eit) == element)
             {
                 m_deleting.push_back(*eit);
 
-                m_raw.erase(eit);
-                m_buffer = m_raw;
+                this->m_raw.erase(eit);
+                this->m_buffer = this->m_raw;
 
-                m_wasUpdated = true;
+                this->m_wasUpdated = true;
                 return true;
             }
         }
