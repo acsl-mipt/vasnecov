@@ -59,7 +59,7 @@ protected:
 protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
     // Для их сокрытия методы объявлены protected, а класс Рендерера сделан friend
-    virtual GLenum renderUpdateData(); // обновление данных, вызов должен быть обёрнут мьютексом
+    GLenum renderUpdateData() override; // обновление данных, вызов должен быть обёрнут мьютексом
 
     void renderApplyTranslation() const; // Выполнение позиционирования элемента
     const QMatrix4x4& renderMatrixMs() const;
@@ -110,11 +110,11 @@ public:
 
 protected:
     // Методы без мьютексов, вызываемые методами, защищенными своими мьютексами
-    virtual void designerUpdateMatrixMs();
+    void designerUpdateMatrixMs() override;
 
 protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов)
-    virtual GLenum renderUpdateData(); // обновление данных, вызов должен быть обёрнут мьютексом
+    GLenum renderUpdateData() override; // обновление данных, вызов должен быть обёрнут мьютексом
 
     GLfloat renderDistance() const;
     QColor renderColor() const;

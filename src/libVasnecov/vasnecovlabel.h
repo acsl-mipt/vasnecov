@@ -70,8 +70,8 @@ protected:
     void updaterRemoveOldPersonalTexture();
 
 protected:
-    GLenum renderUpdateData();
-    void renderDraw();
+    GLenum renderUpdateData() override;
+    void renderDraw() override;
 
     VasnecovTexture* texture() const {return m_texture;}
 

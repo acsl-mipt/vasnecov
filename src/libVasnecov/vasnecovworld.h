@@ -127,8 +127,8 @@ protected:
 
 protected:
     // Вызовы из рендерера
-    GLenum renderUpdateData();
-    void renderDraw();
+    GLenum renderUpdateData() override;
+    void renderDraw() override;
 
     void renderSwitchLamps() const;
     VasnecovPipeline::CameraAttributes renderCalculateCamera() const;

@@ -57,8 +57,8 @@ protected:
     void designerSetAmbientAndDiffuseColor(const QColor& color);
 
 protected:
-    GLenum renderUpdateData();
-    void renderDraw();
+    GLenum renderUpdateData() override;
+    void renderDraw() override;
 
     const VasnecovTexture* renderTextureD() const;
     const VasnecovTexture* renderTextureN() const;

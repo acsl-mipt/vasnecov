@@ -60,7 +60,7 @@ public:
 public:
     // Методы, вызываемые извне (защищенные мьютексами)
     // Интерфейсы свойств
-    virtual void setVisible(GLboolean visible = true);
+    void setVisible(GLboolean visible = true) override;
 
     void setMaterial(VasnecovMaterial* material);
     VasnecovMaterial* material() const;
@@ -76,21 +76,21 @@ public:
     const std::vector<VasnecovProduct*>& children() const;
 
     // Изменение цвета
-    void setColor(const QColor& color); // Задаёт общий цвет продукта. Если есть материал, то передается в ambient и diffuse материала
+    void setColor(const QColor& color) override; // Задаёт общий цвет продукта. Если есть материал, то передается в ambient и diffuse материала
     using VasnecovElement::setColor;
 
     // Привязка координат
-    void setCoordinates(const QVector3D& coordinates);
+    void setCoordinates(const QVector3D& coordinates) override;
     using VasnecovElement::setCoordinates;
-    void incrementCoordinates(const QVector3D& increment);
+    void incrementCoordinates(const QVector3D& increment) override;
     using VasnecovElement::incrementCoordinates;
     QVector3D globalCoordinates();
-    void setAngles(const QVector3D& angles);
+    void setAngles(const QVector3D& angles) override;
     using VasnecovElement::setAngles;
-    virtual void incrementAngles(const QVector3D& increment);
+    void incrementAngles(const QVector3D& increment) override;
     using VasnecovElement::incrementAngles;
-    void setScale(GLfloat scale = 1.0f);
-    virtual void setPositionFromElement(const VasnecovAbstractElement* element);
+    void setScale(GLfloat scale = 1.0f) override;
+    void setPositionFromElement(const VasnecovAbstractElement* element) override;
 
     void switchDrawingBox();
 
@@ -116,14 +116,14 @@ protected:
     void designerSetMatrixM1Recursively(const QMatrix4x4& M1);
 
     void designerUpdateMatrixM1(const QMatrix4x4& M1);
-    void designerUpdateMatrixMs();
+    void designerUpdateMatrixMs() override;
 
-    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
+    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal) override;
 
 protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов)
-    GLenum renderUpdateData();
-    void renderDraw();
+    GLenum renderUpdateData() override;
+    void renderDraw() override;
 
     VasnecovMaterial* renderMaterial() const;
     VasnecovMesh* renderMesh() const;

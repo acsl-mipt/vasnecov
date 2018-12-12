@@ -68,7 +68,7 @@ class VasnecovUniverse
     class LoadingStatus
     {
     public:
-        LoadingStatus(GLboolean* loading) : m_loading(loading)
+        explicit LoadingStatus(GLboolean* loading) : m_loading(loading)
         {
             *m_loading = true;
         }
@@ -138,7 +138,7 @@ class VasnecovUniverse
         template <typename F>
         void forEachPureMaterial(F fun) const {m_materials.forEachPure(fun);}
 
-        virtual GLboolean synchronizeAll()
+        GLboolean synchronizeAll() override
         {
             GLboolean res = false;
 

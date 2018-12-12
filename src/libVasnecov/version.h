@@ -28,7 +28,10 @@ namespace Vasnecov
 {
     struct Version
     {
-        int major, minor, release, build; // major, minor - какие-то функции-макросы, поэтому их не получится использоваться в init list
+        int major;
+        int minor;
+        int release;
+        int build; // major, minor - какие-то функции-макросы, поэтому их не получится использоваться в init list
         int revision;
         QString status;
         QString versionText;

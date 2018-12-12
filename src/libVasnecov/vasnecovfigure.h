@@ -365,10 +365,10 @@ public:
 protected:
     GLboolean designerSetType(VasnecovFigure::Types type);
 
-    GLenum renderUpdateData();
-    void renderDraw();
+    GLenum renderUpdateData() override;
+    void renderDraw() override;
 
-    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
+    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal) override;
 
     GLenum renderType() const;
     const QVector3D& renderCm() const;

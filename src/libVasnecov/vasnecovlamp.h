@@ -76,8 +76,8 @@ public:
     void setQuadraticAttenuation(GLfloat attenuation);
 
 protected:
-    GLenum renderUpdateData();
-    void renderDraw();
+    GLenum renderUpdateData() override;
+    void renderDraw() override;
 
     void renderSetIndex(GLuint index);
     GLuint renderIndex() const;

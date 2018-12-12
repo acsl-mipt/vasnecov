@@ -51,7 +51,7 @@ class VasnecovTextureDiffuse : public VasnecovTexture
 {
 public:
     explicit VasnecovTextureDiffuse(const QImage& image);
-    GLboolean loadImage();
+    GLboolean loadImage() override;
 };
 
 
@@ -59,7 +59,7 @@ class VasnecovTextureInterface : public VasnecovTexture
 {
 public:
     explicit VasnecovTextureInterface(const QImage& image);
-    GLboolean loadImage();
+    GLboolean loadImage() override;
 };
 
 class VasnecovTextureNormal : public VasnecovTextureInterface // Карта нормалей. Когда-нибудь я её наконец-то реализую
