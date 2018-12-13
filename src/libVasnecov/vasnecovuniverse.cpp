@@ -91,18 +91,16 @@ VasnecovUniverse::~VasnecovUniverse()
 */
 VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width, GLsizei height)
 {
-    if(width > Vasnecov::cfg_worldWidthMin && width < Vasnecov::cfg_worldWidthMax &&
-       height > Vasnecov::cfg_worldHeightMin && height < Vasnecov::cfg_worldHeightMax)
+    if(width < Vasnecov::cfg_worldWidthMin || width > Vasnecov::cfg_worldWidthMax &&
+       height < Vasnecov::cfg_worldHeightMin || height > Vasnecov::cfg_worldHeightMax)
     {
-        VasnecovWorld *newWorld = new VasnecovWorld(&m_pipeline, posX, posY, width, height);
-
-        m_elements.addElement(newWorld);
-
-        return newWorld;
+        Vasnecov::problem("Неверные размеры мира");
+        return nullptr;
     }
 
-    Vasnecov::problem("Неверные размеры мира");
-    return nullptr;
+    VasnecovWorld *newWorld = new VasnecovWorld(&m_pipeline, posX, posY, width, height);
+    m_elements.addElement(newWorld);
+    return newWorld;
 }
 
 /*!
@@ -516,13 +514,17 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
 
 VasnecovFigure *VasnecovUniverse::addFigure(const std::string &name, VasnecovWorld *world)
 {
+    std::string tmp = name;
+    return addFigure(std::move(tmp), world);
+}
+
+VasnecovFigure *VasnecovUniverse::addFigure(std::string&& name, VasnecovWorld *world)
+{
     if(!world)
     {
         Vasnecov::problem("Мир не задан");
         return nullptr;
     }
-
-    VasnecovFigure *figure(nullptr);
 
     // Поиск мира в списке
     if(!m_elements.findRawElement(world))
@@ -531,21 +533,17 @@ VasnecovFigure *VasnecovUniverse::addFigure(const std::string &name, VasnecovWor
         return nullptr;
     }
 
-    figure = new VasnecovFigure(&m_pipeline, name);
-
-    if(m_elements.addElement(figure))
-    {
-        world->designerAddElement(figure);
-        return figure;
-    }
-    else
+    VasnecovFigure *figure = new VasnecovFigure(&m_pipeline, name);
+    if(!m_elements.addElement(figure))
     {
         delete figure;
-        figure = nullptr;
-
         Vasnecov::problem("Неверная фигура либо дублирование данных");
         return nullptr;
     }
+
+    assert(figure != nullptr);
+    world->designerAddElement(figure);
+    return figure;
 }
 
 GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
@@ -553,10 +551,8 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
     if(!figure)
         return false;
 
-    if(m_elements.findRawElement(figure))
+    if(m_elements.removeElement(figure))
     {
-        m_elements.removeElement(figure);
-
         // Прочие удаления
         // Удаление из мира
         for(auto& wit: m_elements.rawWorlds().raw())
@@ -566,7 +562,6 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
 
         // Удаление чужих матриц
         designerRemoveThisAlienMatrix(figure->designerExportingMatrix());
-
         return true;
     }
 
@@ -585,7 +580,7 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
  */
 VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld *world, GLfloat width, GLfloat height)
 {
-    return addLabel(name, world, width, height, "");
+    return addLabel(name, world, width, height, std::string());
 }
 /*!
    \brief Перегруженная версия \a VasnecovUniverse::addLabel
@@ -602,16 +597,14 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
         return nullptr;
     }
 
-    VasnecovLabel *label(nullptr);
-    VasnecovTexture *texture(nullptr);
+    nullptr;
+    VasnecovTexture *texture  =nullptr;
 
     // Проверка на наличие текстуры и её догрузка при необходимости
     if(!textureName.empty()) // Иначе нулевая текстура
     {
         std::string corTextureName = correctFileId(textureName, Vasnecov::cfg_textureFormat);
-
         texture = designerFindTexture(raw_data.dirTexturesIPref + corTextureName);
-
         if(!texture)
         {
             // Попытка загрузить насильно
@@ -639,21 +632,16 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
         return nullptr;
     }
 
-    label = new VasnecovLabel(&m_pipeline, name, QVector2D(width, height), texture);
-
-    if(m_elements.addElement(label))
-    {
-        world->designerAddElement(label);
-        return label;
-    }
-    else
+    VasnecovLabel *label = label = new VasnecovLabel(&m_pipeline, name, QVector2D(width, height), texture);
+    if(!m_elements.addElement(label))
     {
         delete label;
-        label = nullptr;
-
         Vasnecov::problem("Неверная метка либо дублирование данных");
         return nullptr;
     }
+
+    world->designerAddElement(label);
+    return label;
 }
 
 VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, VasnecovWorld *world)
@@ -782,18 +770,13 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const std::string &textureName)
 VasnecovMaterial *VasnecovUniverse::addMaterial()
 {
     VasnecovMaterial *material = new VasnecovMaterial(&m_pipeline);
-    if(m_elements.addElement(material))
-    {
-        return material;
-    }
-    else
+    if(!m_elements.addElement(material))
     {
         delete material;
-        material = nullptr;
-
         Vasnecov::problem("Неверный материал либо дублирование данных");
         return nullptr;
     }
+    return material;
 }
 
 /*!
@@ -805,7 +788,6 @@ VasnecovMaterial *VasnecovUniverse::addMaterial()
 */
 VasnecovTexture *VasnecovUniverse::textureByName(const std::string &textureName, Vasnecov::TextureTypes type)
 {
-    VasnecovTexture *texture(nullptr);
     std::string newName;
 
     switch(type)
@@ -823,9 +805,7 @@ VasnecovTexture *VasnecovUniverse::textureByName(const std::string &textureName,
             newName = textureName;
     }
 
-    texture = designerFindTexture(newName);
-
-    return texture;
+    return designerFindTexture(newName);
 }
 
 /*!
@@ -844,8 +824,7 @@ void VasnecovUniverse::setBackgroundColor(const QColor &color)
 */
 void VasnecovUniverse::setBackgroundColor(QRgb rgb)
 {
-    QColor color(rgb);
-    setBackgroundColor(color);
+    setBackgroundColor(QColor(rgb));
 }
 /*!
  \brief
@@ -902,12 +881,7 @@ GLboolean VasnecovUniverse::loadMesh(const std::string &fileName)
 */
 GLuint VasnecovUniverse::loadMeshes(const std::string &dirName, GLboolean withSub)
 {
-    LoadingStatus lStatus(&m_loading);
-    GLuint res(0);
-
-    res = handleFilesInDir(raw_data.dirMeshes, dirName, Vasnecov::cfg_meshFormat, &VasnecovUniverse::loadMeshFile, withSub);
-
-    return res;
+    return handleFilesInDir(raw_data.dirMeshes, dirName, Vasnecov::cfg_meshFormat, &VasnecovUniverse::loadMeshFile, withSub);
 }
 
 /*!
@@ -1000,14 +974,9 @@ void VasnecovUniverse::renderInitialize()
 
 VasnecovMesh *VasnecovUniverse::designerFindMesh(const std::string &name)
 {
-    if(raw_data.meshes.count(name))
-    {
-        return raw_data.meshes[name];
-    }
-    else
-    {
+    if (raw_data.meshes.count(name) == 0)
         return nullptr;
-    }
+    return raw_data.meshes[name];
 }
 
 /*!
@@ -1018,39 +987,30 @@ VasnecovMesh *VasnecovUniverse::designerFindMesh(const std::string &name)
 */
 VasnecovTexture *VasnecovUniverse::designerFindTexture(const std::string &name)
 {
-    if(raw_data.textures.count(name))
-    {
-        return raw_data.textures[name];
-    }
-    else
-    {
+    if (!raw_data.textures.count(name))
         return nullptr;
-    }
+    return raw_data.textures[name];
 }
 
 GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
     GLboolean res = false;
 
-    for(std::vector<VasnecovLamp *>::const_iterator lit = m_elements.rawLamps().begin();
-        lit != m_elements.rawLamps().end(); ++lit)
+    for (auto& lit : m_elements.rawLamps())
     {
-        res |= (*lit)->designerRemoveThisAlienMatrix(alienMs);
+        res |= lit->designerRemoveThisAlienMatrix(alienMs);
     }
-    for(std::vector<VasnecovProduct *>::const_iterator pit = m_elements.rawProducts().begin();
-        pit != m_elements.rawProducts().end(); ++pit)
+    for(auto& pit: m_elements.rawProducts())
     {
-        res |= (*pit)->designerRemoveThisAlienMatrix(alienMs);
+        res |= pit->designerRemoveThisAlienMatrix(alienMs);
     }
-    for(std::vector<VasnecovFigure *>::const_iterator lit = m_elements.rawFigures().begin();
-        lit != m_elements.rawFigures().end(); ++lit)
+    for (auto& lit : m_elements.rawFigures())
     {
-        res |= (*lit)->designerRemoveThisAlienMatrix(alienMs);
+        res |= lit->designerRemoveThisAlienMatrix(alienMs);
     }
-    for(std::vector<VasnecovLabel *>::const_iterator lit = m_elements.rawLabels().begin();
-        lit != m_elements.rawLabels().end(); ++lit)
+    for (auto& lit : m_elements.rawLabels())
     {
-        res |= (*lit)->designerRemoveThisAlienMatrix(alienMs);
+        res |= lit->designerRemoveThisAlienMatrix(alienMs);
     }
     return res;
 }
@@ -1064,21 +1024,20 @@ GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const QMatrix4x4 *alie
 */
 GLboolean VasnecovUniverse::setDirectory(const std::string &newDir, std::string &oldDir) const
 {
-    if(!newDir.empty())
-    {
-        QDir qdir(QString::fromStdString(newDir));
-        if(qdir.exists())
-        {
-            std::string forNewDir = qdir.path().toStdString();
-            forNewDir += "/"; // Для дальнейшей подстановки в адреса
-            if(forNewDir != oldDir)
-            {
-                oldDir = forNewDir;
-                return true;
-            }
-        }
-    }
-    return false;
+    if(newDir.empty())
+        return false;
+
+    QDir qdir(QString::fromStdString(newDir));
+    if (!qdir.exists())
+        return false;
+
+    std::string forNewDir = qdir.path().toStdString();
+    forNewDir += "/"; // Для дальнейшей подстановки в адреса
+    if (forNewDir == oldDir)
+        return false;
+
+    oldDir = forNewDir;
+    return true;
 }
 
 /*!
@@ -1139,23 +1098,22 @@ GLboolean VasnecovUniverse::loadMeshFile(const std::string &fileName)
     std::string path = raw_data.dirMeshes + fileName; // Путь файла с расширением
     std::string fileId = fileName;
 
-    if(correctPath(path, fileId, Vasnecov::cfg_meshFormat))
+    if (!correctPath(path, fileId, Vasnecov::cfg_meshFormat))
+        return false;
+
+    if (raw_data.meshes.count(fileId))
+        return false;
+
+    VasnecovMesh *mesh = new VasnecovMesh(path, &m_pipeline, fileId);
+    if (!mesh)
+        return false;
+
+    if (!mesh->loadModel() || !addMesh(mesh, fileId))
     {
-        if(!raw_data.meshes.count(fileId))
-        {
-            VasnecovMesh *mesh = new VasnecovMesh(path, &m_pipeline, fileId);
-            if(mesh->loadModel())
-            {
-                if(addMesh(mesh, fileId))
-                {
-                    return true;
-                }
-            }
-            delete mesh;
-            mesh = nullptr;
-        }
+        delete mesh;
+        return false;
     }
-    return false;
+    return true;
 }
 
 /*!
@@ -1187,50 +1145,48 @@ GLboolean VasnecovUniverse::loadTextureFile(const std::string &fileName)
 
     std::string fileId = fileName;
 
-    if(correctPath(path, fileId, Vasnecov::cfg_textureFormat))
+    if(!correctPath(path, fileId, Vasnecov::cfg_textureFormat))
+        return false;
+
+    if (raw_data.textures.count(fileId)) // Данные
+        return false;
+
+    QImage image(QString::fromStdString(path));
+
+    if(image.isNull())
+        return false;
+
+    // Проверка на соотношение сторон (чудо-алгоритм от Мастана)
+    bool res = (image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0;
+    if(!res)
     {
-        if(!raw_data.textures.count(fileId)) // Данные
-        {
-            QImage image(QString::fromStdString(path));
-
-            if(!image.isNull())
-            {
-                // Проверка на соотношение сторон (чудо-алгоритм от Мастана)
-                if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
-                {
-                    VasnecovTexture *texture(nullptr);
-
-                    switch(type)
-                    {
-                        case Vasnecov::TextureTypeDiffuse:
-                            texture = new VasnecovTextureDiffuse(image);
-                            break;
-                        case Vasnecov::TextureTypeInterface:
-                            texture = new VasnecovTextureInterface(image);
-                            break;
-                        case Vasnecov::TextureTypeNormal:
-                            texture = new VasnecovTextureNormal(image);
-                            break;
-                        default:
-                            Vasnecov::problem("Тип текстуры указан неверно: ", path);
-                            return false;
-                    }
-
-                    if(addTexture(texture, fileId))
-                    {
-                        return true;
-                    }
-
-                    delete texture;
-                    texture = nullptr;
-                }
-                else
-                {
-                    Vasnecov::problem("Текстура неверного размера: ", path);
-                }
-            }
-        }
+        Vasnecov::problem("Текстура неверного размера: ", path);
+        return false;
     }
+
+    VasnecovTexture *texture = nullptr;
+    switch(type)
+    {
+        case Vasnecov::TextureTypeDiffuse:
+            texture = new VasnecovTextureDiffuse(image);
+            break;
+        case Vasnecov::TextureTypeInterface:
+            texture = new VasnecovTextureInterface(image);
+            break;
+        case Vasnecov::TextureTypeNormal:
+            texture = new VasnecovTextureNormal(image);
+            break;
+        default:
+            Vasnecov::problem("Тип текстуры указан неверно: ", path);
+            return false;
+    }
+
+    if(addTexture(texture, fileId))
+    {
+        return true;
+    }
+
+    delete texture;
     return false;
 }
 
@@ -1271,7 +1227,7 @@ GLboolean VasnecovUniverse::correctPath(std::string &path, std::string &fileId, 
     return false;
 }
 
-std::string VasnecovUniverse::correctFileId(const std::string &fileId, const std::string &format) const
+std::string VasnecovUniverse::correctFileId(const std::string &fileId, const std::string &format)
 {
     std::string res(fileId);
     if (format.empty())

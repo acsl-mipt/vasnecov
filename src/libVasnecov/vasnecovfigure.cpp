@@ -164,10 +164,21 @@ std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const std::string &file
  \fn VasnecovFigure::ZadatTochki
  \param toch
 */
-void VasnecovFigure::setPoints(const std::vector <QVector3D> &points)
+void VasnecovFigure::setPoints(std::vector <QVector3D>&& points)
+{
+    m_points.set(std::move(points));
+}
+/*!
+ \brief
+
+ \fn VasnecovFigure::ZadatTochki
+ \param toch
+*/
+void VasnecovFigure::setPoints(const std::vector <QVector3D>& points)
 {
     m_points.set(points);
 }
+
 /*!
  \brief
 
@@ -329,7 +340,7 @@ void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
         kt.setY(r * sin(angle));
         circ.push_back(kt);
     }
-    m_points.set(circ);
+    m_points.set(std::move(circ));
 }
 
 void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color, GLuint factor)
@@ -373,7 +384,7 @@ void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
     kt.setY(r*sin(endAngle));
     circ.push_back(kt);
 
-    m_points.set(circ);
+    m_points.set(std::move(circ));
 }
 
 void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor &color, GLuint factor)
@@ -419,7 +430,7 @@ void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
     kt.setY(r * sin(endAngle));
     circ.push_back(kt);
 
-    m_points.set(circ);
+    m_points.set(std::move(circ));
 }
 
 void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColor &color, GLuint horizontals, GLuint verticals)
@@ -473,7 +484,7 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
         }
     }
 
-    m_points.set(points);
+    m_points.set(std::move(points));
 }
 
 void VasnecovFigure::createMeshFromFile(const std::string &fileName, const QColor &color)
@@ -586,6 +597,242 @@ GLfloat VasnecovFigure::renderCalculateDistanceToPlane(const QVector3D &planePoi
     pure_distance = centerPoint.distanceToPlane(planePoint, normal);
     return pure_distance;
 }
+
+void VasnecovFigure::VertexManager::set(const std::vector<QVector3D>& points)
+{
+    auto ps = points;
+    set(std::move(ps));
+}
+
+void VasnecovFigure::VertexManager::set(std::vector<QVector3D>&& points)
+{   // Заливка в сырые данные с удалением дубликатов точек
+    raw_vertices.clear();
+    raw_indices.clear();
+
+    if (points.empty())
+    {
+        prepareUpdate();
+        return;
+    }
+
+    if (m_optimize)
+    {
+        raw_indices.reserve(points.size());
+        for (GLuint i = 0; i < points.size(); ++i)
+        {
+            GLuint fIndex = 0;
+            if (optimizedIndex(points[i], fIndex))
+            {
+                raw_indices.push_back(fIndex);
+            }
+            else
+            {
+                raw_vertices.push_back(points[i]);
+                raw_indices.push_back((GLuint)raw_vertices.size() - 1);
+            }
+        }
+    }
+    else
+    {
+        raw_indices.resize(points.size());
+        for (GLuint i = 0; i < points.size(); ++i)
+        {
+            raw_indices[i] = i;
+        }
+        raw_vertices = std::move(points);
+    }
+    prepareUpdate();
+}
+void VasnecovFigure::VertexManager::clear()
+{
+    raw_vertices.clear();
+    raw_indices.clear();
+    prepareUpdate();
+}
+
+void VasnecovFigure::VertexManager::addLast(const QVector3D& point)
+{
+    // Т.к. рендер только читает чистые данные, то можно их прочитать и из другого потока
+    if (pure_indices.empty())
+    {
+        raw_vertices.push_back(point);
+        raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
+        prepareUpdate();
+        return;
+    }
+
+    raw_vertices = pure_vertices;
+    raw_indices = pure_indices;
+
+    if (raw_vertices[raw_indices.back()] != point)
+    {
+        if (m_optimize)
+        {
+            GLuint fIndex(0);
+            if (optimizedIndex(point, fIndex))
+            {
+                raw_indices.push_back(fIndex);
+            }
+            else
+            {
+                raw_vertices.push_back(point);
+                raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
+            }
+        }
+        else
+        {
+            raw_vertices.push_back(point);
+            raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
+        }
+
+        prepareUpdate();
+    }
+}
+void VasnecovFigure::VertexManager::removeLast()
+{
+    if (pure_indices.empty())
+        return;
+    raw_vertices = pure_vertices;
+    raw_indices = pure_indices;
+    removeByIndexIterator(raw_indices.end() - 1);
+    prepareUpdate();
+}
+void VasnecovFigure::VertexManager::replaceLast(const QVector3D& point)
+{
+    if (pure_indices.empty())
+        return;
+    raw_vertices = pure_vertices;
+    raw_indices = pure_indices;
+    if (raw_vertices[raw_indices.back()] == point)
+        return;
+    // TODO: add replace with optimization removing
+    raw_vertices[raw_indices.back()] = point;
+    prepareUpdate();
+}
+
+void VasnecovFigure::VertexManager::addFirst(const QVector3D& point)
+{
+    if (pure_indices.empty())
+    {
+        raw_vertices.push_back(point);
+        raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
+        prepareUpdate();
+        return;
+    }
+    raw_vertices = pure_vertices;
+    raw_indices = pure_indices;
+
+    if (raw_vertices[raw_indices.front()] == point)
+        return;
+
+    if (m_optimize)
+    {
+        GLuint fIndex(0);
+        if (optimizedIndex(point, fIndex))
+        {
+            raw_indices.insert(raw_indices.begin(), fIndex);
+        }
+        else
+        {
+            raw_vertices.push_back(point);
+            raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
+        }
+    }
+    else
+    {
+        raw_vertices.push_back(point);
+        raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
+    }
+
+    prepareUpdate();
+}
+void VasnecovFigure::VertexManager::removeFirst()
+{
+    if (pure_indices.empty())
+        return;
+    raw_vertices = pure_vertices;
+    raw_indices = pure_indices;
+    removeByIndexIterator(raw_indices.begin());
+    prepareUpdate();
+}
+void VasnecovFigure::VertexManager::replaceFirst(const QVector3D& point)
+{
+    if (pure_indices.empty())
+        return;
+    raw_vertices = pure_vertices;
+    raw_indices = pure_indices;
+    if (raw_vertices[raw_indices.front()] != point)
+    {
+        raw_vertices[raw_indices.front()] = point;
+        prepareUpdate();
+    }
+}
+
+GLenum VasnecovFigure::VertexManager::update()
+{
+    if ((m_wasUpdated & m_flag) == 0)
+        return 0;
+    pure_vertices.swap(raw_vertices);
+    pure_indices.swap(raw_indices);
+    pure_cm = raw_cm;
+    m_wasUpdated = m_wasUpdated & ~m_flag; // Удаление своего флага из общего
+    return m_flag;
+}
+
+GLboolean VasnecovFigure::VertexManager::optimizedIndex(const QVector3D& vert, GLuint& fIndex) const
+{
+    for (fIndex = 0; fIndex < raw_vertices.size(); ++fIndex)
+    {
+        if (vert == raw_vertices[fIndex])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void VasnecovFigure::VertexManager::removeByIndexIterator(const std::vector<GLuint>::iterator& needed)
+{
+    GLuint index = *needed;
+
+    // Поиск такого же индекса в списке индексов
+    // Если он есть, значит точка используется еще где-то, поэтому список точек не трогаем
+    std::vector<GLuint>::iterator found1, found2;
+    // Ищем в списке до самого итератора и после
+    found1 = find(raw_indices.begin(), needed, index);
+    found2 = find(needed + 1, raw_indices.end(), index);
+
+    // Удаление самого индекса
+    std::vector<GLuint>::iterator next = raw_indices.erase(needed);
+
+    if (found1 == needed && found2 == raw_indices.end()) // Не найден
+    {
+        // Удаляем вершину
+        raw_vertices.erase(raw_vertices.begin() + index);
+
+        // Изменяем индексы вершин после удалённой (сдвигаем на один)
+        for (std::vector<GLuint>::iterator iit = next; // итератор на индекс, следующий за удаляемым
+            iit != raw_indices.end(); ++iit)
+        {
+            --(*iit);
+        }
+    }
+}
+void VasnecovFigure::VertexManager::prepareUpdate() // FIXME: add checking comparity
+{
+    m_wasUpdated |= m_flag;
+
+    raw_cm = QVector3D(); // Нулевой по умолчанию
+    if (!raw_vertices.empty())
+        return;
+
+    for (const auto& i : raw_vertices)
+    {
+        raw_cm += i;
+    }
+    raw_cm /= raw_vertices.size();
+}
+
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"

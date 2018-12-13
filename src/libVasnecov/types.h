@@ -174,27 +174,12 @@ namespace Vasnecov
     {
         GLenum wasUpdated;
 
-        Attributes() : wasUpdated(false)
-        {
-        }
+        Attributes() : wasUpdated(false) { }
         virtual ~Attributes(){}
-
-        void setUpdateFlag(GLenum flag)
-        {
-            wasUpdated |= flag;
-        }
-        void clearUpdateFlag()
-        {
-            wasUpdated = 0;
-        }
-        GLenum updateFlag() const
-        {
-            return wasUpdated;
-        }
-        GLboolean isUpdateFlag(GLenum flag) const
-        {
-            return (wasUpdated & flag) != 0;
-        }
+        void setUpdateFlag(GLenum flag) { wasUpdated |= flag; }
+        void clearUpdateFlag() { wasUpdated = 0; }
+        GLenum updateFlag() const { return wasUpdated; }
+        GLboolean isUpdateFlag(GLenum flag) const { return (wasUpdated & flag) != 0; }
     };
 
     // Камера

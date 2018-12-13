@@ -35,260 +35,25 @@ class VasnecovFigure : public VasnecovElement
         GLboolean optimization() const { return m_optimize; }
         GLuint rawVerticesSize() const { return static_cast<GLuint>(raw_vertices.size()); }
 
-        void set(const std::vector<QVector3D>& points)
-        {
-            // Заливка в сырые данные с удалением дубликатов точек
-            raw_vertices.clear();
-            raw_indices.clear();
-
-            if(!points.empty())
-            {
-                raw_indices.reserve(points.size());
-                // Резервирование для точек неактуально, т.к. их итоговое количество неизвестно
-
-                if(m_optimize)
-                {
-                    for(GLuint i = 0; i < points.size(); ++i)
-                    {
-                        GLuint fIndex(0);
-                        if(optimizedIndex(points[i], fIndex))
-                        {
-                            raw_indices.push_back(fIndex);
-                        }
-                        else
-                        {
-                            raw_vertices.push_back(points[i]);
-                            raw_indices.push_back((GLuint)raw_vertices.size() - 1);
-                        }
-                    }
-                }
-                else
-                {
-                    raw_vertices = points;
-                    for(GLuint i = 0; i < points.size(); ++i)
-                    {
-                        raw_indices.push_back(i);
-                    }
-                }
-            }
-            prepareUpdate();
-        }
-        void clear()
-        {
-            raw_vertices.clear();
-            raw_indices.clear();
-
-            prepareUpdate();
-        }
-
-        void addLast(const QVector3D& point)
-        {
-            // Т.к. рендер только читает чистые данные, то можно их прочитать и из другого потока
-            if(!pure_indices.empty())
-            {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
-
-                if(raw_vertices[raw_indices.back()] != point)
-                {
-                    if(m_optimize)
-                    {
-                        GLuint fIndex(0);
-                        if(optimizedIndex(point, fIndex))
-                        {
-                            raw_indices.push_back(fIndex);
-                        }
-                        else
-                        {
-                            raw_vertices.push_back(point);
-                            raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
-                        }
-                    }
-                    else
-                    {
-                        raw_vertices.push_back(point);
-                        raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
-                    }
-
-                    prepareUpdate();
-                }
-            }
-            else
-            {
-                raw_vertices.push_back(point);
-                raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
-
-                prepareUpdate();
-            }
-        }
-        void removeLast()
-        {
-            if(!pure_indices.empty())
-            {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
-
-                removeByIndexIterator(raw_indices.end() - 1);
-
-                prepareUpdate();
-            }
-        }
-        void replaceLast(const QVector3D& point)
-        {
-            if(!pure_indices.empty())
-            {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
-
-                if(raw_vertices[raw_indices.back()] != point)
-                {
-                    // TODO: add replace with optimization removing
-                    raw_vertices[raw_indices.back()] = point;
-
-                    prepareUpdate();
-                }
-            }
-        }
-
-        void addFirst(const QVector3D& point)
-        {
-            if(!pure_indices.empty())
-            {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
-
-                if(raw_vertices[raw_indices.front()] != point)
-                {
-                    if(m_optimize)
-                    {
-                        GLuint fIndex(0);
-                        if(optimizedIndex(point, fIndex))
-                        {
-                            raw_indices.insert(raw_indices.begin(), fIndex);
-                        }
-                        else
-                        {
-                            raw_vertices.push_back(point);
-                            raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
-                        }
-                    }
-                    else
-                    {
-                        raw_vertices.push_back(point);
-                        raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
-                    }
-
-                    prepareUpdate();
-                }
-            }
-            else
-            {
-                raw_vertices.push_back(point);
-                raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
-
-                prepareUpdate();
-            }
-        }
-        void removeFirst()
-        {
-            if(!pure_indices.empty())
-            {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
-
-                removeByIndexIterator(raw_indices.begin());
-
-                prepareUpdate();
-            }
-        }
-        void replaceFirst(const QVector3D& point)
-        {
-            if(!pure_indices.empty())
-            {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
-
-                if(raw_vertices[raw_indices.front()] != point)
-                {
-                    raw_vertices[raw_indices.front()] = point;
-
-                    prepareUpdate();
-                }
-            }
-        }
-
-        GLenum update()
-        {
-            if((m_wasUpdated & m_flag) != 0)
-            {
-                pure_vertices.swap(raw_vertices);
-                pure_indices.swap(raw_indices);
-                pure_cm = raw_cm;
-
-                m_wasUpdated = m_wasUpdated &~ m_flag; // Удаление своего флага из общего
-                return m_flag;
-            }
-            return 0;
-        }
+        void set(std::vector<QVector3D>&& points);
+        void set(const std::vector<QVector3D>& points);
+        void clear();
+        void addLast(const QVector3D& point);
+        void removeLast();
+        void replaceLast(const QVector3D& point);
+        void addFirst(const QVector3D& point);
+        void removeFirst();
+        void replaceFirst(const QVector3D& point);
+        GLenum update();
 
         const std::vector<QVector3D>& pureVertices() const { return pure_vertices; }
         const std::vector<GLuint>& pureIndices() const { return pure_indices; }
         const QVector3D& cm() const { return pure_cm; }
 
     private:
-        GLboolean optimizedIndex(const QVector3D& vert, GLuint& fIndex) const
-        {
-            for(fIndex = 0; fIndex < raw_vertices.size(); ++fIndex)
-            {
-                if(vert == raw_vertices[fIndex])
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        void removeByIndexIterator(const std::vector<GLuint>::iterator& needed)
-        {
-            GLuint index = *needed;
-
-            // Поиск такого же индекса в списке индексов
-            // Если он есть, значит точка используется еще где-то, поэтому список точек не трогаем
-            std::vector<GLuint>::iterator found1, found2;
-            // Ищем в списке до самого итератора и после
-            found1 = find(raw_indices.begin(), needed, index);
-            found2 = find(needed + 1, raw_indices.end(), index);
-
-            // Удаление самого индекса
-            std::vector<GLuint>::iterator next = raw_indices.erase(needed);
-
-            if(found1 == needed && found2 == raw_indices.end()) // Не найден
-            {
-                // Удаляем вершину
-                raw_vertices.erase(raw_vertices.begin() + index);
-
-                // Изменяем индексы вершин после удалённой (сдвигаем на один)
-                for(std::vector<GLuint>::iterator iit = next; // итератор на индекс, следующий за удаляемым
-                    iit != raw_indices.end(); ++iit)
-                {
-                    --(*iit);
-                }
-            }
-        }
-        void prepareUpdate() // FIXME: add checking comparity
-        {
-            m_wasUpdated |= m_flag;
-
-            raw_cm = QVector3D(); // Нулевой по умолчанию
-            if(!raw_vertices.empty())
-            {
-                for(GLuint i = 0; i < raw_vertices.size(); ++i)
-                {
-                    raw_cm += raw_vertices[i];
-                }
-                raw_cm /= raw_vertices.size();
-            }
-        }
-
+        GLboolean optimizedIndex(const QVector3D& vert, GLuint& fIndex) const;
+        void removeByIndexIterator(const std::vector<GLuint>::iterator& needed);
+        void prepareUpdate();
     private:
         const GLenum m_flag; // Флаг. Идентификатор, выдаваемый результатом синхронизации update()
         GLenum& m_wasUpdated; // Ссылка на общий флаг обновлений
@@ -322,6 +87,7 @@ public:
 
     static std::vector<QVector3D> readPointsFromObj(const std::string& fileName);
 
+    void setPoints(std::vector<QVector3D>&& points);
     void setPoints(const std::vector<QVector3D>& points);
     void clearPoints();
     GLuint pointsAmount() const;
@@ -337,13 +103,13 @@ public:
     GLboolean setType(VasnecovFigure::Types type);
     VasnecovFigure::Types type() const;
 
-    void enableLighting();
-    void disableLighting();
-    GLboolean lighting() const;
+    void enableLighting() { m_lighting = true; }
+    void disableLighting() { m_lighting = false; }
+    GLboolean lighting() const { return m_lighting; }
 
-    void enableDepth();
-    void disableDepth();
-    GLboolean depth() const;
+    void enableDepth() { m_depth = true; }
+    void disableDepth() { m_depth = false; }
+    GLboolean depth() const { return m_depth; }
 
     GLint setThickness(GLfloat thick);
     GLfloat thickness() const;
@@ -370,9 +136,9 @@ protected:
 
     GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal) override;
 
-    GLenum renderType() const;
-    const QVector3D& renderCm() const;
-    GLboolean renderLighting() const;
+    GLenum renderType() const { return m_type; }
+    const QVector3D& renderCm() const { return m_points.cm(); }
+    GLboolean renderLighting() const { return m_lighting; }
 
 protected:
     VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки
@@ -398,44 +164,6 @@ private:
     Q_DISABLE_COPY(VasnecovFigure)
 };
 
-inline void VasnecovFigure::enableLighting()
-{
-    m_lighting = true;
-}
-inline void VasnecovFigure::disableLighting()
-{
-    m_lighting = false;
-}
-inline GLboolean VasnecovFigure::lighting() const
-{
-    return m_lighting;
-}
-
-inline void VasnecovFigure::enableDepth()
-{
-    m_depth = true;
-}
-inline void VasnecovFigure::disableDepth()
-{
-    m_depth = false;
-}
-inline GLboolean VasnecovFigure::depth() const
-{
-    return m_depth;
-}
-inline GLenum VasnecovFigure::renderType() const
-{
-    return m_type;
-}
-inline const QVector3D& VasnecovFigure::renderCm() const
-{
-    return m_points.cm();
-}
-
-inline GLboolean VasnecovFigure::renderLighting() const
-{
-    return m_lighting;
-}
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"

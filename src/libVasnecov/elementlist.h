@@ -55,7 +55,6 @@ namespace Vasnecov
 
     protected:
         std::vector<T*> m_raw;
-        std::vector<T*> m_buffer;
         std::vector<T*> m_pure;
         GLboolean m_wasUpdated;
         const GLenum m_flag; // Флаг обновления
@@ -76,17 +75,14 @@ namespace Vasnecov
         if (!element)
             return false;
 
-        if(check)
-        {   // Поиск дубликатов
-            if(m_raw.end() != find(m_raw.begin(), m_raw.end(), element))
-            {
-                Vasnecov::problem("Неверный элемент либо дублирование данных");
-                return false;
-            }
+        // Поиск дубликатов
+        if(check && (m_raw.end() != find(m_raw.begin(), m_raw.end(), element)))
+        {
+            Vasnecov::problem("Неверный элемент либо дублирование данных");
+            return false;
         }
 
         m_raw.push_back(element);
-        m_buffer = m_raw;
         m_wasUpdated = true;
         return true;
     }
@@ -94,13 +90,11 @@ namespace Vasnecov
     template <typename T>
     GLboolean ElementBox<T>::synchronize()
     {
-        if(m_wasUpdated)
-        {
-            m_pure.swap(m_buffer);
-            m_wasUpdated = false;
-            return true;
-        }
-        return false;
+        if (!m_wasUpdated)
+            return false;
+        m_pure = m_raw;
+        m_wasUpdated = false;
+        return true;
     }
 
     template <typename T>
@@ -147,7 +141,6 @@ namespace Vasnecov
             return false;
 
         m_raw.erase(i);
-        m_buffer = m_raw;
         m_wasUpdated = true;
         return true;
     }

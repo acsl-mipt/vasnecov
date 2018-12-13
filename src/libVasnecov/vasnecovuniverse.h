@@ -201,8 +201,8 @@ public:
     VasnecovProduct* referProductToWorld(VasnecovProduct* product, VasnecovWorld* world); // Сделать дубликат изделия в заданный мир
     GLboolean removeProduct(VasnecovProduct* product);
 
-    VasnecovFigure* addFigure(const std::string& name,
-                              VasnecovWorld* world);
+    VasnecovFigure* addFigure(const std::string& name, VasnecovWorld* world);
+    VasnecovFigure* addFigure(std::string&& name, VasnecovWorld* world);
     GLboolean removeFigure(VasnecovFigure* figure);
 
     VasnecovLabel* addLabel(const std::string& name,
@@ -273,7 +273,7 @@ protected:
     // Вспомогательные (не привязаны к внутренним данным)
     GLboolean setDirectory(const std::string& newDir, std::string& oldDir) const;
     GLboolean correctPath(std::string& path, std::string& fileId, const std::string& format) const; // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
-    std::string correctFileId(const std::string& fileId, const std::string& format) const; // Удаляет формат из имени
+    static std::string correctFileId(const std::string& fileId, const std::string& format); // Удаляет формат из имени
 
 protected:
     GLenum renderUpdateData(); // Единственный метод, который лочит мьютекс из основного потока (потока отрисовки)
@@ -287,10 +287,9 @@ protected:
     template <typename T>
     static void renderUpdateElementData(T* element)
     {
-        if(element)
-        {
-            element->renderUpdateData();
-        }
+        if (!element)
+            return;
+        element->renderUpdateData();
     }
 
 private:
@@ -351,7 +350,6 @@ inline void VasnecovUniverse::setContext(const QGLContext *context)
 {
     if(!context)
         return;
-
     m_context = context;
 }
 
@@ -383,7 +381,7 @@ GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
     if(!this->m_wasUpdated)
         return false;
 
-    this->m_pure.swap(this->m_raw);
+    this->m_pure = this->m_raw;
     this->m_wasUpdated = false;
 
     if(!m_deleting.empty())
