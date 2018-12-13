@@ -540,7 +540,6 @@ VasnecovFigure *VasnecovUniverse::addFigure(std::string&& name, VasnecovWorld *w
         return nullptr;
     }
 
-    assert(figure != nullptr);
     world->elements().addElement(figure);
     return figure;
 }
