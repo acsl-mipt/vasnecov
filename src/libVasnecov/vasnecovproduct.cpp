@@ -159,7 +159,7 @@ void VasnecovProduct::designerOwnSetVisible(bool visible)
 
     if(m_parent)
     {
-        designerSetVisibleFromParent(m_parent->designerIsVisible() && raw_ownVisible);
+        designerSetVisibleFromParent(m_parent->isVisible() && raw_ownVisible);
     }
     else
     {
@@ -234,9 +234,9 @@ GLenum VasnecovProduct::renderUpdateData()
 {
     // Проверка прозрачности
     GLboolean transp = false;
-    if(m_material && m_material->renderTextureD())
+    if(m_material && m_material->textureD())
     {
-        transp = m_material->renderTextureD()->isTransparency();
+        transp = m_material->textureD()->isTransparency();
     }
     if(m_color.alphaF() < 1.0)
     {
@@ -437,8 +437,7 @@ VasnecovProduct::ProductTypes VasnecovProduct::type() const
 */
 VasnecovProduct *VasnecovProduct::parent() const
 {
-    VasnecovProduct *parent(m_parent);
-    return parent;
+    return m_parent;
 }
 
 void VasnecovProduct::changeParent(VasnecovProduct *newParent)

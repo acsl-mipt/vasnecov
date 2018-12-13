@@ -384,13 +384,13 @@ void VasnecovWorld::renderDraw()
             if(!fig)
                 continue;
 
-            if(fig->renderIsTransparency())
+            if(fig->isTransparency())
             {
                 transFigures.push_back(fig);
             }
             else
             {
-                if (fig->renderLighting() && lampsWork)
+                if (fig->lighting() && lampsWork)
                 {
                     pure_pipeline->enableLamps();
                 }
@@ -420,7 +420,7 @@ void VasnecovWorld::renderDraw()
         {
             if(prod)
             {
-                if(prod->renderIsTransparency())
+                if(prod->isTransparency())
                 {
                     transProducts.push_back(prod);
                 }
@@ -486,7 +486,7 @@ void VasnecovWorld::renderDraw()
         {
             if(!fig)
                 continue;
-            if(fig->renderLighting() && lampsWork)
+            if(fig->lighting() && lampsWork)
             {
                 pure_pipeline->enableLamps();
             }

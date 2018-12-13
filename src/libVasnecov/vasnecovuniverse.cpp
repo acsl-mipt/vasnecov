@@ -138,7 +138,7 @@ VasnecovLamp *VasnecovUniverse::addLamp(const std::string &name, VasnecovWorld *
     VasnecovLamp *lamp = new VasnecovLamp(&m_pipeline, name, type, index);
     if(m_elements.addElement(lamp))
     {
-        world->designerAddElement(lamp);
+        world->elements().addElement(lamp);
         return lamp;
     }
     else
@@ -186,7 +186,7 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
         return nullptr;
     }
 
-    if(world->designerAddElement(lamp, true))
+    if(world->elements().addElement(lamp, true))
     {
         return lamp;
     }
@@ -225,9 +225,9 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, Vasnecov
 
     if(parent)
     {
-        if(world->designerFindElement(parent))
+        if(world->elements().findRawElement(parent))
         {
-            level = parent->designerLevel() + 1;
+            level = parent->level() + 1;
             if(level > Vasnecov::cfg_elementMaxLevel)
             {
                 Vasnecov::problem("Превышен максимальный уровень вложенности изделия");
@@ -246,11 +246,11 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const std::string &name, Vasnecov
 
     if(parent)
     {
-        assembly->designerSetMatrixM1(parent->designerMatrixMs());
+        assembly->designerSetMatrixM1(parent->matrixMs());
         parent->designerAddChild(assembly);
     }
     m_elements.addElement(assembly);
-    world->designerAddElement(assembly); // Здесь не требуется проверка на дубликаты, т.к. указатель assembly девственно чист
+    world->elements().addElement(assembly); // Здесь не требуется проверка на дубликаты, т.к. указатель assembly девственно чист
 
     return assembly;
 }
@@ -342,9 +342,9 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
     // Указан родитель
     if(parent)
     {
-        if(world->designerFindElement(parent))
+        if(world->m_elements.findRawElement(parent))
         {
-            level = parent->designerLevel() + 1;
+            level = parent->level() + 1;
             if(level > Vasnecov::cfg_elementMaxLevel)
             {
                 Vasnecov::problem("Превышен максимальный уровень вложенности изделия");
@@ -363,11 +363,11 @@ VasnecovProduct *VasnecovUniverse::addPart(const std::string &name, VasnecovWorl
 
     if(parent)
     {
-        part->designerSetMatrixM1(parent->designerMatrixMs());
+        part->designerSetMatrixM1(parent->matrixMs());
         parent->designerAddChild(part);
     }
     m_elements.addElement(part);
-    world->designerAddElement(part); // Здесь не требуется проверка на дубликаты, т.к. указатель part девственно чист
+    world->elements().addElement(part); // Здесь не требуется проверка на дубликаты, т.к. указатель part девственно чист
 
     return part;
 }
@@ -422,7 +422,7 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
         return nullptr;
     }
 
-    if(world->designerAddElement(product, true))
+    if(world->elements().addElement(product, true))
     {
         return product;
     }
@@ -492,18 +492,17 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
             // Удаление из мира
             for(auto& wit: m_elements.rawWorlds().raw())
             {
-                wit->designerRemoveElement(dit);
+                wit->elements().removeElement(dit);
             }
 
             // Удаление из списка родителей
-            if(dit->designerParent())
+            if(dit->parent())
             {
-                dit->designerParent()->designerRemoveChild(dit);
+                dit->parent()->designerRemoveChild(dit);
             }
 
             // Удаление чужих матриц
-            const QMatrix4x4 *matrix = dit->designerExportingMatrix();
-            designerRemoveThisAlienMatrix(matrix);
+            designerRemoveThisAlienMatrix(&dit->matrixMs());
         }
 
         return true;
@@ -542,7 +541,7 @@ VasnecovFigure *VasnecovUniverse::addFigure(std::string&& name, VasnecovWorld *w
     }
 
     assert(figure != nullptr);
-    world->designerAddElement(figure);
+    world->elements().addElement(figure);
     return figure;
 }
 
@@ -557,11 +556,11 @@ GLboolean VasnecovUniverse::removeFigure(const VasnecovFigure *figure)
         // Удаление из мира
         for(auto& wit: m_elements.rawWorlds().raw())
         {
-            wit->designerRemoveElement(figure);
+            wit->elements().removeElement(figure);
         }
 
         // Удаление чужих матриц
-        designerRemoveThisAlienMatrix(figure->designerExportingMatrix());
+        designerRemoveThisAlienMatrix(&figure->matrixMs());
         return true;
     }
 
@@ -640,7 +639,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const std::string &name, VasnecovWorld
         return nullptr;
     }
 
-    world->designerAddElement(label);
+    world->elements().addElement(label);
     return label;
 }
 
@@ -665,7 +664,7 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
         return nullptr;
     }
 
-    if(world->designerAddElement(label, true))
+    if(world->elements().addElement(label, true))
     {
         return label;
     }
@@ -696,11 +695,11 @@ GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
         // Удаление из мира
         for(auto& wit: m_elements.rawWorlds().raw())
         {
-            wit->designerRemoveElement(label);
+            wit->elements().removeElement(label);
         }
 
         // Удаление чужих матриц
-        designerRemoveThisAlienMatrix(label->designerExportingMatrix());
+        designerRemoveThisAlienMatrix(&label->matrixMs());
 
         return true;
     }

@@ -28,13 +28,12 @@ public:
     virtual ~VasnecovTexture();
     virtual GLboolean loadImage() = 0; // Загрузка данных из файла
 
-    void setImage(const QImage& image);
-
-    GLuint id() const;
-    const QImage& image() const;
+    void setImage(const QImage& image) { m_image = image; };
+    GLuint id() const { return m_id; }
+    const QImage& image() const { return m_image; };
     GLsizei width() const {return m_width;}
     GLsizei height() const {return m_height;}
-    GLboolean isTransparency() const;
+    GLboolean isTransparency() const { return m_isTransparency; }
 
 protected:
     GLuint m_id;
@@ -68,24 +67,6 @@ public:
     explicit VasnecovTextureNormal(const QImage& image);
 };
 
-//==================================================================================================
-inline void VasnecovTexture::setImage(const QImage& image)
-{
-    m_image = image;
-}
-
-inline GLuint VasnecovTexture::id() const
-{
-    return m_id;
-}
-inline const QImage& VasnecovTexture::image() const
-{
-    return m_image;
-}
-inline GLboolean VasnecovTexture::isTransparency() const
-{
-    return m_isTransparency;
-}
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"

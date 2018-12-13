@@ -27,12 +27,11 @@ class VasnecovMesh
 public:
     VasnecovMesh(const std::string& meshPath, VasnecovPipeline* pipeline, const std::string& name = "");
 
-    void setName(const std::string& name); // Задать имя меша (необязательный параметр)
-    VasnecovPipeline::ElementDrawingMethods type() const;
+    VasnecovPipeline::ElementDrawingMethods type() const { return m_type; }
     GLboolean loadModel(GLboolean readFromMTL = Vasnecov::cfg_readFromMTL);
     GLboolean loadModel(const std::string& path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
     void drawModel(); // Отрисовка модели
-    const QVector3D& cm() const;
+    const QVector3D& cm() const { return m_cm; }
     void drawBorderBox(); // Рисовать ограничивающий бокс
 
 protected:
@@ -122,21 +121,6 @@ private:
     Q_DISABLE_COPY(VasnecovMesh)
 
 };
-
-inline void VasnecovMesh :: setName(const std::string& name)
-{
-    m_name = name;
-}
-
-inline VasnecovPipeline::ElementDrawingMethods VasnecovMesh::type() const
-{
-    return m_type;
-}
-
-inline const QVector3D& VasnecovMesh :: cm() const
-{
-    return m_cm;
-}
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"

@@ -100,12 +100,9 @@ protected:
     void designerSetVisibleFromParent(bool visible);
     GLboolean designerRemoveThisMaterial(const VasnecovMaterial* material);
 
-    GLuint designerLevel() const;
-
     GLboolean designerAddChild(VasnecovProduct* child); // Добавить дочерний элемент, параметром передается индекс элемента
     GLboolean designerRemoveChild(VasnecovProduct* child);
     std::vector<VasnecovProduct*> designerAllChildren(); // Возвращает общий список всех детей
-    VasnecovProduct* designerParent() const;
     VasnecovMaterial* designerMaterial() const;
 
     void designerSetMatrixM1(const QMatrix4x4& M1);
@@ -124,15 +121,6 @@ protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов)
     GLenum renderUpdateData() override;
     void renderDraw() override;
-
-    VasnecovMaterial* renderMaterial() const;
-    VasnecovMesh* renderMesh() const;
-
-    VasnecovProduct::ProductTypes renderType() const;
-    GLuint renderLevel() const;
-
-    VasnecovProduct* renderParent() const;
-    const std::vector<VasnecovProduct*>& renderChildren() const;
 
 protected:
     QMatrix4x4 raw_M1; // Матрица родительских трансформаций
@@ -187,14 +175,6 @@ inline GLboolean VasnecovProduct::designerRemoveThisMaterial(const VasnecovMater
     return false;
 }
 
-inline GLuint VasnecovProduct::designerLevel() const
-{
-    return m_level;
-}
-inline VasnecovProduct *VasnecovProduct::designerParent() const
-{
-    return m_parent;
-}
 inline VasnecovMaterial *VasnecovProduct::designerMaterial() const
 {
     return m_material;
@@ -203,36 +183,7 @@ inline VasnecovMaterial *VasnecovProduct::designerMaterial() const
 inline void VasnecovProduct::designerUpdateMatrixM1(const QMatrix4x4 &M1)
 {
     raw_M1 = M1;
-
     designerUpdateMatrixMs();
-}
-inline VasnecovMaterial *VasnecovProduct::renderMaterial() const
-{
-    return m_material;
-}
-inline VasnecovMesh *VasnecovProduct::renderMesh() const
-{
-    return m_mesh;
-}
-
-inline VasnecovProduct::ProductTypes VasnecovProduct::renderType() const
-{
-    return m_type;
-}
-
-inline GLuint VasnecovProduct::renderLevel() const
-{
-    return m_level;
-}
-
-inline VasnecovProduct *VasnecovProduct::renderParent() const
-{
-    return m_parent;
-}
-
-inline const std::vector<VasnecovProduct *>& VasnecovProduct::renderChildren() const
-{
-    return m_children;
 }
 
 #ifndef _MSC_VER

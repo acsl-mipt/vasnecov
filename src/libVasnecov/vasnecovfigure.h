@@ -129,8 +129,6 @@ public:
     void createMeshFromPoints(const std::vector<QVector3D>& points, const QColor& color = QColor());
 
 protected:
-    GLboolean designerSetType(VasnecovFigure::Types type);
-
     GLenum renderUpdateData() override;
     void renderDraw() override;
 
@@ -138,7 +136,6 @@ protected:
 
     GLenum renderType() const { return m_type; }
     const QVector3D& renderCm() const { return m_points.cm(); }
-    GLboolean renderLighting() const { return m_lighting; }
 
 protected:
     VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки

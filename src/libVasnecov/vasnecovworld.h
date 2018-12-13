@@ -107,21 +107,7 @@ public:
 
 protected:
     // Списки содержимого
-    VasnecovLamp* designerFindElement(const VasnecovLamp* lamp) const;
-    VasnecovProduct* designerFindElement(const VasnecovProduct* product) const;
-    VasnecovFigure* designerFindElement(const VasnecovFigure* figure) const;
-    VasnecovLabel* designerFindElement(const VasnecovLabel* label) const;
-
-    // Добавление новых элементов в списки
-    GLboolean designerAddElement(VasnecovLamp* lamp, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovProduct* product, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovFigure* figure, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovLabel* label, GLboolean check = false);
-
-    GLboolean designerRemoveElement(const VasnecovLamp* lamp);
-    GLboolean designerRemoveElement(const VasnecovProduct* product);
-    GLboolean designerRemoveElement(const VasnecovFigure* figure);
-    GLboolean designerRemoveElement(const VasnecovLabel* label);
+    WorldElementList& elements() { return m_elements; }
 
     void designerUpdateOrtho();
 
@@ -132,11 +118,6 @@ protected:
 
     void renderSwitchLamps() const;
     VasnecovPipeline::CameraAttributes renderCalculateCamera() const;
-
-    const Vasnecov::WorldParameters& renderWorldParameters() const;
-    const Vasnecov::Perspective& renderPerspective() const;
-    const Vasnecov::Ortho& renderOrtho() const;
-    const Vasnecov::Camera& renderCamera() const;
 
     template <typename T>
     static void renderDrawElement(T* element)
@@ -177,57 +158,6 @@ private:
     Q_DISABLE_COPY(VasnecovWorld)
 };
 
-inline VasnecovLamp* VasnecovWorld::designerFindElement(const VasnecovLamp* lamp) const
-{
-    return m_elements.findRawElement(lamp);
-}
-inline VasnecovProduct* VasnecovWorld::designerFindElement(const VasnecovProduct* product) const
-{
-    return m_elements.findRawElement(product);
-}
-inline VasnecovFigure* VasnecovWorld::designerFindElement(const VasnecovFigure* figure) const
-{
-    return m_elements.findRawElement(figure);
-}
-inline VasnecovLabel* VasnecovWorld::designerFindElement(const VasnecovLabel* label) const
-{
-    return m_elements.findRawElement(label);
-}
-
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovLamp* lamp, GLboolean check)
-{
-    return m_elements.addElement(lamp, check);
-}
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovProduct* product, GLboolean check)
-{
-    return m_elements.addElement(product, check);
-}
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovFigure* figure, GLboolean check)
-{
-    return m_elements.addElement(figure, check);
-}
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel* label, GLboolean check)
-{
-    return m_elements.addElement(label, check);
-}
-
-inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovLamp* lamp)
-{
-    return m_elements.removeElement(lamp);
-}
-inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovProduct* product)
-{
-    return m_elements.removeElement(product);
-}
-inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovFigure* figure)
-{
-    return m_elements.removeElement(figure);
-}
-inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovLabel* label)
-{
-    return m_elements.removeElement(label);
-}
-
 inline void VasnecovWorld::renderSwitchLamps() const
 {
     if(m_parameters.light)
@@ -238,28 +168,6 @@ inline void VasnecovWorld::renderSwitchLamps() const
     {
         pure_pipeline->disableLamps();
     }
-}
-
-
-
-inline const Vasnecov::WorldParameters& VasnecovWorld::renderWorldParameters() const
-{
-    return m_parameters;
-}
-
-inline const Vasnecov::Perspective& VasnecovWorld::renderPerspective() const
-{
-    return m_perspective;
-}
-
-inline const Vasnecov::Ortho& VasnecovWorld::renderOrtho() const
-{
-    return m_ortho;
-}
-
-inline const Vasnecov::Camera& VasnecovWorld::renderCamera() const
-{
-    return m_camera;
 }
 
 #ifndef _MSC_VER

@@ -48,10 +48,6 @@ namespace Vasnecov
         void hide() { setVisible(false); }
 
     protected:
-        // Методы без мьютексов, вызываемые методами, защищенными своими мьютексами. Префикс designer
-        GLboolean designerIsVisible() const { return !m_isHidden; }
-
-    protected:
         // Методы, вызываемые на этапе обнолвения данных. Т.е. могут трогать любые данные
         virtual GLenum renderUpdateData(); // обновление данных, вызов должен быть обёрнут мьютексом
 
@@ -61,14 +57,6 @@ namespace Vasnecov
         void updaterSetUpdateFlag(GLenum flag) { raw_wasUpdated |= flag; }
         void updaterClearUpdateFlag() { raw_wasUpdated = 0; }
         void updaterRemoveUpdateFlag(GLenum flag) { raw_wasUpdated = raw_wasUpdated & ~flag; }
-
-    protected:
-        // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов). Префикс render
-        // Для их сокрытия методы объявлены protected, а класс Рендерера сделан friend
-        std::string CoreObject::renderName() const { return m_name; }
-
-        GLboolean renderIsVisible() const { return !m_isHidden; }
-        GLboolean renderIsHidden() const { return m_isHidden; }
 
     protected:
         GLenum raw_wasUpdated;

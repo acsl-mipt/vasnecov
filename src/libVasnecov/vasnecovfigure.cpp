@@ -236,7 +236,31 @@ void VasnecovFigure::replaceFirstPoint(const QVector3D &point)
 */
 GLboolean VasnecovFigure::setType(VasnecovFigure::Types type)
 {
-    return designerSetType(type);
+    switch (type)
+    {
+    case TypePolyline:
+        m_type = VasnecovPipeline::PolyLine;
+        return true;
+    case TypePolylineLoop:
+        m_type = VasnecovPipeline::LoopLine;
+        return true;
+    case TypePolygons:
+        m_type = VasnecovPipeline::FanTriangle;
+        m_lighting = true;
+        return true;
+    case TypeLines:
+        m_type = VasnecovPipeline::Lines;
+        return true;
+    case TypePoints:
+        m_type = VasnecovPipeline::Points;
+        return true;
+    case TypeTriangles:
+        m_type = VasnecovPipeline::Triangles;
+        m_lighting = true;
+        return true;
+    default:
+        return false;
+    }
 }
 
 VasnecovFigure::Types VasnecovFigure::type() const
@@ -298,7 +322,7 @@ void VasnecovFigure::createLine(GLfloat length, const QColor &color)
     if (length <= 0.0f)
         return;
 
-    designerSetType(VasnecovFigure::TypeLines);
+    setType(VasnecovFigure::TypeLines);
     if(color.isValid())
         m_color = color;
     m_points.set(std::vector<QVector3D>{QVector3D(0.0, 0.0, 0.0), QVector3D(length, 0.0, 0.0)});
@@ -308,7 +332,7 @@ void VasnecovFigure::createLine(const QVector3D &first, const QVector3D &second,
 {
     if (first == second)
         return;
-    designerSetType(VasnecovFigure::TypeLines);
+    setType(VasnecovFigure::TypeLines);
     if(color.isValid())
         m_color = color;
     m_points.set(std::vector<QVector3D>{first, second});
@@ -325,7 +349,7 @@ void VasnecovFigure::createCircle(GLfloat r, const QColor &color, GLuint factor)
     if (r <= 0.0f || factor <= 0)
         return;
 
-    designerSetType(VasnecovFigure::TypePolylineLoop);
+    setType(VasnecovFigure::TypePolylineLoop);
     if(color.isValid())
         m_color = color;
 
@@ -348,7 +372,7 @@ void VasnecovFigure::createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
     if (r <= 0.0f || spanAngle == 0.0f || factor <= 0)
         return;
 
-    designerSetType(VasnecovFigure::TypePolyline);
+    setType(VasnecovFigure::TypePolyline);
     if(color.isValid())
         m_color = color;
 
@@ -392,7 +416,7 @@ void VasnecovFigure::createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle,
     if (r <= 0.0 || spanAngle == 0.0 || factor <= 0)
         return;
 
-    designerSetType(VasnecovFigure::TypePolygons);
+    setType(VasnecovFigure::TypePolygons);
     if(color.isValid())
         m_color = color;
 
@@ -438,7 +462,7 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
     if (!horizontals && !verticals)
         return;
 
-    designerSetType(VasnecovFigure::TypeLines);
+    setType(VasnecovFigure::TypeLines);
 
     if(color.isValid())
         m_color = color;
@@ -489,7 +513,7 @@ void VasnecovFigure::createSquareGrid(GLfloat width, GLfloat height, const QColo
 
 void VasnecovFigure::createMeshFromFile(const std::string &fileName, const QColor &color)
 {
-    designerSetType(VasnecovFigure::TypeLines);
+    setType(VasnecovFigure::TypeLines);
     if(color.isValid())
         m_color = color;
     m_points.set(readPointsFromObj(fileName));
@@ -497,39 +521,10 @@ void VasnecovFigure::createMeshFromFile(const std::string &fileName, const QColo
 
 void VasnecovFigure::createMeshFromPoints(const std::vector<QVector3D> &points, const QColor &color)
 {
-    designerSetType(VasnecovFigure::TypeLines);
+    setType(VasnecovFigure::TypeLines);
     if(color.isValid())
         m_color = color;
     m_points.set(points);
-}
-
-GLboolean VasnecovFigure::designerSetType(VasnecovFigure::Types type)
-{
-    switch(type)
-    {
-        case TypePolyline:
-            m_type = VasnecovPipeline::PolyLine;
-            return true;
-        case TypePolylineLoop:
-            m_type = VasnecovPipeline::LoopLine;
-            return true;
-        case TypePolygons:
-            m_type = VasnecovPipeline::FanTriangle;
-            m_lighting = true;
-            return true;
-        case TypeLines:
-            m_type = VasnecovPipeline::Lines;
-            return true;
-        case TypePoints:
-            m_type = VasnecovPipeline::Points;
-            return true;
-        case TypeTriangles:
-            m_type = VasnecovPipeline::Triangles;
-            m_lighting = true;
-            return true;
-        default:
-            return false;
-    }
 }
 
 GLenum VasnecovFigure::renderUpdateData()

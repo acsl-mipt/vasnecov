@@ -37,21 +37,19 @@ public:
                      const std::string& name = std::string());
 
 public:
-    void setTextureD(VasnecovTexture* textureD);
-    VasnecovTexture* textureD() const;
-    void setTextureN(VasnecovTexture* textureN);
-    VasnecovTexture* textureN() const;
+    VasnecovTexture* textureD() const { return m_textureD; }
+    VasnecovTexture* textureN() const { return m_textureN; }
 
-    void setAmbientColor(const QColor& color);
-    void setDiffuseColor(const QColor& color);
-    void setSpecularColor(const QColor& color);
-    void setEmissionColor(const QColor& color);
-    void setShininess(GLfloat shininess);
-    QColor ambientColor() const;
-    QColor diffuseColor() const;
-    QColor specularColor() const;
-    QColor emissionColor() const;
-    GLfloat shininess() const;
+    void setAmbientColor(const QColor& color) { m_ambientColor = color; }
+    void setDiffuseColor(const QColor& color) { m_diffuseColor = color; }
+    void setSpecularColor(const QColor& color) { m_specularColor = color; }
+    void setEmissionColor(const QColor& color) { m_emissionColor = color; }
+    void setShininess(GLfloat shininess) { m_shininess = shininess; }
+    QColor ambientColor() const { return m_ambientColor; }
+    QColor diffuseColor() const { return m_diffuseColor; }
+    QColor specularColor() const { return m_specularColor; }
+    QColor emissionColor() const { return m_emissionColor; }
+    GLfloat shininess() const { return m_shininess; }
 
 protected:
     void designerSetAmbientAndDiffuseColor(const QColor& color);
@@ -59,15 +57,6 @@ protected:
 protected:
     GLenum renderUpdateData() override;
     void renderDraw() override;
-
-    const VasnecovTexture* renderTextureD() const;
-    const VasnecovTexture* renderTextureN() const;
-
-    QColor renderAmbientColor() const;
-    QColor renderDiffuseColor() const;
-    QColor renderSpecularColor() const;
-    QColor renderEmissionColor() const;
-    GLfloat renderShininess() const;
 
 protected:
 
@@ -105,36 +94,6 @@ protected:
 private:
     Q_DISABLE_COPY(VasnecovMaterial)
 };
-
-inline const VasnecovTexture* VasnecovMaterial::renderTextureD() const
-{
-    return m_textureD;
-}
-inline const VasnecovTexture* VasnecovMaterial::renderTextureN() const
-{
-    return m_textureN;
-}
-
-inline QColor VasnecovMaterial::renderAmbientColor() const
-{
-    return m_ambientColor;
-}
-inline QColor VasnecovMaterial::renderDiffuseColor() const
-{
-    return m_diffuseColor;
-}
-inline QColor VasnecovMaterial::renderSpecularColor() const
-{
-    return m_specularColor;
-}
-inline QColor VasnecovMaterial::renderEmissionColor() const
-{
-    return m_emissionColor;
-}
-inline GLfloat VasnecovMaterial::renderShininess() const
-{
-    return m_shininess;
-}
 
 #ifndef _MSC_VER
     #pragma GCC diagnostic ignored "-Weffc++"

@@ -51,8 +51,7 @@ public:
 
 protected:
     // Методы без мьютексов, вызываемые методами, защищенными своими мьютексами. Префикс designer
-    QMatrix4x4 designerMatrixMs() const;
-    const QMatrix4x4* designerExportingMatrix() const;
+    const QMatrix4x4& matrixMs() const { return m_Ms; }
     virtual void designerUpdateMatrixMs();
     GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs); // Обнуление чужой матрицы, равной заданной параметром
 
@@ -62,10 +61,6 @@ protected:
     GLenum renderUpdateData() override; // обновление данных, вызов должен быть обёрнут мьютексом
 
     void renderApplyTranslation() const; // Выполнение позиционирования элемента
-    const QMatrix4x4& renderMatrixMs() const;
-
-    QVector3D renderCoordinates() const;
-    QVector3D renderAngles() const;
 
 protected:
     QVector3D raw_coordinates;
@@ -103,10 +98,10 @@ public:
     QColor color() const;
 
     virtual void setScale(GLfloat scale = 1.0f);
-    GLfloat scale() const;
+    GLfloat scale() const { return m_scale; }
 
     // Прозрачность
-    GLboolean isTransparency() const; // Является ли прозрачной
+    GLboolean isTransparency() const { return m_isTransparency; } // Является ли прозрачной
 
 protected:
     // Методы без мьютексов, вызываемые методами, защищенными своими мьютексами
@@ -116,11 +111,8 @@ protected:
     // Методы, вызываемые рендерером (прямое обращение к основным данным без мьютексов)
     GLenum renderUpdateData() override; // обновление данных, вызов должен быть обёрнут мьютексом
 
-    GLfloat renderDistance() const;
-    QColor renderColor() const;
-    GLfloat renderScale() const;
+    GLfloat renderDistance() const { return pure_distance; }
 
-    GLboolean renderIsTransparency() const;
     virtual GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
     static bool renderCompareByReverseDistance(VasnecovElement* first, VasnecovElement* second);
@@ -161,14 +153,6 @@ inline void VasnecovAbstractElement::renderApplyTranslation() const
         pure_pipeline->setMatrixMV(m_Ms);
     }
 }
-inline QMatrix4x4 VasnecovAbstractElement::designerMatrixMs() const
-{
-    return m_Ms;
-}
-inline const QMatrix4x4 *VasnecovAbstractElement::designerExportingMatrix() const
-{
-    return &m_Ms;
-}
 
 inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
@@ -176,30 +160,6 @@ inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const QM
         return false;
     m_alienMs = nullptr;
     return true;
-}
-inline const QMatrix4x4 &VasnecovAbstractElement::renderMatrixMs() const
-{
-    return m_Ms;
-}
-
-//--------------------------------------------------------------------------------------------------
-inline GLfloat VasnecovElement::renderDistance() const
-{
-    return pure_distance;
-}
-inline QColor VasnecovElement::renderColor() const
-{
-    return m_color;
-}
-
-inline GLfloat VasnecovElement::renderScale() const
-{
-    return m_scale;
-}
-
-inline GLboolean VasnecovElement::renderIsTransparency() const
-{
-    return m_isTransparency;
 }
 
 

@@ -264,7 +264,7 @@ void VasnecovAbstractElement::setPositionFromElement(const VasnecovAbstractEleme
     if(element)
     {
         // NOTE: After this element's coordinates, angles & quaternions will be not actual
-        m_Ms = element->designerMatrixMs();
+        m_Ms = element->matrixMs();
     }
 }
 /*!
@@ -280,7 +280,7 @@ void VasnecovAbstractElement::attachToElement(const VasnecovAbstractElement *ele
 {
     if(element)
     {
-        m_alienMs = element->designerExportingMatrix();
+        m_alienMs = &element->matrixMs();
     }
 }
 
@@ -452,26 +452,6 @@ void VasnecovElement::setScale(GLfloat scale)
         return;
     m_scale = scale;
     designerUpdateMatrixMs();
-}
-/*!
- \brief
-
- \fn VasnecovElement::scale
- \return GLfloat
-*/
-GLfloat VasnecovElement::scale() const
-{
-    return m_scale;
-}
-/*!
- \brief
-
- \fn VasnecovElement::isTransparency
- \return GLboolean
-*/
-GLboolean VasnecovElement::isTransparency() const
-{
-    return m_isTransparency;
 }
 
 bool VasnecovElement::renderCompareByReverseDistance(VasnecovElement *first, VasnecovElement *second)
