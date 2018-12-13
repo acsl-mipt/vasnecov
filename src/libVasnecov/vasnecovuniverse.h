@@ -91,7 +91,7 @@ class VasnecovUniverse
         ~ElementFullBox() override;
 
         GLboolean synchronize() override;
-        GLboolean removeElement(T* element) override;
+        GLboolean removeElement(const T* element) override;
         const std::vector<T*>& deleting() const;
 
     protected:
@@ -110,8 +110,8 @@ class VasnecovUniverse
         GLboolean addElement(VasnecovMaterial* material, GLboolean check = false) {return m_materials.addElement(material, check);}
         using Vasnecov::ElementList<ElementFullBox>::addElement;
 
-        GLboolean removeElement(VasnecovWorld* world) {return m_worlds.removeElement(world);}
-        GLboolean removeElement(VasnecovMaterial* material) {return m_materials.removeElement(material);}
+        GLboolean removeElement(const VasnecovWorld* world) {return m_worlds.removeElement(world);}
+        GLboolean removeElement(const VasnecovMaterial* material) {return m_materials.removeElement(material);}
         using Vasnecov::ElementList<ElementFullBox>::removeElement;
 
         GLuint removeElements(const std::vector<VasnecovWorld*>& deletingList) {return m_worlds.removeElements(deletingList);}
@@ -203,7 +203,7 @@ public:
 
     VasnecovFigure* addFigure(const std::string& name, VasnecovWorld* world);
     VasnecovFigure* addFigure(std::string&& name, VasnecovWorld* world);
-    GLboolean removeFigure(VasnecovFigure* figure);
+    GLboolean removeFigure(const VasnecovFigure* figure);
 
     VasnecovLabel* addLabel(const std::string& name,
                             VasnecovWorld* world,
@@ -397,7 +397,7 @@ GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
 }
 
 template <typename T>
-GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(T *element)
+GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(const T *element)
 {
     if (!element)
         return false;

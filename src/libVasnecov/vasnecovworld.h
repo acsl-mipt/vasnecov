@@ -107,10 +107,10 @@ public:
 
 protected:
     // Списки содержимого
-    VasnecovLamp* designerFindElement(VasnecovLamp* lamp) const;
-    VasnecovProduct* designerFindElement(VasnecovProduct* product) const;
-    VasnecovFigure* designerFindElement(VasnecovFigure* figure) const;
-    VasnecovLabel* designerFindElement(VasnecovLabel* label) const;
+    VasnecovLamp* designerFindElement(const VasnecovLamp* lamp) const;
+    VasnecovProduct* designerFindElement(const VasnecovProduct* product) const;
+    VasnecovFigure* designerFindElement(const VasnecovFigure* figure) const;
+    VasnecovLabel* designerFindElement(const VasnecovLabel* label) const;
 
     // Добавление новых элементов в списки
     GLboolean designerAddElement(VasnecovLamp* lamp, GLboolean check = false);
@@ -118,10 +118,10 @@ protected:
     GLboolean designerAddElement(VasnecovFigure* figure, GLboolean check = false);
     GLboolean designerAddElement(VasnecovLabel* label, GLboolean check = false);
 
-    GLboolean designerRemoveElement(VasnecovLamp* lamp);
-    GLboolean designerRemoveElement(VasnecovProduct* product);
-    GLboolean designerRemoveElement(VasnecovFigure* figure);
-    GLboolean designerRemoveElement(VasnecovLabel* label);
+    GLboolean designerRemoveElement(const VasnecovLamp* lamp);
+    GLboolean designerRemoveElement(const VasnecovProduct* product);
+    GLboolean designerRemoveElement(const VasnecovFigure* figure);
+    GLboolean designerRemoveElement(const VasnecovLabel* label);
 
     void designerUpdateOrtho();
 
@@ -177,19 +177,19 @@ private:
     Q_DISABLE_COPY(VasnecovWorld)
 };
 
-inline VasnecovLamp* VasnecovWorld::designerFindElement(VasnecovLamp* lamp) const
+inline VasnecovLamp* VasnecovWorld::designerFindElement(const VasnecovLamp* lamp) const
 {
     return m_elements.findRawElement(lamp);
 }
-inline VasnecovProduct* VasnecovWorld::designerFindElement(VasnecovProduct* product) const
+inline VasnecovProduct* VasnecovWorld::designerFindElement(const VasnecovProduct* product) const
 {
     return m_elements.findRawElement(product);
 }
-inline VasnecovFigure* VasnecovWorld::designerFindElement(VasnecovFigure* figure) const
+inline VasnecovFigure* VasnecovWorld::designerFindElement(const VasnecovFigure* figure) const
 {
     return m_elements.findRawElement(figure);
 }
-inline VasnecovLabel* VasnecovWorld::designerFindElement(VasnecovLabel* label) const
+inline VasnecovLabel* VasnecovWorld::designerFindElement(const VasnecovLabel* label) const
 {
     return m_elements.findRawElement(label);
 }
@@ -211,19 +211,19 @@ inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel* label, GLboole
     return m_elements.addElement(label, check);
 }
 
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLamp* lamp)
+inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovLamp* lamp)
 {
     return m_elements.removeElement(lamp);
 }
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovProduct* product)
+inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovProduct* product)
 {
     return m_elements.removeElement(product);
 }
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovFigure* figure)
+inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovFigure* figure)
 {
     return m_elements.removeElement(figure);
 }
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel* label)
+inline GLboolean VasnecovWorld::designerRemoveElement(const VasnecovLabel* label)
 {
     return m_elements.removeElement(label);
 }

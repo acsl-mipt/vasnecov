@@ -38,9 +38,9 @@ namespace Vasnecov
 
         virtual GLboolean synchronize(); // Синхронизация чистых данных с грязными
 
-        T* findElement(T* element) const;
+        T* findElement(const T* element) const;
         virtual GLboolean addElement(T* element, GLboolean check = false);
-        virtual GLboolean removeElement(T* element);
+        virtual GLboolean removeElement(const T* element);
         GLuint removeElements(const std::vector<T*>& deletingList);
         const std::vector<T*>& raw() const;
         const std::vector<T*>& pure() const;
@@ -119,19 +119,18 @@ namespace Vasnecov
     }
 
     template <typename T>
-    T *ElementBox<T>::findElement(T *element) const
+    T *ElementBox<T>::findElement(const T *element) const
     {
         if (!element)
             return nullptr;
-        if(find(m_raw.begin(), m_raw.end(), element) != m_raw.end())
-        {
-            return element;
-        }
-        return nullptr;
+        auto i = find(m_raw.begin(), m_raw.end(), element);
+        if (i == m_raw.end())
+            return nullptr;
+        return *i;
     }
 
     template <typename T>
-    GLboolean ElementBox<T>::removeElement(T *element)
+    GLboolean ElementBox<T>::removeElement(const T *element)
     {
         if (!element)
             return false;
@@ -174,20 +173,20 @@ namespace Vasnecov
         ElementList() {}
         virtual ~ElementList(){}
 
-        VasnecovLamp* findRawElement(VasnecovLamp* lamp) const {return m_lamps.findElement(lamp);}
-        VasnecovProduct* findRawElement(VasnecovProduct* product) const {return m_products.findElement(product);}
-        VasnecovFigure* findRawElement(VasnecovFigure* figure) const {return m_figures.findElement(figure);}
-        VasnecovLabel* findRawElement(VasnecovLabel* label) const {return m_labels.findElement(label);}
+        VasnecovLamp* findRawElement(const VasnecovLamp* lamp) const {return m_lamps.findElement(lamp);}
+        VasnecovProduct* findRawElement(const VasnecovProduct* product) const {return m_products.findElement(product);}
+        VasnecovFigure* findRawElement(const VasnecovFigure* figure) const {return m_figures.findElement(figure);}
+        VasnecovLabel* findRawElement(const VasnecovLabel* label) const {return m_labels.findElement(label);}
 
         GLboolean addElement(VasnecovLamp* lamp, GLboolean check = false) {return m_lamps.addElement(lamp, check);}
         GLboolean addElement(VasnecovProduct* product, GLboolean check = false) {return m_products.addElement(product, check);}
         GLboolean addElement(VasnecovFigure* figure, GLboolean check = false) {return m_figures.addElement(figure, check);}
         GLboolean addElement(VasnecovLabel* label, GLboolean check = false) {return m_labels.addElement(label, check);}
 
-        GLboolean removeElement(VasnecovLamp* lamp) {return m_lamps.removeElement(lamp);}
-        GLboolean removeElement(VasnecovProduct* product) {return m_products.removeElement(product);}
-        GLboolean removeElement(VasnecovFigure* figure) {return m_figures.removeElement(figure);}
-        GLboolean removeElement(VasnecovLabel* label) {return m_labels.removeElement(label);}
+        GLboolean removeElement(const VasnecovLamp* lamp) {return m_lamps.removeElement(lamp);}
+        GLboolean removeElement(const VasnecovProduct* product) {return m_products.removeElement(product);}
+        GLboolean removeElement(const VasnecovFigure* figure) {return m_figures.removeElement(figure);}
+        GLboolean removeElement(const VasnecovLabel* label) {return m_labels.removeElement(label);}
 
         GLuint removeElements(const std::vector<VasnecovLamp*>& deletingList) {return m_lamps.removeElements(deletingList);}
         GLuint removeElements(const std::vector<VasnecovProduct*>& deletingList) {return m_products.removeElements(deletingList);}

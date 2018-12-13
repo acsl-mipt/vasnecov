@@ -546,7 +546,7 @@ VasnecovFigure *VasnecovUniverse::addFigure(std::string&& name, VasnecovWorld *w
     return figure;
 }
 
-GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
+GLboolean VasnecovUniverse::removeFigure(const VasnecovFigure *figure)
 {
     if(!figure)
         return false;
