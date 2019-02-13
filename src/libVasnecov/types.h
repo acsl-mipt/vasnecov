@@ -245,6 +245,8 @@ namespace Vasnecov
 
         void setTarget(const QVector3D& target) {m_target = target;}
         void setPosition(const QVector3D& position) {m_position = position;}
+        void setTarget(float x, float y, float z) {m_target = QVector3D(x, y, z);}
+        void setPosition(float x, float y, float z) {m_position = QVector3D(x, y, z);}
         void setRoll(GLfloat roll) {m_roll = roll;}
 
     private:
