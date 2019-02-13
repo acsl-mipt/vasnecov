@@ -29,6 +29,7 @@ src = [
   'src/libVasnecov/vasnecovproduct.cpp',
   'src/libVasnecov/vasnecovresourcemanager.cpp',
   'src/libVasnecov/vasnecovscene.cpp',
+  'src/libVasnecov/vasnecovterrain.cpp',
   'src/libVasnecov/vasnecovtexture.cpp',
   'src/libVasnecov/vasnecovuniverse.cpp',
   'src/libVasnecov/vasnecovworld.cpp',
