@@ -61,6 +61,7 @@ public:
     explicit VasnecovTextureNormal(const QImage& image);
 };
 
+//==================================================================================================
 inline void VasnecovTexture::setImage(const QImage& image)
 {
     m_image = image;

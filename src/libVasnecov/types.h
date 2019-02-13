@@ -194,7 +194,8 @@ namespace Vasnecov
     {
         GLenum wasUpdated;
 
-        Attributes() : wasUpdated(false)
+        Attributes() :
+            wasUpdated(false)
         {
         }
         virtual ~Attributes(){}
@@ -284,16 +285,17 @@ namespace Vasnecov
 
         bool operator!=(const Line& other) const
         {
-            return m_p1 != other.m_p1 || m_p2 != other.m_p2;
+            return m_p1 != other.m_p1 ||
+                   m_p2 != other.m_p2;
         }
         bool operator==(const Line& other) const
         {
-            return m_p1 == other.m_p1 && m_p2 == other.m_p2;
+            return m_p1 == other.m_p1 &&
+                   m_p2 == other.m_p2;
         }
 
     private:
-        QVector3D m_p1;
-        QVector3D m_p2;
+        QVector3D m_p1, m_p2;
     };
 
 inline Vasnecov::WorldTypes WorldParameters::projection() const

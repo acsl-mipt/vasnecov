@@ -35,13 +35,13 @@
 */
 VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, const QGLContext *context) :
     m_pipeline(),
-    m_context(context),
-    m_backgroundColor(0, 0, 0, 255),
+    m_context(raw_data.wasUpdated, Context, context),
+    m_backgroundColor(raw_data.wasUpdated, BackColor, QColor(0, 0, 0, 255)),
 
     m_width(Vasnecov::cfg_displayWidthDefault),
     m_height(Vasnecov::cfg_displayHeightDefault),
 
-    m_loading(false),
+    m_loading(raw_data.wasUpdated, Loading, false),
     m_loadingImage0(),
     m_loadingImage1(),
     m_loadingImageTimer(Vasnecov::timeDefault()),
@@ -51,10 +51,10 @@ VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, con
     m_resourceManager(resourceManager),
     m_elements(),
 
-    m_techRenderer(),
-    m_techVersion(),
-    m_techSL(),
-    m_techExtensions()
+    m_techRenderer(raw_data.wasUpdated, Tech01),
+    m_techVersion(raw_data.wasUpdated, Tech02),
+    m_techSL(raw_data.wasUpdated, Tech03),
+    m_techExtensions(raw_data.wasUpdated, Tech04)
 {
     Q_INIT_RESOURCE(vasnecov);
 
@@ -486,40 +486,50 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
 
         // Удаление материалов
         std::vector<VasnecovMaterial *> delMat;
-        for(VasnecovProduct* dit: delProd)
+        for(std::vector<VasnecovProduct *>::iterator dit = delProd.begin();
+            dit != delProd.end(); ++dit)
         {
-            if(dit->designerMaterial())
+            if((*dit)->designerMaterial())
             {
-                delMat.push_back(dit->designerMaterial());
+                delMat.push_back((*dit)->designerMaterial());
             }
         }
         // Если материал встречается где-то в других продуктах, то из списка претендентов он вычеркивается
-        for(const auto& pit: m_elements.rawProducts())
+        for(std::vector<VasnecovProduct *>::const_iterator pit = m_elements.rawProducts().begin();
+            pit != m_elements.rawProducts().end(); ++pit)
         {
-            auto i = std::find_if(delMat.begin(), delMat.end(), [&](const auto& mit) {return pit->designerMaterial() == mit; });
-            if (i != delMat.end())
-                delMat.erase(i);
+            for(std::vector<VasnecovMaterial *>::iterator mit = delMat.begin();
+                mit != delMat.end(); ++mit)
+            {
+                if((*pit)->designerMaterial() == (*mit))
+                {
+                    delMat.erase(mit);
+                    break;
+                }
+            }
         }
         // Непосредственное удаление больше не нужных материалов
         m_elements.removeElements(delMat);
 
         // Прочие удаления
-        for(VasnecovProduct* dit: delProd)
+        for(std::vector<VasnecovProduct *>::iterator dit = delProd.begin();
+            dit != delProd.end(); ++dit)
         {
             // Удаление из мира
-            for(auto& wit: m_elements.rawWorlds().raw())
+            for(std::vector<VasnecovWorld *>::const_iterator wit = m_elements.rawWorlds().begin();
+                wit != m_elements.rawWorlds().end(); ++wit)
             {
-                wit->designerRemoveElement(dit);
+                (*wit)->designerRemoveElement((*dit));
             }
 
             // Удаление из списка родителей
-            if(dit->designerParent())
+            if((*dit)->designerParent())
             {
-                dit->designerParent()->designerRemoveChild(dit);
+                (*dit)->designerParent()->designerRemoveChild(*dit);
             }
 
             // Удаление чужих матриц
-            const QMatrix4x4 *matrix = dit->designerExportingMatrix();
+            const QMatrix4x4 *matrix = (*dit)->designerExportingMatrix();
             designerRemoveThisAlienMatrix(matrix);
         }
 
@@ -574,9 +584,10 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
 
         // Прочие удаления
         // Удаление из мира
-        for(auto& wit: m_elements.rawWorlds().raw())
+        for(std::vector<VasnecovWorld *>::const_iterator wit = m_elements.rawWorlds().begin();
+            wit != m_elements.rawWorlds().end(); ++wit)
         {
-            wit->designerRemoveElement(figure);
+            (*wit)->designerRemoveElement(figure);
         }
 
         // Удаление чужих матриц
@@ -721,9 +732,10 @@ GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
 
         // Прочие удаления
         // Удаление из мира
-        for(auto& wit: m_elements.rawWorlds().raw())
+        for(std::vector<VasnecovWorld *>::const_iterator wit = m_elements.rawWorlds().begin();
+            wit != m_elements.rawWorlds().end(); ++wit)
         {
-            wit->designerRemoveElement(label);
+            (*wit)->designerRemoveElement(label);
         }
 
         // Удаление чужих матриц
@@ -850,7 +862,7 @@ VasnecovTexture *VasnecovUniverse::textureByName(const QString& textureName, Vas
 */
 void VasnecovUniverse::setBackgroundColor(const QColor &color)
 {
-    m_backgroundColor = color;
+    m_backgroundColor.set(color);
 }
 /*!
  \brief
@@ -973,25 +985,33 @@ QString VasnecovUniverse::info(GLuint type)
     switch (type)
     {
         case GL_VERSION:
-            res = m_techVersion;
+            m_techVersion.update();
+            res = m_techVersion.pure();
             break;
         case GL_RENDERER:
-            res = m_techRenderer;
+            m_techRenderer.update();
+            res = m_techRenderer.pure();
             break;
 #ifndef _MSC_VER
         case GL_SHADING_LANGUAGE_VERSION:
             m_techSL.update();
-            res = m_techSL;
+            res = m_techSL.pure();
             break;
 #endif
         case GL_EXTENSIONS:
-            res = m_techExtensions;
+            m_techExtensions.update();
+            res = m_techExtensions.pure();
             break;
         default:
-            res = "OpenGL " + m_techVersion +
-                  " at " + m_techRenderer +
-                  " with " + m_techSL +
-                  " and \n" + m_techExtensions;
+            m_techVersion.update();
+            m_techRenderer.update();
+            m_techSL.update();
+            m_techExtensions.update();
+
+            res = "OpenGL " + m_techVersion.pure() +
+                  " at " + m_techRenderer.pure() +
+                  " with " + m_techSL.pure() +
+                  " and \n" + m_techExtensions.pure();
             break;
     }
 
@@ -1014,17 +1034,17 @@ void VasnecovUniverse::renderInitialize()
     exts = exts.replace(" ", "\n");
 
     BMCL_INFO() << "OpenGL " << reinterpret_cast<const char *>(glGetString(GL_VERSION));
-    m_techRenderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
-    m_techVersion = reinterpret_cast<const char *>(glGetString(GL_VERSION));
+    m_techRenderer.set(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    m_techVersion.set(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 #ifndef _MSC_VER
     m_techSL.set(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 #endif
-    m_techExtensions = exts;
+    m_techExtensions.set(exts);
 }
 
 GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
-    GLboolean res = false;
+    GLboolean res(false);
 
     for(std::vector<VasnecovLamp *>::const_iterator lit = m_elements.rawLamps().begin();
         lit != m_elements.rawLamps().end(); ++lit)
@@ -1056,7 +1076,13 @@ GLenum VasnecovUniverse::renderUpdateData()
     // Обновление настроек
     if(raw_data.wasUpdated)
     {
-        m_pipeline.setContext(m_context);
+        if(m_context.update())
+        {
+            m_pipeline.setContext(m_context.pure());
+        }
+
+        m_loading.update();
+        m_backgroundColor.update();
     }
 
     // Обновление содержимого списков
@@ -1065,11 +1091,11 @@ GLenum VasnecovUniverse::renderUpdateData()
     if(wasUpdated)
     {
         // Обновление индексов фонарей
-        GLuint index = GL_LIGHT0;
-        int i = 0;
-        for(const auto& lit: m_elements.pureLamps())
+        GLuint index(GL_LIGHT0);
+        for(std::vector<VasnecovLamp *>::const_iterator lit = m_elements.pureLamps().begin();
+            lit != m_elements.pureLamps().end(); ++lit, ++index)
         {
-            lit->renderSetIndex(i++);
+            (*lit)->renderSetIndex(index);
         }
     }
 
@@ -1162,7 +1188,7 @@ void VasnecovUniverse::renderDrawAll(GLsizei width, GLsizei height)
         m_height = height;
 
         // Очистка экрана и т.п.
-        m_pipeline.setBackgroundColor(m_backgroundColor);
+        m_pipeline.setBackgroundColor(m_backgroundColor.pure());
         m_pipeline.clearAll();
 
         // Включение параметров
@@ -1184,7 +1210,7 @@ void VasnecovUniverse::renderDrawAll(GLsizei width, GLsizei height)
     }
 
     // Индикатор факта загрузки
-    if(m_loading)
+    if(m_loading.pure())
     {
         renderDrawLoadingImage();
     }

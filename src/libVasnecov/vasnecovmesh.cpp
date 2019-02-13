@@ -169,7 +169,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                         if(static_cast<GLuint>(parts.size()) == TrianglesIndices::amount)
                         {
                             TrianglesIndices cIndex;
-                            bool correct = true;
+                            bool correct(true);
 
                             // Перебор узлов треугольника
                             for(uint i = 0; i < TrianglesIndices::amount; ++i)
@@ -227,7 +227,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                             if(actSize >= LinesIndices::amount)
                             {
                                 LinesIndices cIndex;
-                                bool correct = true;
+                                bool correct(true);
 
                                 // Перебор узлов треугольника
                                 for(uint i = 0, li = 0; i < actSize; ++i)
@@ -332,7 +332,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
         return m_isLoaded;
     }
 
-    GLint fails = 0;
+    GLint fails(0);
 
     if(m_type == VasnecovPipeline::Lines)
     {
@@ -516,8 +516,8 @@ void VasnecovMesh::optimizeData()
     for(GLuint i = 0; i < rawIndices.size(); ++i)
     {
         QVector3D ver(rawVertices[i]);
-        GLboolean found = false;
-        GLuint fIndex = 0;
+        GLboolean found(false);
+        GLuint fIndex(0);
 
         // Поиск точки в списке точек
         for(fIndex = 0; fIndex < m_vertices.size(); ++fIndex)

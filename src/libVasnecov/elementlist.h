@@ -46,9 +46,7 @@ namespace Vasnecov
         }
 
     protected:
-        std::vector<T*> m_raw;
-        std::vector<T*> m_buffer;
-        std::vector<T*> m_pure;
+        std::vector<T*> m_raw, m_buffer, m_pure;
         GLboolean m_wasUpdated;
         const GLenum m_flag; // Флаг обновления
 
@@ -56,8 +54,10 @@ namespace Vasnecov
         Q_DISABLE_COPY(ElementBox)
     };
 
+
     template <typename T>
     ElementBox<T>::ElementBox() :
+        m_raw(), m_buffer(), m_pure(),
         m_wasUpdated(false),
         m_flag()
     {}
@@ -67,7 +67,7 @@ namespace Vasnecov
     {
         if(element)
         {
-            GLboolean added = true;
+            GLboolean added(true);
             if(check)
             {
                 // Поиск дубликатов
@@ -101,7 +101,7 @@ namespace Vasnecov
     }
 
     template <typename T>
-    const std::vector<T*> &ElementBox<T>::raw() const
+    const std::vector<T *> &ElementBox<T>::raw() const
     {
         return m_raw;
     }
@@ -124,11 +124,12 @@ namespace Vasnecov
     template <typename T>
     T *ElementBox<T>::findElement(T *element) const
     {
-        if (!element)
-            return nullptr;
-        if(find(m_raw.begin(), m_raw.end(), element) != m_raw.end())
+        if(element)
         {
-            return element;
+            if(find(m_raw.begin(), m_raw.end(), element) != m_raw.end())
+            {
+                return element;
+            }
         }
         return nullptr;
     }
@@ -136,31 +137,40 @@ namespace Vasnecov
     template <typename T>
     GLboolean ElementBox<T>::removeElement(T *element)
     {
-        if (!element)
-            return false;
-
-        const auto i = std::find_if(m_raw.begin(), m_raw.end(), [=](const T* v) { return v == element; });
-        if (i == m_raw.end())
-            return false;
-
-        m_raw.erase(i);
-        m_buffer = m_raw;
-        m_wasUpdated = true;
-        return true;
-    }
-
-    template <typename T>
-    GLuint ElementBox<T>::removeElements(const std::vector<T*> &deletingList)
-    {
-        GLuint count = 0;
-
-        for(auto& i: deletingList)
+        if(element)
         {
-            if (removeElement(i))
+            for(typename std::vector<T *>::iterator eit = m_raw.begin();
+                eit != m_raw.end(); ++eit)
             {
-                ++count;
+                if((*eit) == element)
+                {
+                    m_raw.erase(eit);
+                    m_buffer = m_raw;
+                    m_wasUpdated = true;
+                    return true;
+                }
             }
         }
+
+        return false;
+    }
+    template <typename T>
+    GLuint ElementBox<T>::removeElements(const std::vector<T *> &deletingList)
+    {
+        GLuint count(0);
+
+        for(typename std::vector<T *>::const_iterator dit = deletingList.begin();
+            dit != deletingList.end(); ++dit)
+        {
+            if(*dit)
+            {
+                if(this->removeElement(*dit))
+                {
+                    ++count;
+                }
+            }
+        }
+
         return count;
     }
 }
@@ -175,7 +185,12 @@ namespace Vasnecov
     class ElementList
     {
     public:
-        ElementList() {}
+        ElementList() :
+                m_lamps(),
+                m_products(),
+                m_figures(),
+                m_labels()
+        {}
         virtual ~ElementList(){}
 
         VasnecovLamp* findRawElement(VasnecovLamp* lamp) const {return m_lamps.findElement(lamp);}
@@ -234,7 +249,7 @@ namespace Vasnecov
 
         virtual GLboolean synchronizeAll()
         {
-            GLboolean res = false;
+            GLboolean res(false);
 
             res |= m_lamps.synchronize();
             res |= m_products.synchronize();

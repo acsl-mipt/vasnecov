@@ -26,15 +26,15 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::Pr
     raw_M1(),
     raw_ownVisible(true),
 
-    m_type(type),
-    m_parent(parent),
-    m_level(level),
+    m_type(raw_wasUpdated, Type, type),
+    m_parent(raw_wasUpdated, Parent, parent),
+    m_level(raw_wasUpdated, Level, level),
 
-    m_mesh(nullptr),
-    m_material(nullptr),
-    m_children(),
+    m_mesh(raw_wasUpdated, Mesh, nullptr),
+    m_material(raw_wasUpdated, Material, nullptr),
+    m_children(raw_wasUpdated, Children),
 
-    m_drawingBox(false)
+    m_drawingBox(raw_wasUpdated, DrawingBox, false)
 {
     init();
 }
@@ -54,15 +54,15 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name
     raw_M1(),
     raw_ownVisible(true),
 
-    m_type(type),
-    m_parent(parent),
-    m_level(level),
+    m_type(raw_wasUpdated, Type, type),
+    m_parent(raw_wasUpdated, Parent, parent),
+    m_level(raw_wasUpdated, Level, level),
 
-    m_mesh(nullptr),
-    m_material(nullptr),
-    m_children(),
+    m_mesh(raw_wasUpdated, Mesh, nullptr),
+    m_material(raw_wasUpdated, Material, nullptr),
+    m_children(raw_wasUpdated, Children),
 
-    m_drawingBox(false)
+    m_drawingBox(raw_wasUpdated, DrawingBox, false)
 {
     init();
 }
@@ -81,15 +81,15 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name
     raw_M1(),
     raw_ownVisible(true),
 
-    m_type(ProductTypePart), // т.к. меш может быть только у детали
-    m_parent(parent),
-    m_level(level),
+    m_type(raw_wasUpdated, Type, ProductTypePart), // т.к. меш может быть только у детали
+    m_parent(raw_wasUpdated, Parent, parent),
+    m_level(raw_wasUpdated, Level, level),
 
-    m_mesh(mesh),
-    m_material(nullptr),
-    m_children(),
+    m_mesh(raw_wasUpdated, Mesh, mesh),
+    m_material(raw_wasUpdated, Material, nullptr),
+    m_children(raw_wasUpdated, Children),
 
-    m_drawingBox(false)
+    m_drawingBox(raw_wasUpdated, DrawingBox, false)
 {
     init();
 }
@@ -110,13 +110,15 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name
     raw_M1(),
     raw_ownVisible(true),
 
-    m_type(ProductTypePart), // т.к. меш может быть только у детали
-    m_parent(parent),
-    m_level(level),
+    m_type(raw_wasUpdated, Type, ProductTypePart), // т.к. меш может быть только у детали
+    m_parent(raw_wasUpdated, Parent, parent),
+    m_level(raw_wasUpdated, Level, level),
 
-    m_mesh(mesh),
-    m_material(material),
-    m_drawingBox(false)
+    m_mesh(raw_wasUpdated, Mesh, mesh),
+    m_material(raw_wasUpdated, Material, material),
+    m_children(raw_wasUpdated, Children),
+
+    m_drawingBox(raw_wasUpdated, DrawingBox, false)
 {
     init();
 }
@@ -154,16 +156,16 @@ void VasnecovProduct::setPositionFromElement(const VasnecovAbstractElement *elem
 
 void VasnecovProduct::switchDrawingBox()
 {
-    m_drawingBox = !m_drawingBox;
+    m_drawingBox.set(!m_drawingBox.raw());
 }
 
 void VasnecovProduct::designerOwnSetVisible(bool visible)
 {
     raw_ownVisible = visible;
 
-    if(m_parent)
+    if(m_parent.raw())
     {
-        designerSetVisibleFromParent(m_parent->designerIsVisible() && raw_ownVisible);
+        designerSetVisibleFromParent(m_parent.raw()->designerIsVisible() && raw_ownVisible);
     }
     else
     {
@@ -173,55 +175,58 @@ void VasnecovProduct::designerOwnSetVisible(bool visible)
 
 void VasnecovProduct::designerSetVisibleFromParent(bool visible)
 {
-    bool trueVis = false;
+    bool trueVis(false);
 
     if(visible && raw_ownVisible)
     {
         trueVis = true;
     }
 
-    m_isHidden = !trueVis;
+    m_isHidden.set(!trueVis);
 
-    if(!m_children.empty())
+    if(!m_children.raw().empty())
     {
-        for(const auto& cit: m_children)
+        for(std::vector<VasnecovProduct *>::const_iterator cit = m_children.raw().begin();
+            cit != m_children.raw().end(); ++cit)
         {
-            cit->designerSetVisibleFromParent(trueVis);
+            (*cit)->designerSetVisibleFromParent(trueVis);
         }
     }
 }
 
 void VasnecovProduct::designerUpdateMatrixMs()
 {
-    m_Ms = raw_M1;
-    m_Ms.translate(raw_coordinates);
+    QMatrix4x4 newMatrix(raw_M1);
+    newMatrix.translate(raw_coordinates);
 
     QQuaternion qRot;
     qRot = raw_qZ * raw_qX * raw_qY;
 
-    m_Ms.rotate(qRot);
+    newMatrix.rotate(qRot);
 
-    if(m_scale != 1.0f)
+    if(m_scale.raw() != 1.0f)
     {
-        m_Ms.scale(m_scale, m_scale, m_scale);
+        newMatrix.scale(m_scale.raw(), m_scale.raw(), m_scale.raw());
     }
+
+    m_Ms.set(newMatrix);
 }
 
 GLfloat VasnecovProduct::renderCalculateDistanceToPlane(const QVector3D &planePoint, const QVector3D &normal)
 {
     QVector3D centerPoint;
-    if(m_mesh)
+    if(m_mesh.pure())
     {
-        centerPoint = m_mesh->massCenter();
+        centerPoint = m_mesh.pure()->massCenter();
     }
 
-    if(m_alienMs)
+    if(m_alienMs.pure())
     {
-        centerPoint = (*m_alienMs) * m_Ms * centerPoint;
+        centerPoint = (*m_alienMs.pure()) * m_Ms.pure() * centerPoint;
     }
     else
     {
-        centerPoint = m_Ms * centerPoint;
+        centerPoint = m_Ms.pure() * centerPoint;
     }
 
     pure_distance = centerPoint.distanceToPlane(planePoint, normal);
@@ -238,24 +243,35 @@ GLenum VasnecovProduct::renderUpdateData()
 {
     // Проверка прозрачности
     GLboolean transp = false;
-    if(m_material && m_material->renderTextureD())
+    if(m_material.raw() && m_material.raw()->renderTextureD())
     {
-        transp = m_material->renderTextureD()->isTransparency();
+        transp = m_material.raw()->renderTextureD()->isTransparency();
     }
-    if(m_color.alphaF() < 1.0)
+    if(m_color.raw().alphaF() < 1.0)
     {
         transp = true;
     }
-    m_isTransparency = transp;
+    m_isTransparency.set(transp);
 
     // Далее, как обычно
-    GLenum updated = raw_wasUpdated;
+    GLenum updated(raw_wasUpdated);
 
     if(raw_wasUpdated)
     {
         pure_pipeline->setSomethingWasUpdated();
 
         // Копирование сырых данных в основные
+        m_type.update();
+        m_parent.update();
+        m_level.update();
+
+        m_mesh.update();
+        m_material.update();
+
+        m_children.update();
+
+        m_drawingBox.update();
+
         VasnecovElement::renderUpdateData();
     }
 
@@ -269,27 +285,27 @@ GLenum VasnecovProduct::renderUpdateData()
 */
 void VasnecovProduct::renderDraw()
 {
-    if(!m_isHidden &&
-       m_type == ProductTypePart &&
-       m_mesh)
+    if(!m_isHidden.pure() &&
+       m_type.pure() == ProductTypePart &&
+       m_mesh.pure())
     {
         renderApplyTranslation();
 
-        if(m_material)
+        if(m_material.pure())
         {
-            m_material->renderDraw();
+            m_material.pure()->renderDraw();
         }
         else
         {
             pure_pipeline->disableTexture2D();
-            pure_pipeline->setColor(m_color);
+            pure_pipeline->setColor(m_color.pure());
         }
 
-        if(m_drawingBox)
+        if(m_drawingBox.pure())
         {
-            m_mesh->drawBorderBox(pure_pipeline);
+            m_mesh.pure()->drawBorderBox(pure_pipeline);
         }
-        m_mesh->drawModel(pure_pipeline);
+        m_mesh.pure()->drawModel(pure_pipeline);
     }
 }
 
@@ -302,17 +318,24 @@ void VasnecovProduct::renderDraw()
 */
 GLboolean VasnecovProduct::designerAddChild(VasnecovProduct *child)
 {
-    GLboolean res = false;
-    if (!child)
-        return false;
+    GLboolean res(false);
+    if(child)
+    {
+        if(m_type.raw() == ProductTypeAssembly &&
+           m_level.raw() <= Vasnecov::cfg_elementMaxLevel)
+        {
+            std::vector<VasnecovProduct *> chs = m_children.raw();
+            chs.push_back(child);
+            m_children.set(chs);
 
-    if (m_type != ProductTypeAssembly || m_level > Vasnecov::cfg_elementMaxLevel)
-        return false;
+            child->designerSetMatrixM1Recursively(m_Ms.raw());
+            child->designerSetColorRecursively(m_color.raw());
 
-    m_children.push_back(child);
-    child->designerSetMatrixM1Recursively(m_Ms);
-    child->designerSetColorRecursively(m_color);
-    return true;
+            res = true;
+        }
+    }
+
+    return res;
 }
 
 /*!
@@ -324,15 +347,29 @@ GLboolean VasnecovProduct::designerAddChild(VasnecovProduct *child)
 */
 GLboolean VasnecovProduct::designerRemoveChild(VasnecovProduct *child)
 {
-    if (!child || m_type != ProductTypeAssembly)
-        return false;
+    GLboolean res(false);
+    if(child)
+    {
+        if(m_type.raw() == ProductTypeAssembly)
+        {
+            std::vector<VasnecovProduct *> chs = m_children.raw();
 
-    const auto i = std::find_if(m_children.begin(), m_children.end(), [=](const VasnecovProduct* v) { return v == child; });
-    if (i == m_children.end())
-        return false;
+            for(std::vector<VasnecovProduct *>::iterator cit = chs.begin();
+                cit != chs.end(); ++cit)
+            {
+                if((*cit) == child)
+                {
+                    chs.erase(cit);
+                    m_children.set(chs);
 
-    m_children.erase(i);
-    return true;
+                    res = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    return res;
 }
 /*!
  \brief
@@ -343,15 +380,17 @@ GLboolean VasnecovProduct::designerRemoveChild(VasnecovProduct *child)
 std::vector<VasnecovProduct *> VasnecovProduct::designerAllChildren()
 {
     std::vector<VasnecovProduct *> children;
-    if (m_type != ProductTypeAssembly)
-        return children;
 
-    for(const auto& cit: m_children)
+    if(m_type.raw() == ProductTypeAssembly)
     {
-        children.push_back(cit);
+        for(std::vector<VasnecovProduct *>::const_iterator cit = m_children.raw().begin();
+            cit != m_children.raw().end(); ++cit)
+        {
+            children.push_back(*cit);
 
-        std::vector<VasnecovProduct *> grandchildren = cit->designerAllChildren();
-        children.insert(children.end(), grandchildren.begin(), grandchildren.end());
+            std::vector<VasnecovProduct *> grandchildren = (*cit)->designerAllChildren();
+            children.insert(children.end(), grandchildren.begin(), grandchildren.end());
+        }
     }
     return children;
 }
@@ -365,9 +404,9 @@ void VasnecovProduct::setMaterial(VasnecovMaterial *material)
 {
     if(material)
     {
-        if(m_type == ProductTypePart)
+        if(m_type.raw() == ProductTypePart)
         {
-            m_material = material;
+            m_material.set(material);
         }
     }
 }
@@ -379,7 +418,7 @@ void VasnecovProduct::setMaterial(VasnecovMaterial *material)
 */
 VasnecovMaterial *VasnecovProduct::material() const
 {
-    VasnecovMaterial * material(m_material);
+    VasnecovMaterial * material(m_material.raw());
     return material;
 }
 /*!
@@ -392,9 +431,9 @@ void VasnecovProduct::setMesh(VasnecovMesh *mesh)
 {
     if(mesh)
     {
-        if(m_type == ProductTypePart)
+        if(m_type.raw() == ProductTypePart)
         {
-            m_mesh = mesh;
+            m_mesh.set(mesh);
         }
     }
 }
@@ -406,7 +445,7 @@ void VasnecovProduct::setMesh(VasnecovMesh *mesh)
 */
 VasnecovMesh *VasnecovProduct::mesh() const
 {
-    VasnecovMesh *mesh(m_mesh);
+    VasnecovMesh *mesh(m_mesh.raw());
     return mesh;
 }
 
@@ -418,7 +457,7 @@ VasnecovMesh *VasnecovProduct::mesh() const
 */
 GLuint VasnecovProduct::level() const
 {
-    GLuint level(m_level);
+    GLuint level(m_level.raw());
     return level;
 }
 /*!
@@ -429,7 +468,7 @@ GLuint VasnecovProduct::level() const
 */
 VasnecovProduct::ProductTypes VasnecovProduct::type() const
 {
-    VasnecovProduct::ProductTypes type(m_type);
+    VasnecovProduct::ProductTypes type(m_type.raw());
     return type;
 }
 
@@ -441,19 +480,19 @@ VasnecovProduct::ProductTypes VasnecovProduct::type() const
 */
 VasnecovProduct *VasnecovProduct::parent() const
 {
-    VasnecovProduct *parent(m_parent);
+    VasnecovProduct *parent(m_parent.raw());
     return parent;
 }
 
 void VasnecovProduct::changeParent(VasnecovProduct *newParent)
 {
-    if(m_parent)
+    if(m_parent.raw())
     {
-        m_parent->designerRemoveChild(this);
+        m_parent.raw()->designerRemoveChild(this);
     }
     if(newParent)
     {
-        m_parent = newParent;
+        m_parent.set(newParent);
         newParent->designerAddChild(this);
     }
     else // Нет родителя - элемент глобальный
@@ -468,9 +507,10 @@ void VasnecovProduct::changeParent(VasnecovProduct *newParent)
  \fn VasnecovProduct::children
  \return std::vector<VasnecovProduct *>
 */
-const std::vector<VasnecovProduct*>& VasnecovProduct::children() const
+std::vector<VasnecovProduct *> VasnecovProduct::children() const
 {
-    return m_children;
+    std::vector<VasnecovProduct *> children(m_children.raw());
+    return children;
 }
 
 /*!
@@ -481,8 +521,10 @@ const std::vector<VasnecovProduct*>& VasnecovProduct::children() const
 */
 void VasnecovProduct::setColor(const QColor &color)
 {
-    if(m_color != color)
+    if(m_color.raw() != color)
+    {
         designerSetColorRecursively(color);
+    }
 }
 /*!
  \brief
@@ -525,7 +567,8 @@ void VasnecovProduct::incrementCoordinates(const QVector3D &increment)
 */
 QVector3D VasnecovProduct::globalCoordinates()
 {
-    return QVector3D(m_Ms(0, 3), m_Ms(1, 3), m_Ms(2, 3));
+    QVector3D coordinates(m_Ms.raw()(0, 3), m_Ms.raw()(1, 3), m_Ms.raw()(2, 3));
+    return coordinates;
 }
 
 /*!
@@ -536,34 +579,34 @@ QVector3D VasnecovProduct::globalCoordinates()
 */
 void VasnecovProduct::setAngles(const QVector3D &angles)
 {
-    if (raw_angles == angles)
-        return;
+    if(raw_angles != angles)
+    {
+        GLenum rotate(0);
 
-    GLenum rotate(0);
+        if(raw_angles.x() != angles.x())
+        {
+            raw_angles.setX(Vasnecov::trimAngle(angles.x()));
+            raw_qX = raw_qX.fromAxisAndAngle(1.0, 0.0, 0.0, raw_angles.x());
+            rotate |= Vasnecov::RotationX;
+        }
+        if(raw_angles.y() != angles.y())
+        {
+            raw_angles.setY(Vasnecov::trimAngle(angles.y()));
+            raw_qY = raw_qY.fromAxisAndAngle(0.0, 1.0, 0.0, raw_angles.y());
+            rotate |= Vasnecov::RotationY;
+        }
+        if(raw_angles.z() != angles.z())
+        {
+            raw_angles.setZ(Vasnecov::trimAngle(angles.z()));
+            raw_qZ = raw_qZ.fromAxisAndAngle(0.0, 0.0, 1.0, raw_angles.z());
+            rotate |= Vasnecov::RotationZ;
+        }
 
-    if(raw_angles.x() != angles.x())
-    {
-        raw_angles.setX(Vasnecov::trimAngle(angles.x()));
-        raw_qX = raw_qX.fromAxisAndAngle(1.0, 0.0, 0.0, raw_angles.x());
-        rotate |= Vasnecov::RotationX;
-    }
-    if(raw_angles.y() != angles.y())
-    {
-        raw_angles.setY(Vasnecov::trimAngle(angles.y()));
-        raw_qY = raw_qY.fromAxisAndAngle(0.0, 1.0, 0.0, raw_angles.y());
-        rotate |= Vasnecov::RotationY;
-    }
-    if(raw_angles.z() != angles.z())
-    {
-        raw_angles.setZ(Vasnecov::trimAngle(angles.z()));
-        raw_qZ = raw_qZ.fromAxisAndAngle(0.0, 0.0, 1.0, raw_angles.z());
-        rotate |= Vasnecov::RotationZ;
-    }
-
-    if(rotate)
-    {
-        designerUpdateMatrixMs();
-        designerUpdateChildrenMatrix();
+        if(rotate)
+        {
+            designerUpdateMatrixMs();
+            designerUpdateChildrenMatrix();
+        }
     }
 }
 
@@ -575,34 +618,34 @@ void VasnecovProduct::setAngles(const QVector3D &angles)
 */
 void VasnecovProduct::incrementAngles(const QVector3D &increment)
 {
-    if (increment.x() == 0.0f && increment.y() == 0.0f && increment.z() == 0.0f)
-        return;
+    if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
+    {
+        GLenum rotate(0);
 
-    GLenum rotate(0);
+        if(increment.x() != 0.0)
+        {
+            raw_angles.setX(Vasnecov::trimAngle(raw_angles.x() + increment.x()));
+            raw_qX = raw_qX.fromAxisAndAngle(1.0, 0.0, 0.0, raw_angles.x());
+            rotate |= Vasnecov::RotationX;
+        }
+        if(increment.y() != 0.0)
+        {
+            raw_angles.setY(Vasnecov::trimAngle(raw_angles.y() + increment.y()));
+            raw_qY = raw_qY.fromAxisAndAngle(0.0, 1.0, 0.0, raw_angles.y());
+            rotate |= Vasnecov::RotationY;
+        }
+        if(increment.z() != 0.0)
+        {
+            raw_angles.setZ(Vasnecov::trimAngle(raw_angles.z() + increment.z()));
+            raw_qZ = raw_qZ.fromAxisAndAngle(0.0, 0.0, 1.0, raw_angles.z());
+            rotate |= Vasnecov::RotationZ;
+        }
 
-    if(increment.x() != 0.0)
-    {
-        raw_angles.setX(Vasnecov::trimAngle(raw_angles.x() + increment.x()));
-        raw_qX = raw_qX.fromAxisAndAngle(1.0, 0.0, 0.0, raw_angles.x());
-        rotate |= Vasnecov::RotationX;
-    }
-    if(increment.y() != 0.0)
-    {
-        raw_angles.setY(Vasnecov::trimAngle(raw_angles.y() + increment.y()));
-        raw_qY = raw_qY.fromAxisAndAngle(0.0, 1.0, 0.0, raw_angles.y());
-        rotate |= Vasnecov::RotationY;
-    }
-    if(increment.z() != 0.0)
-    {
-        raw_angles.setZ(Vasnecov::trimAngle(raw_angles.z() + increment.z()));
-        raw_qZ = raw_qZ.fromAxisAndAngle(0.0, 0.0, 1.0, raw_angles.z());
-        rotate |= Vasnecov::RotationZ;
-    }
-
-    if(rotate)
-    {
-        designerUpdateMatrixMs();
-        designerUpdateChildrenMatrix();
+        if(rotate)
+        {
+            designerUpdateMatrixMs();
+            designerUpdateChildrenMatrix();
+        }
     }
 }
 
@@ -614,11 +657,11 @@ void VasnecovProduct::incrementAngles(const QVector3D &increment)
 */
 void VasnecovProduct::setScale(GLfloat scale)
 {
-    if (m_scale == scale)
-        return;
-    m_scale = scale;
-    designerUpdateMatrixMs();
-    designerUpdateChildrenMatrix();
+    if(m_scale.set(scale))
+    {
+        designerUpdateMatrixMs();
+        designerUpdateChildrenMatrix();
+    }
 }
 
 /*!
@@ -630,7 +673,9 @@ void VasnecovProduct::setScale(GLfloat scale)
 void VasnecovProduct::designerSetMatrixM1(const QMatrix4x4 &M1)
 {
     if(raw_M1 != M1)
+    {
         designerSetMatrixM1Recursively(M1);
+    }
 }
 
 /*!
@@ -641,18 +686,20 @@ void VasnecovProduct::designerSetMatrixM1(const QMatrix4x4 &M1)
 */
 void VasnecovProduct::designerSetColorRecursively(const QColor &color)
 {
-    m_color = color;
+    m_color.set(color);
 
-    if(!m_children.empty())
+    if(!m_children.raw().empty())
     {
-        for(const auto& cit: m_children)
+        for(std::vector<VasnecovProduct *>::const_iterator cit = m_children.raw().begin();
+            cit != m_children.raw().end();
+            ++cit)
         {
-            cit->designerSetColorRecursively(color);
+            (*cit)->designerSetColorRecursively(color);
         }
     }
-    if(m_type == ProductTypePart && m_material)
+    if(m_type.raw() == ProductTypePart && m_material.raw())
     {
-        m_material->designerSetAmbientAndDiffuseColor(color);
+        m_material.raw()->designerSetAmbientAndDiffuseColor(color);
     }
 }
 /*!
@@ -662,12 +709,14 @@ void VasnecovProduct::designerSetColorRecursively(const QColor &color)
 */
 void VasnecovProduct::designerUpdateChildrenMatrix()
 {
-    if(!m_children.empty())
+    if(!m_children.raw().empty())
     {
-        for(const auto& cit: m_children)
+        for(std::vector<VasnecovProduct *>::const_iterator cit = m_children.raw().begin();
+            cit != m_children.raw().end();
+            ++cit)
         {
             // Матрица преобразований элемента передается дочерним в качестве матрицы начальных преобразований
-            cit->designerSetMatrixM1Recursively(m_Ms);
+            (*cit)->designerSetMatrixM1Recursively(m_Ms.raw());
         }
     }
 }

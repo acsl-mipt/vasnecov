@@ -281,10 +281,11 @@ QVector4D VasnecovPipeline::projectPoint(const QMatrix4x4 &MV, const QVector3D &
 */
 void VasnecovPipeline::setColor(const QColor &color)
 {
-    if (color == m_color)
-        return;
-    m_color = color;
-    glColor4f(m_color.redF(), m_color.greenF(), m_color.blueF(), m_color.alphaF());
+    if(color != m_color)
+    {
+        m_color = color;
+        glColor4f(m_color.redF(), m_color.greenF(), m_color.blueF(), m_color.alphaF());
+    }
 }
 /*!
  \brief
@@ -294,15 +295,16 @@ void VasnecovPipeline::setColor(const QColor &color)
 */
 void VasnecovPipeline::setAmbientColor(const QColor &color)
 {
-    if (color == m_ambientColor)
-        return;
-    m_ambientColor = color;
-    GLfloat params[4];
-    params[0] = m_ambientColor.redF();
-    params[1] = m_ambientColor.greenF();
-    params[2] = m_ambientColor.blueF();
-    params[3] = m_ambientColor.alphaF();
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
+    if(color != m_ambientColor)
+    {
+        m_ambientColor = color;
+        GLfloat params[4];
+        params[0] = m_ambientColor.redF();
+        params[1] = m_ambientColor.greenF();
+        params[2] = m_ambientColor.blueF();
+        params[3] = m_ambientColor.alphaF();
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
+    }
 }
 
 /*!
@@ -315,9 +317,10 @@ void VasnecovPipeline::disableAllConcreteLamps(GLboolean strong)
 {
     if(!strong)
     {
-        for(GLuint lit: m_activatedLamps)
+        for(std::vector<GLuint>::iterator lit = m_activatedLamps.begin();
+            lit != m_activatedLamps.end(); ++lit)
         {
-            glDisable(lit);
+            glDisable(*lit);
         }
         m_activatedLamps.clear();
     }

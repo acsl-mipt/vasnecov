@@ -53,8 +53,8 @@ protected:
     GLenum renderUpdateData();
     void renderDraw();
 
-    const VasnecovTexture* renderTextureD() const;
-    const VasnecovTexture* renderTextureN() const;
+    VasnecovTexture* renderTextureD() const;
+    VasnecovTexture* renderTextureN() const;
 
     QColor renderAmbientColor() const;
     QColor renderDiffuseColor() const;
@@ -70,14 +70,14 @@ protected:
         DefaultDiffuseTextured
     };
 
-    VasnecovTexture* m_textureD;
-    VasnecovTexture* m_textureN;
+    Vasnecov::MutualData<VasnecovTexture*> m_textureD;
+    Vasnecov::MutualData<VasnecovTexture*> m_textureN;
 
-    QColor m_ambientColor;
-    QColor m_diffuseColor;
-    QColor m_specularColor;
-    QColor m_emissionColor;
-    GLfloat m_shininess;
+    Vasnecov::MutualData<QColor> m_ambientColor;
+    Vasnecov::MutualData<QColor> m_diffuseColor;
+    Vasnecov::MutualData<QColor> m_specularColor;
+    Vasnecov::MutualData<QColor> m_emissionColor;
+    Vasnecov::MutualData<GLfloat> m_shininess;
 
     enum
     {
@@ -99,32 +99,32 @@ private:
     Q_DISABLE_COPY(VasnecovMaterial)
 };
 
-inline const VasnecovTexture* VasnecovMaterial::renderTextureD() const
+inline VasnecovTexture *VasnecovMaterial::renderTextureD() const
 {
-    return m_textureD;
+    return m_textureD.pure();
 }
-inline const VasnecovTexture* VasnecovMaterial::renderTextureN() const
+inline VasnecovTexture *VasnecovMaterial::renderTextureN() const
 {
-    return m_textureN;
+    return m_textureN.pure();
 }
 
 inline QColor VasnecovMaterial::renderAmbientColor() const
 {
-    return m_ambientColor;
+    return m_ambientColor.pure();
 }
 inline QColor VasnecovMaterial::renderDiffuseColor() const
 {
-    return m_diffuseColor;
+    return m_diffuseColor.pure();
 }
 inline QColor VasnecovMaterial::renderSpecularColor() const
 {
-    return m_specularColor;
+    return m_specularColor.pure();
 }
 inline QColor VasnecovMaterial::renderEmissionColor() const
 {
-    return m_emissionColor;
+    return m_emissionColor.pure();
 }
 inline GLfloat VasnecovMaterial::renderShininess() const
 {
-    return m_shininess;
+    return m_shininess.pure();
 }

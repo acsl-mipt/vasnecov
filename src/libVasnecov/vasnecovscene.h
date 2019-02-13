@@ -57,8 +57,13 @@ inline VasnecovUniverse *VasnecovScene::universe() const
 }
 inline bool VasnecovScene::removeUniverse()
 {
-    if (!m_universe)
+    if(m_universe)
+    {
+        m_universe = nullptr;
+        return true;
+    }
+    else
+    {
         return false;
-    m_universe = nullptr;
-    return true;
+    }
 }

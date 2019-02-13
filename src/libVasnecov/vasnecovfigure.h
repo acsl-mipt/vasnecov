@@ -240,15 +240,15 @@ class VasnecovFigure : public VasnecovElement
             return 0;
         }
 
-        const std::vector<QVector3D>& pureVertices() const
+        const std::vector<QVector3D>* pureVertices() const
         {
-            return pure_vertices;
+            return &pure_vertices;
         }
-        const std::vector<GLuint>& pureIndices() const
+        const std::vector<GLuint>* pureIndices() const
         {
-            return pure_indices;
+            return &pure_indices;
         }
-        const QVector3D& cm() const
+        QVector3D cm() const
         {
             return pure_cm;
         }
@@ -389,16 +389,16 @@ protected:
     GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
     GLenum renderType() const;
-    const QVector3D& renderCm() const;
+    QVector3D renderCm() const;
     GLboolean renderLighting() const;
 
 protected:
-    VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки
+    Vasnecov::MutualData<VasnecovPipeline::ElementDrawingMethods> m_type; // Тип отрисовки
     VertexManager m_points;
 
-    GLfloat   m_thickness; // Толщина линий
-    GLboolean m_lighting; // Освещение фигуры
-    GLboolean m_depth; // Тест глубины
+    Vasnecov::MutualData<GLfloat> m_thickness; // Толщина линий
+    Vasnecov::MutualData<GLboolean> m_lighting; // Освещение фигуры
+    Vasnecov::MutualData<GLboolean> m_depth; // Тест глубины
 
     enum Updated
     {
@@ -418,39 +418,39 @@ private:
 
 inline void VasnecovFigure::enableLighting()
 {
-    m_lighting = true;
+    m_lighting.set(true);
 }
 inline void VasnecovFigure::disableLighting()
 {
-    m_lighting = false;
+    m_lighting.set(false);
 }
 inline GLboolean VasnecovFigure::lighting() const
 {
-    return m_lighting;
+    return m_lighting.raw();
 }
 
 inline void VasnecovFigure::enableDepth()
 {
-    m_depth = true;
+    m_depth.set(true);
 }
 inline void VasnecovFigure::disableDepth()
 {
-    m_depth = false;
+    m_depth.set(false);
 }
 inline GLboolean VasnecovFigure::depth() const
 {
-    return m_depth;
+    return m_depth.raw();
 }
 inline GLenum VasnecovFigure::renderType() const
 {
-    return m_type;
+    return m_type.pure();
 }
-inline const QVector3D& VasnecovFigure::renderCm() const
+inline QVector3D VasnecovFigure::renderCm() const
 {
     return m_points.cm();
 }
 
 inline GLboolean VasnecovFigure::renderLighting() const
 {
-    return m_lighting;
+    return m_lighting.pure();
 }

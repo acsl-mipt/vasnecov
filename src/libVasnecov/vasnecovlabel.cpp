@@ -232,8 +232,8 @@ bool VasnecovLabel::updaterCalculateTexturePosition()
 */
 GLenum VasnecovLabel::renderUpdateData()
 {
-    GLenum updated = false;
-    GLboolean ok = true;
+    GLenum updated(false);
+    GLboolean ok(true);
 
     if(raw_wasUpdated)
     {
@@ -299,20 +299,20 @@ GLenum VasnecovLabel::renderUpdateData()
 */
 void VasnecovLabel::renderDraw()
 {
-    if(!m_isHidden && m_texture)
+    if(!m_isHidden.pure() && m_texture)
     {
         // Позиционирование
-        if(m_alienMs)
+        if(m_alienMs.pure())
         {
-            pure_pipeline->setMatrixOrtho2D(m_Ms * (*m_alienMs));
+            pure_pipeline->setMatrixOrtho2D(m_Ms.pure() * (*m_alienMs.pure()));
         }
         else
         {
-            pure_pipeline->setMatrixOrtho2D(m_Ms);
+            pure_pipeline->setMatrixOrtho2D(m_Ms.pure());
         }
 
         // Растровая часть
-        pure_pipeline->setColor(m_color);
+        pure_pipeline->setColor(m_color.pure());
         pure_pipeline->enableTexture2D(m_texture->id());
 
         pure_pipeline->drawElements(VasnecovPipeline::Triangles, &m_indices, &m_vertices, nullptr, &m_textures);

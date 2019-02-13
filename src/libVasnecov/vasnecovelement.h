@@ -26,7 +26,7 @@ public:
     void setCoordinates(GLfloat x, GLfloat y, GLfloat z);
     virtual void incrementCoordinates(const QVector3D& increment); // Приращение координат
     void incrementCoordinates(GLfloat x, GLfloat y, GLfloat z);
-    const QVector3D& coordinates() const;
+    QVector3D coordinates() const;
     // Углы (по умолчанию, задаются в градусах. В них же хранятся)
     virtual void setAngles(const QVector3D& angles);
     void setAngles(GLfloat x, GLfloat y, GLfloat z);
@@ -36,7 +36,7 @@ public:
     void setAnglesRad(GLfloat x, GLfloat y, GLfloat z);
     void incrementAnglesRad(const QVector3D& increment);
     void incrementAnglesRad(GLfloat x, GLfloat y, GLfloat z);
-    const QVector3D& angles() const;
+    QVector3D angles() const;
 
     virtual void setPositionFromElement(const VasnecovAbstractElement* element);
     void attachToElement(const VasnecovAbstractElement* element);
@@ -65,8 +65,8 @@ protected:
     QVector3D raw_angles;
     QQuaternion raw_qX, raw_qY, raw_qZ;
 
-    QMatrix4x4        m_Ms;
-    const QMatrix4x4* m_alienMs;
+    Vasnecov::MutualData<QMatrix4x4> m_Ms;
+    Vasnecov::MutualData<const QMatrix4x4*> m_alienMs;
 
     enum Updated // Изменение данных
     {
@@ -120,9 +120,9 @@ protected:
     static bool renderCompareByDirectDistance(VasnecovElement* first, VasnecovElement* second);
 
 protected:
-    QColor    m_color; // Цвет
-    GLfloat   m_scale; // Масштаб
-    GLboolean m_isTransparency; // Прозрачность
+    Vasnecov::MutualData<QColor> m_color; // Цвет
+    Vasnecov::MutualData<GLfloat> m_scale; // Масштаб
+    Vasnecov::MutualData<GLboolean> m_isTransparency; // Прозрачность
 
     GLfloat pure_distance; // Расстояние от ЦМ объекта до плоскости камеры (для сортировки)
 
@@ -140,38 +140,42 @@ private:
     Q_DISABLE_COPY(VasnecovElement)
 };
 
+//==================================================================================================
 inline void VasnecovAbstractElement::renderApplyTranslation() const
 {
     // Если есть чужая матрица трансформаций, то перемножается со своей, иначе используем только свою.
-    if(m_alienMs)
+    if(m_alienMs.pure())
     {
-        pure_pipeline->setMatrixMV(m_alienMs);
-        pure_pipeline->addMatrixMV(m_Ms);
+        pure_pipeline->setMatrixMV(m_alienMs.pure());
+        pure_pipeline->addMatrixMV(m_Ms.pure());
     }
     else
     {
-        pure_pipeline->setMatrixMV(m_Ms);
+        pure_pipeline->setMatrixMV(m_Ms.pure());
     }
 }
 inline QMatrix4x4 VasnecovAbstractElement::designerMatrixMs() const
 {
-    return m_Ms;
+    return m_Ms.raw();
 }
 inline const QMatrix4x4 *VasnecovAbstractElement::designerExportingMatrix() const
 {
-    return &m_Ms;
+    const QMatrix4x4 *Ms(&m_Ms.raw());
+    return Ms;
 }
 
 inline GLboolean VasnecovAbstractElement::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
-    if (m_alienMs != alienMs)
-        return false;
-    m_alienMs = nullptr;
-    return true;
+    if(m_alienMs.raw() == alienMs)
+    {
+        m_alienMs.set(nullptr);
+        return true;
+    }
+    return false;
 }
 inline const QMatrix4x4 &VasnecovAbstractElement::renderMatrixMs() const
 {
-    return m_Ms;
+    return m_Ms.pure();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -181,15 +185,15 @@ inline GLfloat VasnecovElement::renderDistance() const
 }
 inline QColor VasnecovElement::renderColor() const
 {
-    return m_color;
+    return m_color.pure();
 }
 
 inline GLfloat VasnecovElement::renderScale() const
 {
-    return m_scale;
+    return m_scale.pure();
 }
 
 inline GLboolean VasnecovElement::renderIsTransparency() const
 {
-    return m_isTransparency;
+    return m_isTransparency.pure();
 }

@@ -32,7 +32,9 @@ namespace Vasnecov
 class VasnecovWorld : public Vasnecov::CoreObject
 {
     // Список контейнеров списков
-    class WorldElementList : public Vasnecov::ElementList<Vasnecov::ElementBox>{};
+    class WorldElementList : public Vasnecov::ElementList<Vasnecov::ElementBox>
+    {};
+
 
 public:
     VasnecovWorld(VasnecovPipeline* pipeline,
@@ -46,7 +48,7 @@ public:
     GLboolean setProjection(Vasnecov::WorldTypes type);
     GLboolean setWindow(GLint x, GLint y, GLsizei width, GLsizei height);
     GLboolean setParameters(Vasnecov::WorldParameters parameters);
-    const Vasnecov::WorldParameters& worldParameters() const;
+    Vasnecov::WorldParameters worldParameters() const;
     Vasnecov::WorldTypes projection() const;
 
     GLint x() const;
@@ -67,8 +69,8 @@ public:
     void switchLight();
 
     GLboolean setPerspective(GLfloat angle, GLfloat frontBorder, GLfloat backBorder); // Задать характеристики перспективной проекции
-    const Vasnecov::Perspective& perspective() const;
-    const Vasnecov::Ortho& ortho() const;
+    Vasnecov::Perspective perspective() const;
+    Vasnecov::Ortho ortho() const;
 
     // TODO: add camera (operator) position with angles (quaternions) & use setCameraAngles in local CS
     void setCamera(const Vasnecov::Camera& camera);
@@ -93,7 +95,7 @@ public:
     void setCameraRoll(GLfloat roll);
     void tiltCamera(GLfloat roll);
 
-    const Vasnecov::Camera& camera() const;
+    Vasnecov::Camera camera() const;
 
     Vasnecov::Line unprojectPointToLine(const QPointF& point);
     Vasnecov::Line unprojectPointToLine(GLfloat x, GLfloat y);
@@ -141,11 +143,11 @@ protected:
     }
 
 private:
-    Vasnecov::WorldParameters m_parameters; // Характеристики мира
-    Vasnecov::Perspective m_perspective; // Характеристики вида при перспективной проекции
-    Vasnecov::Ortho m_ortho; // Характеристики вида при ортогональной проекции
-    Vasnecov::Camera m_camera; // камера мира
-    QMatrix4x4 m_projectionMatrix;
+    Vasnecov::MutualData<Vasnecov::WorldParameters> m_parameters; // Характеристики мира
+    Vasnecov::MutualData<Vasnecov::Perspective> m_perspective; // Характеристики вида при перспективной проекции
+    Vasnecov::MutualData<Vasnecov::Ortho> m_ortho; // Характеристики вида при ортогональной проекции
+    Vasnecov::MutualData<Vasnecov::Camera> m_camera; // камера мира
+    Vasnecov::MutualData<QMatrix4x4> m_projectionMatrix;
 
     Vasnecov::LightModel m_lightModel;
     WorldElementList m_elements;
@@ -223,7 +225,7 @@ inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel* label)
 
 inline void VasnecovWorld::renderSwitchLamps() const
 {
-    if(m_parameters.light())
+    if(m_parameters.pure().light())
     {
         pure_pipeline->enableLamps();
     }
@@ -235,20 +237,20 @@ inline void VasnecovWorld::renderSwitchLamps() const
 
 inline const Vasnecov::WorldParameters& VasnecovWorld::renderWorldParameters() const
 {
-    return m_parameters;
+    return m_parameters.pure();
 }
 
 inline const Vasnecov::Perspective& VasnecovWorld::renderPerspective() const
 {
-    return m_perspective;
+    return m_perspective.pure();
 }
 
 inline const Vasnecov::Ortho& VasnecovWorld::renderOrtho() const
 {
-    return m_ortho;
+    return m_ortho.pure();
 }
 
 inline const Vasnecov::Camera& VasnecovWorld::renderCamera() const
 {
-    return m_camera;
+    return m_camera.pure();
 }
