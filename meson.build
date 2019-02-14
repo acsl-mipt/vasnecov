@@ -13,26 +13,26 @@ rc_file = 'vasnecov.qrc'
 inc = include_directories('src')
 
 moc_headers = [
-  'src/libVasnecov/vasnecovscene.h',
+  'src/libVasnecov/VasnecovScene.h',
 ]
 
 src = [
-  'src/libVasnecov/technologist.cpp',
-  'src/libVasnecov/vasnecov.cpp',
-  'src/libVasnecov/vasnecovelement.cpp',
-  'src/libVasnecov/vasnecovfigure.cpp',
-  'src/libVasnecov/vasnecovlabel.cpp',
-  'src/libVasnecov/vasnecovlamp.cpp',
-  'src/libVasnecov/vasnecovmaterial.cpp',
-  'src/libVasnecov/vasnecovmesh.cpp',
-  'src/libVasnecov/vasnecovpipeline.cpp',
-  'src/libVasnecov/vasnecovproduct.cpp',
-  'src/libVasnecov/vasnecovresourcemanager.cpp',
-  'src/libVasnecov/vasnecovscene.cpp',
-  'src/libVasnecov/vasnecovterrain.cpp',
-  'src/libVasnecov/vasnecovtexture.cpp',
-  'src/libVasnecov/vasnecovuniverse.cpp',
-  'src/libVasnecov/vasnecovworld.cpp',
+  'src/libVasnecov/Technologist.cpp',
+  'src/libVasnecov/Vasnecov.cpp',
+  'src/libVasnecov/VasnecovElement.cpp',
+  'src/libVasnecov/VasnecovFigure.cpp',
+  'src/libVasnecov/VasnecovLabel.cpp',
+  'src/libVasnecov/VasnecovLamp.cpp',
+  'src/libVasnecov/VasnecovMaterial.cpp',
+  'src/libVasnecov/VasnecovMesh.cpp',
+  'src/libVasnecov/VasnecovPipeline.cpp',
+  'src/libVasnecov/VasnecovProduct.cpp',
+  'src/libVasnecov/VasnecovResourceManager.cpp',
+  'src/libVasnecov/VasnecovScene.cpp',
+  'src/libVasnecov/VasnecovTerrain.cpp',
+  'src/libVasnecov/VasnecovTexture.cpp',
+  'src/libVasnecov/VasnecovUniverse.cpp',
+  'src/libVasnecov/VasnecovWorld.cpp',
 ]
 
 processed = qt5_mod.preprocess(

@@ -1,2 +1,2 @@
-#include "libVasnecov/vasnecovuniverse.h"
-#include "libVasnecov/version.h"
+#include "libVasnecov/VasnecovUniverse.h"
+#include "libVasnecov/Version.h"
