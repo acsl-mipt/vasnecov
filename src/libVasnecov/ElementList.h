@@ -15,6 +15,7 @@
 class VasnecovLamp;
 class VasnecovProduct;
 class VasnecovFigure;
+class VasnecovTerrain;
 class VasnecovLabel;
 class VasnecovMaterial;
 
@@ -42,13 +43,13 @@ namespace Vasnecov
         template <typename F>
         void forEachPure(F fun) const
         {
-            for_each(m_pure.begin(), m_pure.end(), fun);
+            for_each(_pure.begin(), _pure.end(), fun);
         }
 
     protected:
-        std::vector<T*> m_raw, m_buffer, m_pure;
-        GLboolean m_wasUpdated;
-        const GLenum m_flag; // Флаг обновления
+        std::vector<T*>     _raw, _buffer, _pure;
+        GLboolean           _wasUpdated;
+        const GLenum        _flag; // Флаг обновления
 
     private:
         Q_DISABLE_COPY(ElementBox)
@@ -57,9 +58,9 @@ namespace Vasnecov
 
     template <typename T>
     ElementBox<T>::ElementBox() :
-        m_raw(), m_buffer(), m_pure(),
-        m_wasUpdated(false),
-        m_flag()
+        _raw(), _buffer(), _pure(),
+        _wasUpdated(false),
+        _flag()
     {}
 
     template <typename T>
@@ -71,16 +72,16 @@ namespace Vasnecov
             if(check)
             {
                 // Поиск дубликатов
-                if(m_raw.end() != find(m_raw.begin(), m_raw.end(), element))
+                if(_raw.end() != find(_raw.begin(), _raw.end(), element))
                 {
                     added = false;
                 }
             }
             if(added)
             {
-                m_raw.push_back(element);
-                m_buffer = m_raw;
-                m_wasUpdated = true;
+                _raw.push_back(element);
+                _buffer = _raw;
+                _wasUpdated = true;
                 return true;
             }
         }
@@ -91,10 +92,10 @@ namespace Vasnecov
     template <typename T>
     GLboolean ElementBox<T>::synchronize()
     {
-        if(m_wasUpdated)
+        if(_wasUpdated)
         {
-            m_pure.swap(m_buffer);
-            m_wasUpdated = false;
+            _pure.swap(_buffer);
+            _wasUpdated = false;
             return true;
         }
         return false;
@@ -103,22 +104,22 @@ namespace Vasnecov
     template <typename T>
     const std::vector<T *> &ElementBox<T>::raw() const
     {
-        return m_raw;
+        return _raw;
     }
     template <typename T>
     const std::vector<T *> &ElementBox<T>::pure() const
     {
-        return m_pure;
+        return _pure;
     }
     template <typename T>
     GLboolean ElementBox<T>::hasPure() const
     {
-        return !m_pure.empty();
+        return !_pure.empty();
     }
     template <typename T>
     GLuint ElementBox<T>::rawCount() const
     {
-        return static_cast<GLuint>(m_pure.size());
+        return static_cast<GLuint>(_pure.size());
     }
 
     template <typename T>
@@ -126,7 +127,7 @@ namespace Vasnecov
     {
         if(element)
         {
-            if(find(m_raw.begin(), m_raw.end(), element) != m_raw.end())
+            if(find(_raw.begin(), _raw.end(), element) != _raw.end())
             {
                 return element;
             }
@@ -139,14 +140,14 @@ namespace Vasnecov
     {
         if(element)
         {
-            for(typename std::vector<T *>::iterator eit = m_raw.begin();
-                eit != m_raw.end(); ++eit)
+            for(typename std::vector<T *>::iterator eit = _raw.begin();
+                eit != _raw.end(); ++eit)
             {
                 if((*eit) == element)
                 {
-                    m_raw.erase(eit);
-                    m_buffer = m_raw;
-                    m_wasUpdated = true;
+                    _raw.erase(eit);
+                    _buffer = _raw;
+                    _wasUpdated = true;
                     return true;
                 }
             }
@@ -181,88 +182,102 @@ namespace Vasnecov
               class ELamp = VasnecovLamp,
               class EProduct = VasnecovProduct,
               class EFigure = VasnecovFigure,
+              class ETerrain = VasnecovTerrain,
               class ELabel = VasnecovLabel>
     class ElementList
     {
     public:
         ElementList() :
-                m_lamps(),
-                m_products(),
-                m_figures(),
-                m_labels()
+                _lamps(),
+                _products(),
+                _figures(),
+                _labels()
         {}
         virtual ~ElementList(){}
 
-        VasnecovLamp* findRawElement(VasnecovLamp* lamp) const {return m_lamps.findElement(lamp);}
-        VasnecovProduct* findRawElement(VasnecovProduct* product) const {return m_products.findElement(product);}
-        VasnecovFigure* findRawElement(VasnecovFigure* figure) const {return m_figures.findElement(figure);}
-        VasnecovLabel* findRawElement(VasnecovLabel* label) const {return m_labels.findElement(label);}
+        VasnecovLamp* findRawElement(VasnecovLamp* element) const       {return _lamps.findElement(element);}
+        VasnecovProduct* findRawElement(VasnecovProduct* element) const {return _products.findElement(element);}
+        VasnecovFigure* findRawElement(VasnecovFigure* element) const   {return _figures.findElement(element);}
+        VasnecovTerrain* findRawElement(VasnecovTerrain* element) const {return _terrains.findElement(element);}
+        VasnecovLabel* findRawElement(VasnecovLabel* element) const     {return _labels.findElement(element);}
 
-        GLboolean addElement(VasnecovLamp* lamp, GLboolean check = false) {return m_lamps.addElement(lamp, check);}
-        GLboolean addElement(VasnecovProduct* product, GLboolean check = false) {return m_products.addElement(product, check);}
-        GLboolean addElement(VasnecovFigure* figure, GLboolean check = false) {return m_figures.addElement(figure, check);}
-        GLboolean addElement(VasnecovLabel* label, GLboolean check = false) {return m_labels.addElement(label, check);}
+        GLboolean addElement(VasnecovLamp* element, GLboolean check = false)    {return _lamps.addElement(element, check);}
+        GLboolean addElement(VasnecovProduct* element, GLboolean check = false) {return _products.addElement(element, check);}
+        GLboolean addElement(VasnecovFigure* element, GLboolean check = false)  {return _figures.addElement(element, check);}
+        GLboolean addElement(VasnecovTerrain* element, GLboolean check = false) {return _terrains.addElement(element, check);}
+        GLboolean addElement(VasnecovLabel* element, GLboolean check = false)   {return _labels.addElement(element, check);}
 
-        GLboolean removeElement(VasnecovLamp* lamp) {return m_lamps.removeElement(lamp);}
-        GLboolean removeElement(VasnecovProduct* product) {return m_products.removeElement(product);}
-        GLboolean removeElement(VasnecovFigure* figure) {return m_figures.removeElement(figure);}
-        GLboolean removeElement(VasnecovLabel* label) {return m_labels.removeElement(label);}
+        GLboolean removeElement(VasnecovLamp* element)      {return _lamps.removeElement(element);}
+        GLboolean removeElement(VasnecovProduct* element)   {return _products.removeElement(element);}
+        GLboolean removeElement(VasnecovFigure* element)    {return _figures.removeElement(element);}
+        GLboolean removeElement(VasnecovTerrain* element)   {return _terrains.removeElement(element);}
+        GLboolean removeElement(VasnecovLabel* element)     {return _labels.removeElement(element);}
 
-        GLuint removeElements(const std::vector<VasnecovLamp*>& deletingList) {return m_lamps.removeElements(deletingList);}
-        GLuint removeElements(const std::vector<VasnecovProduct*>& deletingList) {return m_products.removeElements(deletingList);}
-        GLuint removeElements(const std::vector<VasnecovFigure*>& deletingList) {return m_figures.removeElements(deletingList);}
-        GLuint removeElements(const std::vector<VasnecovLabel*>& deletingList) {return m_labels.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovLamp*>& deletingList)       {return _lamps.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovProduct*>& deletingList)    {return _products.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovFigure*>& deletingList)     {return _figures.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovTerrain*>& deletingList)    {return _terrains.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovLabel*>& deletingList)      {return _labels.removeElements(deletingList);}
 
-        GLboolean synchronizeLamps() {return m_lamps.synchronize();}
-        GLboolean synchronizeProducts() {return m_products.synchronize();}
-        GLboolean synchronizeFigures() {return m_figures.synchronize();}
-        GLboolean synchronizeLabels() {return m_labels.synchronize();}
+        GLboolean synchronizeLamps()    {return _lamps.synchronize();}
+        GLboolean synchronizeProducts() {return _products.synchronize();}
+        GLboolean synchronizeFigures()  {return _figures.synchronize();}
+        GLboolean synchronizeTerrains() {return _terrains.synchronize();}
+        GLboolean synchronizeLabels()   {return _labels.synchronize();}
 
-        const std::vector<VasnecovLamp*>& rawLamps() const {return m_lamps.raw();}
-        const std::vector<VasnecovProduct*>& rawProducts() const {return m_products.raw();}
-        const std::vector<VasnecovFigure*>& rawFigures() const {return m_figures.raw();}
-        const std::vector<VasnecovLabel*>& rawLabels() const {return m_labels.raw();}
+        const std::vector<VasnecovLamp*>& rawLamps() const          {return _lamps.raw();}
+        const std::vector<VasnecovProduct*>& rawProducts() const    {return _products.raw();}
+        const std::vector<VasnecovFigure*>& rawFigures() const      {return _figures.raw();}
+        const std::vector<VasnecovTerrain*>& rawTerrains() const    {return _terrains.raw();}
+        const std::vector<VasnecovLabel*>& rawLabels() const        {return _labels.raw();}
 
-        const std::vector<VasnecovLamp*>& pureLamps() const {return m_lamps.pure();}
-        const std::vector<VasnecovProduct*>& pureProducts() const {return m_products.pure();}
-        const std::vector<VasnecovFigure*>& pureFigures() const {return m_figures.pure();}
-        const std::vector<VasnecovLabel*>& pureLabels() const {return m_labels.pure();}
+        const std::vector<VasnecovLamp*>& pureLamps() const         {return _lamps.pure();}
+        const std::vector<VasnecovProduct*>& pureProducts() const   {return _products.pure();}
+        const std::vector<VasnecovFigure*>& pureFigures() const     {return _figures.pure();}
+        const std::vector<VasnecovTerrain*>& pureTerrains() const   {return _terrains.pure();}
+        const std::vector<VasnecovLabel*>& pureLabels() const       {return _labels.pure();}
 
-        GLboolean hasPureLamps() const {return m_lamps.hasPure();}
-        GLboolean hasPureProducts() const {return m_products.hasPure();}
-        GLboolean hasPureFigures() const {return m_figures.hasPure();}
-        GLboolean hasPureLabels() const {return m_labels.hasPure();}
+        GLboolean hasPureLamps() const      {return _lamps.hasPure();}
+        GLboolean hasPureProducts() const   {return _products.hasPure();}
+        GLboolean hasPureFigures() const    {return _figures.hasPure();}
+        GLboolean hasPureTerrains() const   {return _terrains.hasPure();}
+        GLboolean hasPureLabels() const     {return _labels.hasPure();}
 
-        GLuint rawLampsCount() const {return m_lamps.rawCount();}
-        GLuint rawProductsCount() const {return m_products.rawCount();}
-        GLuint rawFiguresCount() const {return m_figures.rawCount();}
-        GLuint rawLabelsCount() const {return m_labels.rawCount();}
+        GLuint rawLampsCount() const    {return _lamps.rawCount();}
+        GLuint rawProductsCount() const {return _products.rawCount();}
+        GLuint rawFiguresCount() const  {return _figures.rawCount();}
+        GLuint rawTerrainsCount() const {return _terrains.rawCount();}
+        GLuint rawLabelsCount() const   {return _labels.rawCount();}
 
         template <typename F>
-        void forEachPureLamp(F fun) const {m_lamps.forEachPure(fun);}
+        void forEachPureLamp(F fun) const       {_lamps.forEachPure(fun);}
         template <typename F>
-        void forEachPureProduct(F fun) const {m_products.forEachPure(fun);}
+        void forEachPureProduct(F fun) const    {_products.forEachPure(fun);}
         template <typename F>
-        void forEachPureFigure(F fun) const {m_figures.forEachPure(fun);}
+        void forEachPureFigure(F fun) const     {_figures.forEachPure(fun);}
         template <typename F>
-        void forEachPureLabel(F fun) const {m_labels.forEachPure(fun);}
+        void forEachPureTerrain(F fun) const    {_terrains.forEachPure(fun);}
+        template <typename F>
+        void forEachPureLabel(F fun) const      {_labels.forEachPure(fun);}
 
         virtual GLboolean synchronizeAll()
         {
             GLboolean res(false);
 
-            res |= m_lamps.synchronize();
-            res |= m_products.synchronize();
-            res |= m_figures.synchronize();
-            res |= m_labels.synchronize();
+            res |= _lamps.synchronize();
+            res |= _products.synchronize();
+            res |= _figures.synchronize();
+            res |= _terrains.synchronize();
+            res |= _labels.synchronize();
 
             return res;
         }
 
     protected:
-        C<ELamp> m_lamps;
-        C<EProduct> m_products;
-        C<EFigure> m_figures;
-        C<ELabel> m_labels;
+        C<ELamp>    _lamps;
+        C<EProduct> _products;
+        C<EFigure>  _figures;
+        C<ETerrain> _terrains;
+        C<ELabel>   _labels;
     };
 }

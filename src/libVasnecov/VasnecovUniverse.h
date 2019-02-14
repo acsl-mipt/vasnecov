@@ -71,64 +71,65 @@ class VasnecovUniverse
     public:
         UniverseElementList();
 
-        VasnecovWorld* findRawElement(VasnecovWorld* world) const {return m_worlds.findElement(world);}
-        VasnecovMaterial* findRawElement(VasnecovMaterial* material) const {return m_materials.findElement(material);}
+        VasnecovWorld* findRawElement(VasnecovWorld* world) const {return _worlds.findElement(world);}
+        VasnecovMaterial* findRawElement(VasnecovMaterial* material) const {return _materials.findElement(material);}
         using Vasnecov::ElementList<ElementFullBox>::findRawElement;
 
-        GLboolean addElement(VasnecovWorld* world, GLboolean check = false) {return m_worlds.addElement(world, check);}
-        GLboolean addElement(VasnecovMaterial* material, GLboolean check = false) {return m_materials.addElement(material, check);}
+        GLboolean addElement(VasnecovWorld* world, GLboolean check = false) {return _worlds.addElement(world, check);}
+        GLboolean addElement(VasnecovMaterial* material, GLboolean check = false) {return _materials.addElement(material, check);}
         using Vasnecov::ElementList<ElementFullBox>::addElement;
 
-        GLboolean removeElement(VasnecovWorld* world) {return m_worlds.removeElement(world);}
-        GLboolean removeElement(VasnecovMaterial* material) {return m_materials.removeElement(material);}
+        GLboolean removeElement(VasnecovWorld* world) {return _worlds.removeElement(world);}
+        GLboolean removeElement(VasnecovMaterial* material) {return _materials.removeElement(material);}
         using Vasnecov::ElementList<ElementFullBox>::removeElement;
 
-        GLuint removeElements(const std::vector<VasnecovWorld*>& deletingList) {return m_worlds.removeElements(deletingList);}
-        GLuint removeElements(const std::vector<VasnecovMaterial*>& deletingList) {return m_materials.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovWorld*>& deletingList) {return _worlds.removeElements(deletingList);}
+        GLuint removeElements(const std::vector<VasnecovMaterial*>& deletingList) {return _materials.removeElements(deletingList);}
         using Vasnecov::ElementList<ElementFullBox>::removeElements;
 
-        GLboolean synchronizeWorlds() {return m_worlds.synchronize();}
-        GLboolean synchronizeMaterials() {return m_materials.synchronize();}
+        GLboolean synchronizeWorlds() {return _worlds.synchronize();}
+        GLboolean synchronizeMaterials() {return _materials.synchronize();}
 
-        const std::vector<VasnecovWorld*>& rawWorlds() const {return m_worlds.raw();}
-        const std::vector<VasnecovMaterial*>& rawMaterials() const {return m_materials.raw();}
+        const std::vector<VasnecovWorld*>& rawWorlds() const {return _worlds.raw();}
+        const std::vector<VasnecovMaterial*>& rawMaterials() const {return _materials.raw();}
 
-        const std::vector<VasnecovWorld*>& pureWorlds() const {return m_worlds.pure();}
-        const std::vector<VasnecovMaterial*>& pureMaterials() const {return m_materials.pure();}
+        const std::vector<VasnecovWorld*>& pureWorlds() const {return _worlds.pure();}
+        const std::vector<VasnecovMaterial*>& pureMaterials() const {return _materials.pure();}
 
-        GLboolean hasPureWorlds() const {return m_worlds.hasPure();}
-        GLboolean hasPureMaterials() const {return m_materials.hasPure();}
+        GLboolean hasPureWorlds() const {return _worlds.hasPure();}
+        GLboolean hasPureMaterials() const {return _materials.hasPure();}
 
-        GLuint rawWorldsCount() const {return m_worlds.rawCount();}
-        GLuint rawMaterialsCount() const {return m_materials.rawCount();}
+        GLuint rawWorldsCount() const {return _worlds.rawCount();}
+        GLuint rawMaterialsCount() const {return _materials.rawCount();}
 
         template <typename F>
-        void forEachPureWorld(F fun) const {m_worlds.forEachPure(fun);}
+        void forEachPureWorld(F fun) const {_worlds.forEachPure(fun);}
         template <typename F>
-        void forEachPureMaterial(F fun) const {m_materials.forEachPure(fun);}
+        void forEachPureMaterial(F fun) const {_materials.forEachPure(fun);}
 
         virtual GLboolean synchronizeAll()
         {
             GLboolean res(false);
 
-            res |= m_worlds.synchronize();
-            res |= m_materials.synchronize();
+            res |= _worlds.synchronize();
+            res |= _materials.synchronize();
             res |= Vasnecov::ElementList<ElementFullBox>::synchronizeAll();
 
             return res;
         }
 
         // Работа со списками удаления
-        const std::vector<VasnecovWorld*>& deletingWorlds() const {return m_worlds.deleting();}
-        const std::vector<VasnecovMaterial*>& deletingMaterials() const {return m_materials.deleting();}
-        const std::vector<VasnecovLamp*>& deletingLamps() const {return m_lamps.deleting();}
-        const std::vector<VasnecovProduct*>& deletingProduct() const {return m_products.deleting();}
-        const std::vector<VasnecovFigure*>& deletingFigure() const {return m_figures.deleting();}
-        const std::vector<VasnecovLabel*>& deletingLabel() const {return m_labels.deleting();}
+        const std::vector<VasnecovWorld*>& deletingWorlds() const       {return _worlds.deleting();}
+        const std::vector<VasnecovMaterial*>& deletingMaterials() const {return _materials.deleting();}
+        const std::vector<VasnecovLamp*>& deletingLamps() const         {return _lamps.deleting();}
+        const std::vector<VasnecovProduct*>& deletingProduct() const    {return _products.deleting();}
+        const std::vector<VasnecovFigure*>& deletingFigure() const      {return _figures.deleting();}
+        const std::vector<VasnecovTerrain*>& deletingTerrain() const    {return _terrains.deleting();}
+        const std::vector<VasnecovLabel*>& deletingLabel() const        {return _labels.deleting();}
 
     protected:
-        ElementFullBox<VasnecovWorld> m_worlds;
-        ElementFullBox<VasnecovMaterial> m_materials;
+        ElementFullBox<VasnecovWorld> _worlds;
+        ElementFullBox<VasnecovMaterial> _materials;
     };
 
 
@@ -269,6 +270,7 @@ private:
         Figures			= 0x0000020,
         Labels			= 0x0000040,
         Lamps			= 0x0000080,
+        Terrains		= 0x0000100,
         Flags			= 0x0001000,
         Loading			= 0x0002000,
         BackColor		= 0x0004000,
@@ -308,8 +310,8 @@ VasnecovUniverse::ElementFullBox<T>::ElementFullBox() :
 template <typename T>
 VasnecovUniverse::ElementFullBox<T>::~ElementFullBox()
 {
-    for(typename std::vector<T *>::iterator eit = this->m_raw.begin();
-        eit != this->m_raw.end(); ++eit)
+    for(typename std::vector<T *>::iterator eit = this->_raw.begin();
+        eit != this->_raw.end(); ++eit)
     {
         delete (*eit);
         (*eit) = 0;
@@ -325,10 +327,10 @@ VasnecovUniverse::ElementFullBox<T>::~ElementFullBox()
 template <typename T>
 GLboolean VasnecovUniverse::ElementFullBox<T>::synchronize()
 {
-    if(this->m_wasUpdated)
+    if(this->_wasUpdated)
     {
-        this->m_pure.swap(this->m_buffer);
-        this->m_wasUpdated = false;
+        this->_pure.swap(this->_buffer);
+        this->_wasUpdated = false;
 
         if(!m_deleting.empty())
         {
@@ -350,17 +352,17 @@ GLboolean VasnecovUniverse::ElementFullBox<T>::removeElement(T *element)
 {
     if(element)
     {
-        for(typename std::vector<T *>::iterator eit = this->m_raw.begin();
-            eit != this->m_raw.end(); ++eit)
+        for(typename std::vector<T *>::iterator eit = this->_raw.begin();
+            eit != this->_raw.end(); ++eit)
         {
             if((*eit) == element)
             {
                 m_deleting.push_back(*eit);
 
-                this->m_raw.erase(eit);
-                this->m_buffer = this->m_raw;
+                this->_raw.erase(eit);
+                this->_buffer = this->_raw;
 
-                this->m_wasUpdated = true;
+                this->_wasUpdated = true;
                 return true;
             }
         }

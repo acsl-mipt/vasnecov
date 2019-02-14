@@ -24,6 +24,7 @@
 #include "VasnecovProduct.h"
 #include "VasnecovResourceManager.h"
 #include "VasnecovTerrain.h"
+#include "VasnecovTerrain.h"
 
 VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, const QGLContext *context) :
     m_pipeline(),
@@ -488,6 +489,31 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
 
 VasnecovTerrain*VasnecovUniverse::addTerrain(const QString& name, VasnecovWorld* world)
 {
+    if(world == nullptr)
+    {
+        Vasnecov::problem("World is not set");
+        return nullptr;
+    }
+
+    // Поиск мира в списке
+    if(!m_elements.findRawElement(world))
+    {
+        Vasnecov::problem("Incorrect world");
+        return nullptr;
+    }
+
+    VasnecovTerrain *terrain = new VasnecovTerrain(&m_pipeline, name);
+
+    if(m_elements.addElement(terrain))
+    {
+        world->designerAddElement(terrain);
+        return terrain;
+    }
+    else
+    {
+        delete terrain;
+        Vasnecov::problem("Incorrect or duplicated terrain");
+    }
     return nullptr;
 }
 
@@ -993,6 +1019,6 @@ void VasnecovUniverse::renderDrawAll(GLsizei width, GLsizei height)
 
 VasnecovUniverse::UniverseElementList::UniverseElementList() :
     Vasnecov::ElementList<VasnecovUniverse::ElementFullBox>(),
-    m_worlds(),
-    m_materials()
+    _worlds(),
+    _materials()
 {}

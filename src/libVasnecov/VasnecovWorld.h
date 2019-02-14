@@ -107,17 +107,20 @@ protected:
     VasnecovLamp* designerFindElement(VasnecovLamp* lamp) const;
     VasnecovProduct* designerFindElement(VasnecovProduct* product) const;
     VasnecovFigure* designerFindElement(VasnecovFigure* figure) const;
+    VasnecovTerrain* designerFindElement(VasnecovTerrain* terrain) const;
     VasnecovLabel* designerFindElement(VasnecovLabel* label) const;
 
     // Добавление новых элементов в списки
     GLboolean designerAddElement(VasnecovLamp* lamp, GLboolean check = false);
     GLboolean designerAddElement(VasnecovProduct* product, GLboolean check = false);
     GLboolean designerAddElement(VasnecovFigure* figure, GLboolean check = false);
+    GLboolean designerAddElement(VasnecovTerrain* terrain, GLboolean check = false);
     GLboolean designerAddElement(VasnecovLabel* label, GLboolean check = false);
 
     GLboolean designerRemoveElement(VasnecovLamp* lamp);
     GLboolean designerRemoveElement(VasnecovProduct* product);
     GLboolean designerRemoveElement(VasnecovFigure* figure);
+    GLboolean designerRemoveElement(VasnecovTerrain* terrain);
     GLboolean designerRemoveElement(VasnecovLabel* label);
 
     void designerUpdateOrtho();
@@ -186,6 +189,11 @@ inline VasnecovFigure* VasnecovWorld::designerFindElement(VasnecovFigure* figure
 {
     return m_elements.findRawElement(figure);
 }
+
+inline VasnecovTerrain*VasnecovWorld::designerFindElement(VasnecovTerrain* terrain) const
+{
+    return m_elements.findRawElement(terrain);
+}
 inline VasnecovLabel* VasnecovWorld::designerFindElement(VasnecovLabel* label) const
 {
     return m_elements.findRawElement(label);
@@ -203,6 +211,11 @@ inline GLboolean VasnecovWorld::designerAddElement(VasnecovFigure* figure, GLboo
 {
     return m_elements.addElement(figure, check);
 }
+
+inline GLboolean VasnecovWorld::designerAddElement(VasnecovTerrain* terrain, GLboolean check)
+{
+    return m_elements.addElement(terrain, check);
+}
 inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel* label, GLboolean check)
 {
     return m_elements.addElement(label, check);
@@ -219,6 +232,11 @@ inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovProduct* product)
 inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovFigure* figure)
 {
     return m_elements.removeElement(figure);
+}
+
+inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovTerrain* terrain)
+{
+    return m_elements.removeElement(terrain);
 }
 inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel* label)
 {

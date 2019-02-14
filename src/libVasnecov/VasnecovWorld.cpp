@@ -623,6 +623,7 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 
     return Vasnecov::Line();
 }
+
 Vasnecov::Perspective VasnecovWorld::perspective() const
 {
     Vasnecov::Perspective perspective(m_perspective.raw());

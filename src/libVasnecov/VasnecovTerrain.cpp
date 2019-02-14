@@ -34,3 +34,8 @@ GLuint VasnecovTerrain::pointsAmount() const
 {
     return m_points.size();
 }
+
+void VasnecovTerrain::renderDraw()
+{
+
+}

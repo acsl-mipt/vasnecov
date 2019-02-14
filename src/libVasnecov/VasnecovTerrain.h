@@ -21,6 +21,9 @@ public:
     void clearPoints();
     GLuint pointsAmount() const;
 
+protected:
+    void renderDraw();
+
 private:
     std::vector<QVector3D> m_points;
 
