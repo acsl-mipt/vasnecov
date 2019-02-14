@@ -1,6 +1,8 @@
 #include "BomberModel.h"
 #include <QPainter>
 #include <QFont>
+#include <VasnecovFigure>
+#include <VasnecovLabel>
 #include "Scene.h" // TODO: refactor
 
 BomberModel::BomberModel(VasnecovUniverse *universe, VasnecovWorld *world) :

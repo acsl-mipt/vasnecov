@@ -12,8 +12,10 @@
 #pragma once
 
 #include "elementlist.h"
-#include "vasnecovlamp.h"
+#include "lightmodel.h"
+#include "coreobject.h"
 
+class VasnecovLamp;
 class VasnecovProduct;
 class VasnecovLabel;
 class VasnecovFigure;

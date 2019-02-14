@@ -17,8 +17,13 @@
 #include <QFile>
 #include <bmcl/Logging.h>
 
+#include "vasnecovfigure.h"
+#include "vasnecovlabel.h"
+#include "vasnecovlamp.h"
 #include "vasnecovmesh.h"
+#include "vasnecovproduct.h"
 #include "vasnecovresourcemanager.h"
+#include "vasnecovterrain.h"
 
 VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, const QGLContext *context) :
     m_pipeline(),
@@ -88,7 +93,7 @@ VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width,
     Vasnecov::problem("Неверные размеры мира");
     return nullptr;
 }
-VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *world, VasnecovLamp::LampTypes type)
+VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *world, Vasnecov::LampTypes type)
 {
     if(!world)
     {
@@ -480,6 +485,17 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
 
     return false;
 }
+
+VasnecovTerrain*VasnecovUniverse::addTerrain(const QString& name, VasnecovWorld* world)
+{
+    return nullptr;
+}
+
+GLboolean VasnecovUniverse::removeTerrain(VasnecovTerrain* terrain)
+{
+    return false;
+}
+
 VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *world, GLfloat width, GLfloat height)
 {
     return addLabel(name, world, width, height, "");
@@ -545,7 +561,6 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
         return nullptr;
     }
 }
-
 VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, VasnecovWorld *world)
 {
     if(!label || !world)

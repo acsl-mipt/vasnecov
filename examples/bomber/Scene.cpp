@@ -2,8 +2,11 @@
 #include <QTimer>
 #include <QQuaternion>
 #include <QGraphicsSceneMouseEvent>
-
 #include <QFile>
+
+#include <VasnecovFigure>
+#include <VasnecovProduct>
+#include <VasnecovLamp>
 
 Scene::Scene(VasnecovUniverse *universe, QObject *parent) :
     VasnecovScene(parent),

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Vasnecov>
+#include <VasnecovProduct>
 
 class EmptyModel
 {

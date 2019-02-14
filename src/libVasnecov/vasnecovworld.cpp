@@ -7,13 +7,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "vasnecovworld.h"
+#include "configuration.h"
 #include "technologist.h"
+#include "vasnecovfigure.h"
+#include "vasnecovlabel.h"
+#include "vasnecovlamp.h"
 #include "vasnecovmaterial.h"
 #include "vasnecovproduct.h"
-#include "vasnecovlabel.h"
-#include "vasnecovfigure.h"
-#include "configuration.h"
+#include "vasnecovworld.h"
+
 #include <QSize>
 #include <QRect>
 

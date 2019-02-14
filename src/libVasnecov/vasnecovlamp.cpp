@@ -9,7 +9,7 @@
 
 #include "vasnecovlamp.h"
 
-VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, VasnecovLamp::LampTypes type, GLuint index) :
+VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, Vasnecov::LampTypes type, GLuint index) :
     VasnecovAbstractElement(pipeline, name),
     m_type(raw_wasUpdated, Type, type),
 
@@ -28,25 +28,25 @@ VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, Vasn
 
     pure_index(index)
 {
-    if(type == LampTypeCelestial)
+    if(type == Vasnecov::LampTypeCelestial)
     {
         QVector3D v(0.0, 0.0, 1.0);
         raw_coordinates = v;
         designerUpdateMatrixMs();
     }
 }
-void VasnecovLamp::setType(LampTypes type)
+void VasnecovLamp::setType(Vasnecov::LampTypes type)
 {
     m_type.set(type);
 }
 void VasnecovLamp::setCelestialDirection(const QVector3D &direction)
 {
-    setType(LampTypeCelestial);
+    setType(Vasnecov::LampTypeCelestial);
     setCoordinates(direction);
 }
 void VasnecovLamp::setCelestialDirection(GLfloat x, GLfloat y, GLfloat z)
 {
-    setType(LampTypeCelestial);
+    setType(Vasnecov::LampTypeCelestial);
     setCoordinates(x, y, z);
 }
 void VasnecovLamp::setAmbientColor(const QColor &color)
@@ -65,14 +65,14 @@ void VasnecovLamp::setSpotDirection(const QVector3D &direction)
 {
     if(m_spotDirection.set(direction))
     {
-        m_type.set(LampTypeHeadlight);
+        m_type.set(Vasnecov::LampTypeHeadlight);
     }
 }
 void VasnecovLamp::setSpotExponent(GLfloat exponent)
 {
     if(m_spotExponent.set(exponent))
     {
-        m_type.set(LampTypeHeadlight);
+        m_type.set(Vasnecov::LampTypeHeadlight);
     }
 }
 void VasnecovLamp::setSpotAngle(GLfloat angle)
@@ -88,7 +88,7 @@ void VasnecovLamp::setSpotAngle(GLfloat angle)
             m_spotCosAngle.set(-1.0f);
         }
 
-        m_type.set(LampTypeHeadlight);
+        m_type.set(Vasnecov::LampTypeHeadlight);
     }
 }
 void VasnecovLamp::setConstantAttenuation(GLfloat attenuation)
@@ -161,7 +161,7 @@ void VasnecovLamp::renderDraw()
 
         renderApplyTranslation();
 
-        if(m_type.pure() == LampTypeCelestial)
+        if(m_type.pure() == Vasnecov::LampTypeCelestial)
         {
             // Для направленного источника чужая матрица задаёт углы, направление же считывается со своей
             params[0] = m_Ms.pure()(0, 3);
@@ -170,8 +170,8 @@ void VasnecovLamp::renderDraw()
             params[3] = 0;
             glLightfv(pure_index, GL_POSITION, params);
         }
-        else if(m_type.pure() == LampTypeSpot ||
-                m_type.pure() == LampTypeHeadlight)
+        else if(m_type.pure() == Vasnecov::LampTypeSpot ||
+                m_type.pure() == Vasnecov::LampTypeHeadlight)
         {
             params[0] = 0;
             params[1] = 0;
@@ -188,7 +188,7 @@ void VasnecovLamp::renderDraw()
             params[0] = m_quadraticAttenuation.pure();
             glLightfv(pure_index, GL_QUADRATIC_ATTENUATION, params);
 
-            if(m_type.pure() == LampTypeHeadlight)
+            if(m_type.pure() == Vasnecov::LampTypeHeadlight)
             {
                 params[0] = m_spotDirection.pure().x();
                 params[1] = m_spotDirection.pure().y();

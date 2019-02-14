@@ -1,12 +1,16 @@
 #include "Scene.h"
-#include <QTimer>
-#include <QQuaternion>
-#include <QGraphicsSceneMouseEvent>
-#include <QKeyEvent>
 
 #include <QFile>
-#include "BomberModel.h"
+#include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
 #include <QPainter>
+#include <QQuaternion>
+#include <QTimer>
+
+#include <VasnecovFigure>
+#include <VasnecovLamp>
+
+#include "BomberModel.h"
 
 Scene::Scene(VasnecovUniverse *univ, QObject *parent) :
     VasnecovScene(parent),

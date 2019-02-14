@@ -18,14 +18,15 @@
 #include <map>
 #include "configuration.h"
 #include "vasnecovmaterial.h"
-#include "vasnecovfigure.h"
 #include "vasnecovworld.h"
-#include "vasnecovproduct.h"
-#include "vasnecovlabel.h"
 #include "elementlist.h"
 
-class VasnecovMaterial;
+class VasnecovFigure;
+class VasnecovLamp;
+class VasnecovProduct;
 class VasnecovResourceManager;
+class VasnecovTerrain;
+class VasnecovLabel;
 
 class VasnecovUniverse
 {
@@ -143,7 +144,7 @@ public:
 
     VasnecovLamp* addLamp(const QString& name,
                           VasnecovWorld* world,
-                          VasnecovLamp::LampTypes type = VasnecovLamp::LampTypeCelestial);
+                          Vasnecov::LampTypes type = Vasnecov::LampTypeCelestial);
     VasnecovLamp* referLampToWorld(VasnecovLamp* lamp, VasnecovWorld* world);
 
     // Добавление новых продуктов
@@ -173,6 +174,10 @@ public:
     VasnecovFigure* addFigure(const QString& name,
                               VasnecovWorld* world);
     GLboolean removeFigure(VasnecovFigure* figure);
+
+    VasnecovTerrain* addTerrain(const QString& name,
+                                VasnecovWorld* world);
+    GLboolean removeTerrain(VasnecovTerrain* terrain);
 
     VasnecovLabel* addLabel(const QString& name,
                             VasnecovWorld* world,
