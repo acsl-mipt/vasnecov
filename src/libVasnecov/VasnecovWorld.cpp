@@ -24,22 +24,22 @@ VasnecovWorld::VasnecovWorld(VasnecovPipeline* pipeline,
                              GLsizei width, GLsizei height,
                              const QString& name) :
     Vasnecov::CoreObject(pipeline, name),
-    m_parameters(raw_wasUpdated, Parameters),
-    m_perspective(raw_wasUpdated, Perspective),
-    m_ortho(raw_wasUpdated, Ortho),
-    m_camera(raw_wasUpdated, Cameras),
-    m_projectionMatrix(raw_wasUpdated, Matrix),
-    m_lightModel(),
+    _parameters(raw_wasUpdated, Parameters),
+    _perspective(raw_wasUpdated, Perspective),
+    _ortho(raw_wasUpdated, Ortho),
+    _camera(raw_wasUpdated, Cameras),
+    _projectionMatrix(raw_wasUpdated, Matrix),
+    _lightModel(),
 
-    m_elements()
+    _elements()
 {
-    m_parameters.editableRaw().setX(mx);
-    m_parameters.editableRaw().setY(my);
-    m_parameters.editableRaw().setWidth(width);
-    m_parameters.editableRaw().setHeight(height);
+    _parameters.editableRaw().setX(mx);
+    _parameters.editableRaw().setY(my);
+    _parameters.editableRaw().setWidth(width);
+    _parameters.editableRaw().setHeight(height);
 
     // Перспективная проекция
-    m_perspective.editableRaw().ratio = static_cast<GLfloat>(width)/height;
+    _perspective.editableRaw().ratio = static_cast<GLfloat>(width)/height;
 
     designerUpdateOrtho();
 
@@ -52,7 +52,7 @@ void VasnecovWorld::designerUpdateOrtho()
 {
     // Ортогональная проекция (по данным перспективной и положению камеры)
     GLfloat dist;
-    dist = (m_camera.raw().target() - m_camera.raw().position()).length();
+    dist = (_camera.raw().target() - _camera.raw().position()).length();
 
     if(dist == 0)
     {
@@ -61,14 +61,14 @@ void VasnecovWorld::designerUpdateOrtho()
 
     Vasnecov::Ortho ortho;
 
-    ortho.top = tan(m_perspective.raw().angle*c_degToRad*0.5f)*dist;
+    ortho.top = tan(_perspective.raw().angle*c_degToRad*0.5f)*dist;
     ortho.bottom = - ortho.top;
-    ortho.left = m_perspective.raw().ratio*ortho.bottom;
-    ortho.right = m_perspective.raw().ratio*ortho.top;
+    ortho.left = _perspective.raw().ratio*ortho.bottom;
+    ortho.right = _perspective.raw().ratio*ortho.top;
     ortho.front = -dist*10.0f; // NOTE: it's stupidy, but i don't know how to make it correct
-    ortho.back = (m_perspective.raw().backBorder+dist)*10.0f;
+    ortho.back = (_perspective.raw().backBorder+dist)*10.0f;
 
-    m_ortho.set(ortho);
+    _ortho.set(ortho);
 }
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
 {
@@ -80,20 +80,20 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
     vec = qYaw.rotatedVector(vec);
     vec = qPitch.rotatedVector(vec);
 
-    vec *= (m_camera.raw().target() - m_camera.raw().position()).length(); // Увеличение на длину
+    vec *= (_camera.raw().target() - _camera.raw().position()).length(); // Увеличение на длину
 
-    QVector3D target = vec + m_camera.raw().position();
-    if(m_camera.raw().target() != target)
+    QVector3D target = vec + _camera.raw().position();
+    if(_camera.raw().target() != target)
     {
-        m_camera.editableRaw().setTarget(target);
+        _camera.editableRaw().setTarget(target);
         designerUpdateOrtho();
     }
 }
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
-    if(m_camera.raw().roll() != roll)
+    if(_camera.raw().roll() != roll)
     {
-        m_camera.editableRaw().setRoll(roll);
+        _camera.editableRaw().setRoll(roll);
     }
 
     setCameraAngles(yaw, pitch);
@@ -102,7 +102,7 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll)
 void VasnecovWorld::flyCamera(const QVector3D &step)
 {
 
-    QVector3D forward = (m_camera.raw().target() - m_camera.raw().position()).normalized();
+    QVector3D forward = (_camera.raw().target() - _camera.raw().position()).normalized();
 
     bool updated(false);
     QVector3D target, position;
@@ -111,8 +111,8 @@ void VasnecovWorld::flyCamera(const QVector3D &step)
     {
         forward *= step.x();
 
-        target = forward + m_camera.raw().target();
-        position = forward + m_camera.raw().position();
+        target = forward + _camera.raw().target();
+        position = forward + _camera.raw().position();
 
         updated = true;
     }
@@ -121,15 +121,15 @@ void VasnecovWorld::flyCamera(const QVector3D &step)
         QVector3D side = QVector3D::crossProduct(QVector3D(0, 0, 1), forward).normalized();
         side *= step.y();
 
-        target = side + m_camera.raw().target();
-        position = side + m_camera.raw().position();
+        target = side + _camera.raw().target();
+        position = side + _camera.raw().position();
 
         updated = true;
     }
     if(step.z())
     {
-        target = QVector3D(0, 0, 1)*step.z() + m_camera.raw().target();
-        position = QVector3D(0, 0, 1)*step.z() + m_camera.raw().position();
+        target = QVector3D(0, 0, 1)*step.z() + _camera.raw().target();
+        position = QVector3D(0, 0, 1)*step.z() + _camera.raw().position();
 
         updated = true;
     }
@@ -138,14 +138,14 @@ void VasnecovWorld::flyCamera(const QVector3D &step)
     {
         GLboolean orth(false);
 
-        if(m_camera.raw().target() != target)
+        if(_camera.raw().target() != target)
         {
-            m_camera.editableRaw().setTarget(target);
+            _camera.editableRaw().setTarget(target);
             orth = true;
         }
-        if(m_camera.raw().position() != position)
+        if(_camera.raw().position() != position)
         {
-            m_camera.editableRaw().setPosition(position);
+            _camera.editableRaw().setPosition(position);
             orth = true;
         }
 
@@ -168,7 +168,7 @@ void VasnecovWorld::moveCamera(const QVector3D &step)
     if(step.x() || step.y())
     {
         // Направление на цель в горизональной плоскости (x)
-        QVector3D forward = (m_camera.raw().target() - m_camera.raw().position());
+        QVector3D forward = (_camera.raw().target() - _camera.raw().position());
         forward.setZ(0);
         forward.normalize();
         // Направление вбок (y)
@@ -178,16 +178,16 @@ void VasnecovWorld::moveCamera(const QVector3D &step)
         forward *= step.x();
         side *= step.y();
 
-        target = forward + side + m_camera.raw().target();
-        position = forward + side + m_camera.raw().position();
+        target = forward + side + _camera.raw().target();
+        position = forward + side + _camera.raw().position();
 
         updated = true;
 
     }
     if(step.z())
     {
-        target = QVector3D(0, 0, 1)*step.z() + m_camera.raw().target();
-        position = QVector3D(0, 0, 1)*step.z() + m_camera.raw().position();
+        target = QVector3D(0, 0, 1)*step.z() + _camera.raw().target();
+        position = QVector3D(0, 0, 1)*step.z() + _camera.raw().position();
 
         updated = true;
     }
@@ -196,14 +196,14 @@ void VasnecovWorld::moveCamera(const QVector3D &step)
     {
         GLboolean orth(false);
 
-        if(m_camera.raw().target() != target)
+        if(_camera.raw().target() != target)
         {
-            m_camera.editableRaw().setTarget(target);
+            _camera.editableRaw().setTarget(target);
             orth = true;
         }
-        if(m_camera.raw().position() != position)
+        if(_camera.raw().position() != position)
         {
-            m_camera.editableRaw().setPosition(position);
+            _camera.editableRaw().setPosition(position);
             orth = true;
         }
 
@@ -219,7 +219,7 @@ void VasnecovWorld::moveCamera(GLfloat x, GLfloat y, GLfloat z)
 
 void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch)
 {
-    QVector3D vec = m_camera.raw().target() - m_camera.raw().position();
+    QVector3D vec = _camera.raw().target() - _camera.raw().position();
 
     QQuaternion qYaw = QQuaternion::fromAxisAndAngle(0, 0, 1, yaw);
     QQuaternion qPitch = QQuaternion::fromAxisAndAngle(QVector3D::crossProduct(QVector3D(0, 0, 1), vec).normalized(), pitch);
@@ -227,19 +227,19 @@ void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch)
     vec = qYaw.rotatedVector(vec);
     vec = qPitch.rotatedVector(vec);
 
-    QVector3D target = vec + m_camera.raw().position();
-    if(m_camera.raw().target() != target)
+    QVector3D target = vec + _camera.raw().position();
+    if(_camera.raw().target() != target)
     {
-        m_camera.editableRaw().setTarget(target);
+        _camera.editableRaw().setTarget(target);
         designerUpdateOrtho();
     }
 }
 
 void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
-    if(m_camera.raw().roll() != roll)
+    if(_camera.raw().roll() != roll)
     {
-        m_camera.editableRaw().setRoll(roll);
+        _camera.editableRaw().setRoll(roll);
     }
 
     rotateCamera(yaw, pitch);
@@ -247,9 +247,9 @@ void VasnecovWorld::rotateCamera(GLfloat yaw, GLfloat pitch, GLfloat roll)
 
 void VasnecovWorld::setCameraRoll(GLfloat roll)
 {
-    if(m_camera.raw().roll() != roll)
+    if(_camera.raw().roll() != roll)
     {
-        m_camera.editableRaw().setRoll(roll);
+        _camera.editableRaw().setRoll(roll);
         designerUpdateOrtho();
     }
 }
@@ -258,7 +258,7 @@ void VasnecovWorld::tiltCamera(GLfloat roll)
 {
     if(roll != 0.0f)
     {
-        m_camera.editableRaw().setRoll(m_camera.raw().roll() + roll);
+        _camera.editableRaw().setRoll(_camera.raw().roll() + roll);
         designerUpdateOrtho();
     }
 }
@@ -267,19 +267,19 @@ GLenum VasnecovWorld::renderUpdateData()
     GLenum updated(0);
 
     // Обновление своих данных
-    updated |= m_elements.synchronizeAll();
+    updated |= _elements.synchronizeAll();
 
     if(raw_wasUpdated)
     {
         pure_pipeline->setSomethingWasUpdated();
 
-        m_parameters.update();
-        m_perspective.update();
-        m_ortho.update();
-        m_camera.update();
+        _parameters.update();
+        _perspective.update();
+        _ortho.update();
+        _camera.update();
 
         // Matrix is only one object edited by renderer and readed by designer
-        m_projectionMatrix.synchronizeRaw();
+        _projectionMatrix.synchronizeRaw();
 
         Vasnecov::CoreObject::renderUpdateData();
     }
@@ -292,23 +292,23 @@ void VasnecovWorld::renderDraw()
         pure_pipeline->clearZBuffer();
 
         // Задание характеристик мира
-        pure_pipeline->activateDepth(m_parameters.pure().depth());
-        pure_pipeline->setDrawingType(m_parameters.pure().drawingType());
+        pure_pipeline->activateDepth(_parameters.pure().depth());
+        pure_pipeline->setDrawingType(_parameters.pure().drawingType());
         pure_pipeline->setColor(QColor(255, 255, 255, 255));
 
         // Проецирование и установка камеры
-        pure_pipeline->setViewport(m_parameters.pure().x(), m_parameters.pure().y(), m_parameters.pure().width(), m_parameters.pure().height());
+        pure_pipeline->setViewport(_parameters.pure().x(), _parameters.pure().y(), _parameters.pure().width(), _parameters.pure().height());
 
-        if(m_parameters.pure().projection() == Vasnecov::WorldTypePerspective) // Перспективная проекция
+        if(_parameters.pure().projection() == Vasnecov::WorldTypePerspective) // Перспективная проекция
         {
-            pure_pipeline->setPerspective(m_perspective.pure(), renderCalculateCamera());
+            pure_pipeline->setPerspective(_perspective.pure(), renderCalculateCamera());
         }
         else // Ортогональная
         {
-            pure_pipeline->setOrtho(m_ortho.pure(), renderCalculateCamera());
+            pure_pipeline->setOrtho(_ortho.pure(), renderCalculateCamera());
         }
 
-        m_projectionMatrix.editablePure() = pure_pipeline->matrixP();
+        _projectionMatrix.editablePure() = pure_pipeline->matrixP();
 
         // Моделирование
         // Обработка источников света
@@ -316,19 +316,19 @@ void VasnecovWorld::renderDraw()
         pure_pipeline->disableLamps();
 
         GLboolean lampsWork(false);
-        if(m_elements.hasPureLamps() && m_parameters.pure().light())
+        if(_elements.hasPureLamps() && _parameters.pure().light())
         {
-            pure_pipeline->setAmbientColor(m_lightModel.ambientColor());
+            pure_pipeline->setAmbientColor(_lightModel.ambientColor());
             pure_pipeline->enableLamps();
             lampsWork = true;
 
-            m_elements.forEachPureLamp(renderDrawElement<VasnecovLamp>);
+            _elements.forEachPureLamp(renderDrawElement<VasnecovLamp>);
         }
 
         // Рисование фигур (непрозрачных)
         std::vector<VasnecovFigure *> transFigures;
 
-        if(m_elements.hasPureFigures())
+        if(_elements.hasPureFigures())
         {
             // Задание материала по умолчанию
             VasnecovMaterial mat(pure_pipeline);
@@ -339,9 +339,9 @@ void VasnecovWorld::renderDraw()
             pure_pipeline->disableTexture2D();
             pure_pipeline->disableSmoothShading();
 
-            transFigures.reserve(m_elements.pureFigures().size());
-            for(std::vector<VasnecovFigure *>::const_iterator fit = m_elements.pureFigures().begin();
-                fit != m_elements.pureFigures().end(); ++fit)
+            transFigures.reserve(_elements.pureFigures().size());
+            for(std::vector<VasnecovFigure *>::const_iterator fit = _elements.pureFigures().begin();
+                fit != _elements.pureFigures().end(); ++fit)
             {
                 VasnecovFigure *fig(*fit);
                 if(fig)
@@ -376,11 +376,11 @@ void VasnecovWorld::renderDraw()
         // Отрисовка непрозрачных изделий (деталей)
         std::vector<VasnecovProduct *> transProducts;
 
-        if(m_elements.hasPureProducts())
+        if(_elements.hasPureProducts())
         {
-            transProducts.reserve(m_elements.pureProducts().size());
-            for(std::vector<VasnecovProduct *>::const_iterator pit = m_elements.pureProducts().begin();
-                pit != m_elements.pureProducts().end(); ++pit)
+            transProducts.reserve(_elements.pureProducts().size());
+            for(std::vector<VasnecovProduct *>::const_iterator pit = _elements.pureProducts().begin();
+                pit != _elements.pureProducts().end(); ++pit)
             {
                 VasnecovProduct *prod(*pit);
                 if(prod)
@@ -402,8 +402,8 @@ void VasnecovWorld::renderDraw()
         {
             if(Vasnecov::cfg_sortTransparency)
             {
-                QVector3D viewVector = (m_camera.pure().target() - m_camera.pure().position()).normalized();
-                QVector3D viewPoint = m_camera.pure().position();
+                QVector3D viewVector = (_camera.pure().target() - _camera.pure().position()).normalized();
+                QVector3D viewPoint = _camera.pure().position();
 
                 for(std::vector<VasnecovProduct *>::const_iterator pit = transProducts.begin();
                     pit != transProducts.end(); ++pit)
@@ -434,8 +434,8 @@ void VasnecovWorld::renderDraw()
         {
             if(Vasnecov::cfg_sortTransparency)
             {
-                QVector3D viewVector = (m_camera.pure().target() - m_camera.pure().position()).normalized();
-                QVector3D viewPoint = m_camera.pure().position();
+                QVector3D viewVector = (_camera.pure().target() - _camera.pure().position()).normalized();
+                QVector3D viewPoint = _camera.pure().position();
 
                 for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
                     fit != transFigures.end(); ++fit)
@@ -485,7 +485,7 @@ void VasnecovWorld::renderDraw()
         }
 
         // Отрисовка меток
-        if(m_elements.hasPureLabels())
+        if(_elements.hasPureLabels())
         {
             pure_pipeline->disableDepth();
             pure_pipeline->clearZBuffer();
@@ -493,67 +493,67 @@ void VasnecovWorld::renderDraw()
             pure_pipeline->disableBackFaces();
 
             pure_pipeline->setOrtho2D();
-                m_elements.forEachPureLabel(renderDrawElement<VasnecovLabel>);
+                _elements.forEachPureLabel(renderDrawElement<VasnecovLabel>);
             pure_pipeline->unsetOrtho2D();
         }
     }
 }
 Vasnecov::WorldParameters VasnecovWorld::worldParameters() const
 {
-    Vasnecov::WorldParameters parameters(m_parameters.raw());
+    Vasnecov::WorldParameters parameters(_parameters.raw());
     return parameters;
 }
 
 Vasnecov::WorldTypes VasnecovWorld::projection() const
 {
-    Vasnecov::WorldTypes projection(m_parameters.raw().projection());
+    Vasnecov::WorldTypes projection(_parameters.raw().projection());
     return projection;
 }
 
 GLint VasnecovWorld::x() const
 {
-    return m_parameters.raw().x();
+    return _parameters.raw().x();
 }
 
 GLint VasnecovWorld::y() const
 {
-    return m_parameters.raw().y();
+    return _parameters.raw().y();
 }
 
 GLsizei VasnecovWorld::width() const
 {
-    return m_parameters.raw().width();
+    return _parameters.raw().width();
 }
 
 GLsizei VasnecovWorld::height() const
 {
-    return m_parameters.raw().height();
+    return _parameters.raw().height();
 }
 
 QSize VasnecovWorld::size() const
 {
-    return QSize(m_parameters.raw().width(), m_parameters.raw().height());
+    return QSize(_parameters.raw().width(), _parameters.raw().height());
 }
 QRect VasnecovWorld::window() const
 {
-    return QRect(m_parameters.raw().x(),
-                 m_parameters.raw().y(),
-                 m_parameters.raw().width(),
-                 m_parameters.raw().height());
+    return QRect(_parameters.raw().x(),
+                 _parameters.raw().y(),
+                 _parameters.raw().width(),
+                 _parameters.raw().height());
 }
 void VasnecovWorld::setDrawingType(Vasnecov::PolygonDrawingTypes type)
 {
-    if(m_parameters.raw().drawingType() != type)
+    if(_parameters.raw().drawingType() != type)
     {
-        m_parameters.editableRaw().setDrawingType(type);
+        _parameters.editableRaw().setDrawingType(type);
     }
 }
 
 void VasnecovWorld::setCameraPosition(const QVector3D &position)
 {
-    if(m_camera.raw().position() != position)
+    if(_camera.raw().position() != position)
     {
-        m_camera.editableRaw().setPosition(position);
+        _camera.editableRaw().setPosition(position);
         designerUpdateOrtho();
     }
 }
@@ -563,9 +563,9 @@ void VasnecovWorld::setCameraPosition(GLfloat x, GLfloat y, GLfloat z)
 }
 void VasnecovWorld::setCameraTarget(const QVector3D &target)
 {
-    if(m_camera.raw().target() != target)
+    if(_camera.raw().target() != target)
     {
-        m_camera.editableRaw().setTarget(target);
+        _camera.editableRaw().setTarget(target);
         designerUpdateOrtho();
     }
 }
@@ -575,12 +575,12 @@ void VasnecovWorld::setCameraTarget(GLfloat x, GLfloat y, GLfloat z)
 }
 void VasnecovWorld::setCamera(const Vasnecov::Camera &camera)
 {
-    if(m_camera.set(camera))
+    if(_camera.set(camera))
         designerUpdateOrtho(); // т.к. изменяется расстояние между фронтальными границами
 }
 Vasnecov::Camera VasnecovWorld::camera() const
 {
-    Vasnecov::Camera camera(m_camera.raw());
+    Vasnecov::Camera camera(_camera.raw());
     return camera;
 }
 
@@ -591,19 +591,19 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QPointF &point)
 
 Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 {
-    if(x >= m_parameters.raw().x() &&
-       y >= m_parameters.raw().y() &&
-       x <= (m_parameters.raw().x() + m_parameters.raw().width()) &&
-       y <= (m_parameters.raw().y() + m_parameters.raw().height()) &&
-       m_parameters.raw().width() > 0.0f &&
-       m_parameters.raw().height() > 0.0f)
+    if(x >= _parameters.raw().x() &&
+       y >= _parameters.raw().y() &&
+       x <= (_parameters.raw().x() + _parameters.raw().width()) &&
+       y <= (_parameters.raw().y() + _parameters.raw().height()) &&
+       _parameters.raw().width() > 0.0f &&
+       _parameters.raw().height() > 0.0f)
     {
         // Поскольку камера умножается только на проективную матрицу, то матрица модели-вида здесь не нужна
-        QMatrix4x4 matInverted = m_projectionMatrix.raw().inverted();
+        QMatrix4x4 matInverted = _projectionMatrix.raw().inverted();
 
         // z [0; 1]
-        QVector4D viewVector((x - m_parameters.raw().x()) * 2.0f / m_parameters.raw().width() - 1.0f,
-                             (y - m_parameters.raw().y()) * 2.0f / m_parameters.raw().height() - 1.0f,
+        QVector4D viewVector((x - _parameters.raw().x()) * 2.0f / _parameters.raw().width() - 1.0f,
+                             (y - _parameters.raw().y()) * 2.0f / _parameters.raw().height() - 1.0f,
                              -1.0f,
                              1.0f);
 
@@ -626,21 +626,21 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 
 Vasnecov::Perspective VasnecovWorld::perspective() const
 {
-    Vasnecov::Perspective perspective(m_perspective.raw());
+    Vasnecov::Perspective perspective(_perspective.raw());
     return perspective;
 }
 Vasnecov::Ortho VasnecovWorld::ortho() const
 {
-    Vasnecov::Ortho orto(m_ortho.raw());
+    Vasnecov::Ortho orto(_ortho.raw());
     return orto;
 }
 GLboolean VasnecovWorld::setProjection(Vasnecov::WorldTypes type)
 {
     if(type == Vasnecov::WorldTypePerspective || type == Vasnecov::WorldTypeOrthographic)
     {
-        if(m_parameters.raw().projection() != type)
+        if(_parameters.raw().projection() != type)
         {
-            m_parameters.editableRaw().setProjection(type);
+            _parameters.editableRaw().setProjection(type);
         }
         return 1;
     }
@@ -656,34 +656,34 @@ GLboolean VasnecovWorld::setWindow(GLint x, GLint y, GLsizei width, GLsizei heig
     {
         GLboolean updated (false);
 
-        if(m_parameters.raw().x() != x)
+        if(_parameters.raw().x() != x)
         {
-            m_parameters.editableRaw().setX(x);
+            _parameters.editableRaw().setX(x);
             updated = true;
         }
 
-        if(m_parameters.raw().y() != y)
+        if(_parameters.raw().y() != y)
         {
-            m_parameters.editableRaw().setY(y);
+            _parameters.editableRaw().setY(y);
             updated = true;
         }
 
-        if(m_parameters.raw().width() != width)
+        if(_parameters.raw().width() != width)
         {
-            m_parameters.editableRaw().setWidth(width);
+            _parameters.editableRaw().setWidth(width);
             updated = true;
         }
 
-        if(m_parameters.raw().height() != height)
+        if(_parameters.raw().height() != height)
         {
-            m_parameters.editableRaw().setHeight(height);
+            _parameters.editableRaw().setHeight(height);
             updated = true;
         }
 
 
-        if(!qFuzzyCompare(m_perspective.raw().ratio, static_cast<GLfloat>(width)/height))
+        if(!qFuzzyCompare(_perspective.raw().ratio, static_cast<GLfloat>(width)/height))
         {
-            m_perspective.editableRaw().ratio = static_cast<GLfloat>(width)/height;
+            _perspective.editableRaw().ratio = static_cast<GLfloat>(width)/height;
             updated = true;
         }
 
@@ -706,11 +706,11 @@ GLboolean VasnecovWorld::setParameters(Vasnecov::WorldParameters parameters) // 
     {
         GLboolean updated(false);
 
-        updated = m_parameters.set(parameters);
+        updated = _parameters.set(parameters);
 
-        if(!qFuzzyCompare(m_perspective.raw().ratio, static_cast<GLfloat>(parameters.width())/parameters.height()))
+        if(!qFuzzyCompare(_perspective.raw().ratio, static_cast<GLfloat>(parameters.width())/parameters.height()))
         {
-            m_perspective.editableRaw().ratio = static_cast<GLfloat>(parameters.width())/parameters.height();
+            _perspective.editableRaw().ratio = static_cast<GLfloat>(parameters.width())/parameters.height();
             updated = true;
         }
 
@@ -730,21 +730,21 @@ GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfl
     {
         GLboolean updated(false);
 
-        if(!qFuzzyCompare(m_perspective.raw().frontBorder, frontBorder))
+        if(!qFuzzyCompare(_perspective.raw().frontBorder, frontBorder))
         {
-            m_perspective.editableRaw().frontBorder = frontBorder;
+            _perspective.editableRaw().frontBorder = frontBorder;
             updated = true;
         }
 
-        if(!qFuzzyCompare(m_perspective.raw().backBorder, backBorder))
+        if(!qFuzzyCompare(_perspective.raw().backBorder, backBorder))
         {
-            m_perspective.editableRaw().backBorder = backBorder;
+            _perspective.editableRaw().backBorder = backBorder;
             updated = true;
         }
 
-        if(!qFuzzyCompare(m_perspective.raw().angle, angle))
+        if(!qFuzzyCompare(_perspective.raw().angle, angle))
         {
-            m_perspective.editableRaw().angle = angle;
+            _perspective.editableRaw().angle = angle;
             updated = true;
         }
 
@@ -760,57 +760,57 @@ GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfl
 }
 void VasnecovWorld::setDepth()
 {
-    if(!m_parameters.raw().depth())
-        m_parameters.editableRaw().setDepth(true);
+    if(!_parameters.raw().depth())
+        _parameters.editableRaw().setDepth(true);
 }
 void VasnecovWorld::unsetDepth()
 {
-    if(m_parameters.raw().depth())
-        m_parameters.editableRaw().setDepth(false);
+    if(_parameters.raw().depth())
+        _parameters.editableRaw().setDepth(false);
 }
 
 GLboolean VasnecovWorld::depth() const
 {
-    return m_parameters.raw().depth();
+    return _parameters.raw().depth();
 }
 
 void VasnecovWorld::switchDepth()
 {
-    m_parameters.editableRaw().setDepth(!m_parameters.raw().depth());
+    _parameters.editableRaw().setDepth(!_parameters.raw().depth());
 }
 void VasnecovWorld::setLight()
 {
-    if(!m_parameters.raw().light())
-        m_parameters.editableRaw().setLight(true);
+    if(!_parameters.raw().light())
+        _parameters.editableRaw().setLight(true);
 }
 void VasnecovWorld::unsetLight()
 {
-    if(m_parameters.editableRaw().light())
-        m_parameters.editableRaw().setLight(false);
+    if(_parameters.editableRaw().light())
+        _parameters.editableRaw().setLight(false);
 }
 
 GLboolean VasnecovWorld::light() const
 {
-    return m_parameters.raw().light();
+    return _parameters.raw().light();
 }
 
 void VasnecovWorld::switchLight()
 {
-    m_parameters.editableRaw().setLight(!m_parameters.raw().light());
+    _parameters.editableRaw().setLight(!_parameters.raw().light());
 }
 
 VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
 {
     // Расчет направлений камеры
     VasnecovPipeline::CameraAttributes cameraAttr;
-    QVector3D forward = (m_camera.pure().target() - m_camera.pure().position()).normalized();
+    QVector3D forward = (_camera.pure().target() - _camera.pure().position()).normalized();
 
-    cameraAttr.eye = m_camera.pure().position();
-    cameraAttr.center = m_camera.pure().target();
+    cameraAttr.eye = _camera.pure().position();
+    cameraAttr.center = _camera.pure().target();
 
     // Камере (lookAt) не нужен строгий вектор направления вверх. LookAt всё равно берет с него проекцию.
     // Если вектор направления взгляда вертикален, то up-вектор просто направляем по X
-    if(m_camera.pure().position().x() == m_camera.pure().target().x() && m_camera.pure().position().y() == m_camera.pure().target().y())
+    if(_camera.pure().position().x() == _camera.pure().target().x() && _camera.pure().position().y() == _camera.pure().target().y())
     {
         cameraAttr.up = QVector3D(1.0f, 0.0f, 0.0f);
     }
@@ -820,7 +820,7 @@ VasnecovPipeline::CameraAttributes VasnecovWorld::renderCalculateCamera() const
     }
 
     // Вращение вокруг вектора взгляда
-    cameraAttr.up = QQuaternion::fromAxisAndAngle(forward, m_camera.pure().roll()).rotatedVector(cameraAttr.up);
+    cameraAttr.up = QQuaternion::fromAxisAndAngle(forward, _camera.pure().roll()).rotatedVector(cameraAttr.up);
 
     return cameraAttr;
 }

@@ -104,24 +104,15 @@ public:
 
 protected:
     // Списки содержимого
-    VasnecovLamp* designerFindElement(VasnecovLamp* lamp) const;
-    VasnecovProduct* designerFindElement(VasnecovProduct* product) const;
-    VasnecovFigure* designerFindElement(VasnecovFigure* figure) const;
-    VasnecovTerrain* designerFindElement(VasnecovTerrain* terrain) const;
-    VasnecovLabel* designerFindElement(VasnecovLabel* label) const;
+    template<typename T>
+    T* designerFindElement(T* element) const;
 
     // Добавление новых элементов в списки
-    GLboolean designerAddElement(VasnecovLamp* lamp, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovProduct* product, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovFigure* figure, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovTerrain* terrain, GLboolean check = false);
-    GLboolean designerAddElement(VasnecovLabel* label, GLboolean check = false);
+    template<typename T>
+    GLboolean designerAddElement(T* element, GLboolean check = false);
 
-    GLboolean designerRemoveElement(VasnecovLamp* lamp);
-    GLboolean designerRemoveElement(VasnecovProduct* product);
-    GLboolean designerRemoveElement(VasnecovFigure* figure);
-    GLboolean designerRemoveElement(VasnecovTerrain* terrain);
-    GLboolean designerRemoveElement(VasnecovLabel* label);
+    template<typename T>
+    GLboolean designerRemoveElement(T* element);
 
     void designerUpdateOrtho();
 
@@ -148,14 +139,14 @@ protected:
     }
 
 private:
-    Vasnecov::MutualData<Vasnecov::WorldParameters> m_parameters; // Характеристики мира
-    Vasnecov::MutualData<Vasnecov::Perspective> m_perspective; // Характеристики вида при перспективной проекции
-    Vasnecov::MutualData<Vasnecov::Ortho> m_ortho; // Характеристики вида при ортогональной проекции
-    Vasnecov::MutualData<Vasnecov::Camera> m_camera; // камера мира
-    Vasnecov::MutualData<QMatrix4x4> m_projectionMatrix;
+    Vasnecov::MutualData<Vasnecov::WorldParameters> _parameters; // Характеристики мира
+    Vasnecov::MutualData<Vasnecov::Perspective>     _perspective; // Характеристики вида при перспективной проекции
+    Vasnecov::MutualData<Vasnecov::Ortho>           _ortho; // Характеристики вида при ортогональной проекции
+    Vasnecov::MutualData<Vasnecov::Camera>          _camera; // камера мира
+    Vasnecov::MutualData<QMatrix4x4>                _projectionMatrix;
 
-    Vasnecov::LightModel m_lightModel;
-    WorldElementList m_elements;
+    Vasnecov::LightModel                            _lightModel;
+    WorldElementList                                _elements;
 
     friend class VasnecovUniverse;
 
@@ -177,75 +168,27 @@ private:
     Q_DISABLE_COPY(VasnecovWorld)
 };
 
-inline VasnecovLamp* VasnecovWorld::designerFindElement(VasnecovLamp* lamp) const
+template<typename T>
+T* VasnecovWorld::designerFindElement(T* element) const
 {
-    return m_elements.findRawElement(lamp);
-}
-inline VasnecovProduct* VasnecovWorld::designerFindElement(VasnecovProduct* product) const
-{
-    return m_elements.findRawElement(product);
-}
-inline VasnecovFigure* VasnecovWorld::designerFindElement(VasnecovFigure* figure) const
-{
-    return m_elements.findRawElement(figure);
+    return _elements.findRawElement(element);
 }
 
-inline VasnecovTerrain*VasnecovWorld::designerFindElement(VasnecovTerrain* terrain) const
+template<typename T>
+GLboolean VasnecovWorld::designerAddElement(T* element, GLboolean check)
 {
-    return m_elements.findRawElement(terrain);
-}
-inline VasnecovLabel* VasnecovWorld::designerFindElement(VasnecovLabel* label) const
-{
-    return m_elements.findRawElement(label);
+    return _elements.addElement(element, check);
 }
 
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovLamp* lamp, GLboolean check)
+template<typename T>
+GLboolean VasnecovWorld::designerRemoveElement(T* element)
 {
-    return m_elements.addElement(lamp, check);
-}
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovProduct* product, GLboolean check)
-{
-    return m_elements.addElement(product, check);
-}
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovFigure* figure, GLboolean check)
-{
-    return m_elements.addElement(figure, check);
-}
-
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovTerrain* terrain, GLboolean check)
-{
-    return m_elements.addElement(terrain, check);
-}
-inline GLboolean VasnecovWorld::designerAddElement(VasnecovLabel* label, GLboolean check)
-{
-    return m_elements.addElement(label, check);
-}
-
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLamp* lamp)
-{
-    return m_elements.removeElement(lamp);
-}
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovProduct* product)
-{
-    return m_elements.removeElement(product);
-}
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovFigure* figure)
-{
-    return m_elements.removeElement(figure);
-}
-
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovTerrain* terrain)
-{
-    return m_elements.removeElement(terrain);
-}
-inline GLboolean VasnecovWorld::designerRemoveElement(VasnecovLabel* label)
-{
-    return m_elements.removeElement(label);
+    return _elements.removeElement(element);
 }
 
 inline void VasnecovWorld::renderSwitchLamps() const
 {
-    if(m_parameters.pure().light())
+    if(_parameters.pure().light())
     {
         pure_pipeline->enableLamps();
     }
@@ -257,20 +200,20 @@ inline void VasnecovWorld::renderSwitchLamps() const
 
 inline const Vasnecov::WorldParameters& VasnecovWorld::renderWorldParameters() const
 {
-    return m_parameters.pure();
+    return _parameters.pure();
 }
 
 inline const Vasnecov::Perspective& VasnecovWorld::renderPerspective() const
 {
-    return m_perspective.pure();
+    return _perspective.pure();
 }
 
 inline const Vasnecov::Ortho& VasnecovWorld::renderOrtho() const
 {
-    return m_ortho.pure();
+    return _ortho.pure();
 }
 
 inline const Vasnecov::Camera& VasnecovWorld::renderCamera() const
 {
-    return m_camera.pure();
+    return _camera.pure();
 }
