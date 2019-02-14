@@ -222,14 +222,16 @@ public:
 
     QString info(GLuint type = 0);
 
-protected:
+private:
     // Методы, вызываемые из внешних потоков (работают с сырыми данными)
     GLboolean designerRemoveThisAlienMatrix(const QMatrix4x4* alienMs);
+    template <typename T>
+    GLboolean designerRemoveSimpleElement(T* element);
 
-protected:
+private:
     GLenum renderUpdateData(); // Единственный метод, который лочит мьютекс из основного потока (потока отрисовки)
 
-protected:
+private:
     // Базовая инициализация и циклическая отрисовка
     void renderInitialize();
     void renderDrawAll(GLsizei width, GLsizei height);
@@ -243,24 +245,24 @@ protected:
     }
 
 private:
-    VasnecovPipeline m_pipeline;
-    Vasnecov::MutualData<const QGLContext*> m_context;
-    Vasnecov::MutualData<QColor> m_backgroundColor;
-
-    GLsizei m_width, m_height; // Размеры окна вывода
-
+    VasnecovPipeline                        _pipeline;
+    Vasnecov::MutualData<const QGLContext*> _context;
+    Vasnecov::MutualData<QColor>            _backgroundColor;
+    // Размеры окна вывода
+    GLsizei                                 _width;
+    GLsizei                                 _height;
     // Картинка для индикации загрузки
-    Vasnecov::MutualData<GLboolean> m_loading;
-    QImage m_loadingImage0, m_loadingImage1;
-    timespec m_loadingImageTimer;
+    Vasnecov::MutualData<GLboolean>         _loading;
+    QImage                                  _loadingImage0, _loadingImage1;
+    timespec                                _loadingImageTimer;
 
-    GLuint m_lampsCountMax;
+    GLuint                                  _lampsCountMax;
 
     // Списки миров
     // Списки общих (между мирами) данных
-    Vasnecov::Attributes                raw_data;
-    bmcl::Rc<VasnecovResourceManager>   m_resourceManager;
-    UniverseElementList                 m_elements;
+    Vasnecov::Attributes                    raw_data;
+    bmcl::Rc<VasnecovResourceManager>       _resourceManager;
+    UniverseElementList                     _elements;
 
     enum Updated
     {
@@ -283,10 +285,10 @@ private:
     };
 
     // Технологическая информация (raw - из потока ренедеринга, pure - во внешнем)
-    Vasnecov::MutualData<QString> m_techRenderer;
-    Vasnecov::MutualData<QString> m_techVersion;
-    Vasnecov::MutualData<QString> m_techSL;
-    Vasnecov::MutualData<QString> m_techExtensions;
+    Vasnecov::MutualData<QString>           _techRenderer;
+    Vasnecov::MutualData<QString>           _techVersion;
+    Vasnecov::MutualData<QString>           _techSL;
+    Vasnecov::MutualData<QString>           _techExtensions;
 
     friend class VasnecovScene;
     friend class VasnecovWidget;
@@ -300,7 +302,7 @@ inline void VasnecovUniverse::setContext(const QGLContext *context)
     if(!context)
         return;
 
-    m_context.set(context);
+    _context.set(context);
 }
 
 template <typename T>
@@ -375,4 +377,28 @@ template <typename T>
 const std::vector<T *> &VasnecovUniverse::ElementFullBox<T>::deleting() const
 {
     return m_deleting;
+}
+
+template<typename T>
+GLboolean VasnecovUniverse::designerRemoveSimpleElement(T* element)
+{
+    if(!element)
+        return false;
+
+    if(_elements.findRawElement(element))
+    {
+        _elements.removeElement(element);
+
+        // Прочие удаления
+        // Удаление из мира
+        for(const auto world : _elements.rawWorlds())
+            world->designerRemoveElement(element);
+
+        // Удаление чужих матриц
+        designerRemoveThisAlienMatrix(element->designerExportingMatrix());
+
+        return true;
+    }
+
+    return false;
 }

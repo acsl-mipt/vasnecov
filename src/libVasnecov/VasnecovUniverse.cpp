@@ -27,45 +27,45 @@
 #include "VasnecovTerrain.h"
 
 VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, const QGLContext *context) :
-    m_pipeline(),
-    m_context(raw_data.wasUpdated, Context, context),
-    m_backgroundColor(raw_data.wasUpdated, BackColor, QColor(0, 0, 0, 255)),
+    _pipeline(),
+    _context(raw_data.wasUpdated, Context, context),
+    _backgroundColor(raw_data.wasUpdated, BackColor, QColor(0, 0, 0, 255)),
 
-    m_width(Vasnecov::cfg_displayWidthDefault),
-    m_height(Vasnecov::cfg_displayHeightDefault),
+    _width(Vasnecov::cfg_displayWidthDefault),
+    _height(Vasnecov::cfg_displayHeightDefault),
 
-    m_loading(raw_data.wasUpdated, Loading, false),
-    m_loadingImage0(),
-    m_loadingImage1(),
-    m_loadingImageTimer(Vasnecov::timeDefault()),
-    m_lampsCountMax(Vasnecov::cfg_lampsCountMax),
+    _loading(raw_data.wasUpdated, Loading, false),
+    _loadingImage0(),
+    _loadingImage1(),
+    _loadingImageTimer(Vasnecov::timeDefault()),
+    _lampsCountMax(Vasnecov::cfg_lampsCountMax),
 
     raw_data(),
-    m_resourceManager(resourceManager),
-    m_elements(),
+    _resourceManager(resourceManager),
+    _elements(),
 
-    m_techRenderer(raw_data.wasUpdated, Tech01),
-    m_techVersion(raw_data.wasUpdated, Tech02),
-    m_techSL(raw_data.wasUpdated, Tech03),
-    m_techExtensions(raw_data.wasUpdated, Tech04)
+    _techRenderer(raw_data.wasUpdated, Tech01),
+    _techVersion(raw_data.wasUpdated, Tech02),
+    _techSL(raw_data.wasUpdated, Tech03),
+    _techExtensions(raw_data.wasUpdated, Tech04)
 {
     Q_INIT_RESOURCE(vasnecov);
 
-    if(!m_loadingImage0.load(":/share/loading0.png") ||
-       !m_loadingImage1.load(":/share/loading1.png"))
+    if(!_loadingImage0.load(":/share/loading0.png") ||
+       !_loadingImage1.load(":/share/loading1.png"))
     {
         Vasnecov::problem("Не загрузилась иконка предзагрузки");
     }
-    if(!m_loadingImage0.isNull())
+    if(!_loadingImage0.isNull())
     {
-        m_loadingImage0 = m_loadingImage0.mirrored(0, 1);
+        _loadingImage0 = _loadingImage0.mirrored(0, 1);
     }
-    if(!m_loadingImage1.isNull())
+    if(!_loadingImage1.isNull())
     {
-        m_loadingImage1 = m_loadingImage1.mirrored(0, 1);
+        _loadingImage1 = _loadingImage1.mirrored(0, 1);
     }
 #ifndef _MSC_VER
-    if(clock_gettime(CLOCK_MONOTONIC, &m_loadingImageTimer) < 0)
+    if(clock_gettime(CLOCK_MONOTONIC, &_loadingImageTimer) < 0)
     {
         Vasnecov::problem("Проблемы с таймером картинки загрузки");
     }
@@ -84,9 +84,9 @@ VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width,
     if(width > Vasnecov::cfg_worldWidthMin && width < Vasnecov::cfg_worldWidthMax &&
        height > Vasnecov::cfg_worldHeightMin && height < Vasnecov::cfg_worldHeightMax)
     {
-        VasnecovWorld *newWorld = new VasnecovWorld(&m_pipeline, posX, posY, width, height);
+        VasnecovWorld *newWorld = new VasnecovWorld(&_pipeline, posX, posY, width, height);
 
-        m_elements.addElement(newWorld);
+        _elements.addElement(newWorld);
 
         return newWorld;
     }
@@ -105,21 +105,21 @@ VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *worl
     GLuint index(GL_LIGHT0);
 
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
         return nullptr;
     }
-    size_t count = m_elements.rawLampsCount();
-    if(count < m_lampsCountMax)
+    size_t count = _elements.rawLampsCount();
+    if(count < _lampsCountMax)
     {
         // Индексы задаются тупо прибавлением. Если какие-то фонари удалялись, то индекс будет неверным.
         // Но это не страшно, т.к. при обновлении данных в updateData индексы будут переназначены
         index += count;
     }
 
-    VasnecovLamp *lamp = new VasnecovLamp(&m_pipeline, name, type, index);
-    if(m_elements.addElement(lamp))
+    VasnecovLamp *lamp = new VasnecovLamp(&_pipeline, name, type, index);
+    if(_elements.addElement(lamp))
     {
         world->designerAddElement(lamp);
         return lamp;
@@ -142,13 +142,13 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
     }
 
     // Поиск фонаря в общем списке
-    if(!m_elements.findRawElement(lamp))
+    if(!_elements.findRawElement(lamp))
     {
         Vasnecov::problem("Заданный фонарь не найден");
         return nullptr;
     }
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
         return nullptr;
@@ -176,7 +176,7 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorl
     GLuint level(0);
 
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
         return nullptr;
@@ -201,14 +201,14 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorl
     }
 
     // world && (parent exists)
-    assembly = new VasnecovProduct(&m_pipeline, name, VasnecovProduct::ProductTypeAssembly, parent, level);
+    assembly = new VasnecovProduct(&_pipeline, name, VasnecovProduct::ProductTypeAssembly, parent, level);
 
     if(parent)
     {
         assembly->designerSetMatrixM1(parent->designerMatrixMs());
         parent->designerAddChild(assembly);
     }
-    m_elements.addElement(assembly);
+    _elements.addElement(assembly);
     world->designerAddElement(assembly); // Здесь не требуется проверка на дубликаты, т.к. указатель assembly девственно чист
 
     return assembly;
@@ -234,19 +234,19 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
     {
         QString corMeshName = VasnecovResourceManager::correctFileId(meshName, Vasnecov::cfg_meshFormat);
         // Поиск меша в списке
-        mesh = m_resourceManager->designerFindMesh(corMeshName);
+        mesh = _resourceManager->designerFindMesh(corMeshName);
 
         if(!mesh)
         {
             // Попытка загрузить насильно
             // Метод загрузки сам управляет мьютексом
-            if(!m_resourceManager->loadMeshFile(corMeshName))
+            if(!_resourceManager->loadMeshFile(corMeshName))
             {
                 Vasnecov::problem("Не найден заданный меш");
                 return nullptr;
             }
 
-            mesh = m_resourceManager->designerFindMesh(corMeshName);
+            mesh = _resourceManager->designerFindMesh(corMeshName);
 
             if(!mesh)
             {
@@ -263,7 +263,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
     }
 
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан не верно");
         return nullptr;
@@ -271,7 +271,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
     // Поиск материала
     if(material)
     {
-        if(!m_elements.findRawElement(material))
+        if(!_elements.findRawElement(material))
         {
             Vasnecov::problem("Не найден заданный материал");
             return nullptr;
@@ -297,14 +297,14 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
     }
 
     // world && mesh && (parent exists)
-    part = new VasnecovProduct(&m_pipeline, name, mesh, material, parent, level);
+    part = new VasnecovProduct(&_pipeline, name, mesh, material, parent, level);
 
     if(parent)
     {
         part->designerSetMatrixM1(parent->designerMatrixMs());
         parent->designerAddChild(part);
     }
-    m_elements.addElement(part);
+    _elements.addElement(part);
     world->designerAddElement(part); // Здесь не требуется проверка на дубликаты, т.к. указатель part девственно чист
 
     return part;
@@ -313,7 +313,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
 {
     if(!textureName.isEmpty())
     {
-        return addPart(name, world, meshName, addMaterial(m_resourceManager->texturesDPref() + textureName), parent);
+        return addPart(name, world, meshName, addMaterial(_resourceManager->texturesDPref() + textureName), parent);
     }
     else
     {
@@ -329,13 +329,13 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
     }
 
     // Поиск изделия в общем списке
-    if(!m_elements.findRawElement(product))
+    if(!_elements.findRawElement(product))
     {
         Vasnecov::problem("Заданное изделие не найдено");
         return nullptr;
     }
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
         return nullptr;
@@ -364,13 +364,13 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
      * 4. Убить все чужие матрицы, которые были от этих (продукт + дети + внуки) продуктов.
      */
 
-    if(m_elements.findRawElement(product))
+    if(_elements.findRawElement(product))
     {
         // Удаление продуктов - долгая операция с заблокированным мьютексом
         std::vector<VasnecovProduct *> delProd(product->designerAllChildren());
         delProd.push_back(product);
 
-        m_elements.removeElements(delProd);
+        _elements.removeElements(delProd);
 
         // Удаление материалов
         std::vector<VasnecovMaterial *> delMat;
@@ -383,8 +383,8 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
             }
         }
         // Если материал встречается где-то в других продуктах, то из списка претендентов он вычеркивается
-        for(std::vector<VasnecovProduct *>::const_iterator pit = m_elements.rawProducts().begin();
-            pit != m_elements.rawProducts().end(); ++pit)
+        for(std::vector<VasnecovProduct *>::const_iterator pit = _elements.rawProducts().begin();
+            pit != _elements.rawProducts().end(); ++pit)
         {
             for(std::vector<VasnecovMaterial *>::iterator mit = delMat.begin();
                 mit != delMat.end(); ++mit)
@@ -397,15 +397,15 @@ GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
             }
         }
         // Непосредственное удаление больше не нужных материалов
-        m_elements.removeElements(delMat);
+        _elements.removeElements(delMat);
 
         // Прочие удаления
         for(std::vector<VasnecovProduct *>::iterator dit = delProd.begin();
             dit != delProd.end(); ++dit)
         {
             // Удаление из мира
-            for(std::vector<VasnecovWorld *>::const_iterator wit = m_elements.rawWorlds().begin();
-                wit != m_elements.rawWorlds().end(); ++wit)
+            for(std::vector<VasnecovWorld *>::const_iterator wit = _elements.rawWorlds().begin();
+                wit != _elements.rawWorlds().end(); ++wit)
             {
                 (*wit)->designerRemoveElement((*dit));
             }
@@ -431,22 +431,22 @@ VasnecovFigure *VasnecovUniverse::addFigure(const QString& name, VasnecovWorld *
 {
     if(!world)
     {
-        Vasnecov::problem("Мир не задан");
+        Vasnecov::problem("World is not set");
         return nullptr;
     }
 
     VasnecovFigure *figure(nullptr);
 
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан не верно");
+        Vasnecov::problem("Incorrect world");
         return nullptr;
     }
 
-    figure = new VasnecovFigure(&m_pipeline, name);
+    figure = new VasnecovFigure(&_pipeline, name);
 
-    if(m_elements.addElement(figure))
+    if(_elements.addElement(figure))
     {
         world->designerAddElement(figure);
         return figure;
@@ -463,28 +463,7 @@ VasnecovFigure *VasnecovUniverse::addFigure(const QString& name, VasnecovWorld *
 
 GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
 {
-    if(!figure)
-        return false;
-
-    if(m_elements.findRawElement(figure))
-    {
-        m_elements.removeElement(figure);
-
-        // Прочие удаления
-        // Удаление из мира
-        for(std::vector<VasnecovWorld *>::const_iterator wit = m_elements.rawWorlds().begin();
-            wit != m_elements.rawWorlds().end(); ++wit)
-        {
-            (*wit)->designerRemoveElement(figure);
-        }
-
-        // Удаление чужих матриц
-        designerRemoveThisAlienMatrix(figure->designerExportingMatrix());
-
-        return true;
-    }
-
-    return false;
+    return designerRemoveSimpleElement(figure);
 }
 
 VasnecovTerrain*VasnecovUniverse::addTerrain(const QString& name, VasnecovWorld* world)
@@ -496,15 +475,15 @@ VasnecovTerrain*VasnecovUniverse::addTerrain(const QString& name, VasnecovWorld*
     }
 
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Incorrect world");
         return nullptr;
     }
 
-    VasnecovTerrain *terrain = new VasnecovTerrain(&m_pipeline, name);
+    VasnecovTerrain *terrain = new VasnecovTerrain(&_pipeline, name);
 
-    if(m_elements.addElement(terrain))
+    if(_elements.addElement(terrain))
     {
         world->designerAddElement(terrain);
         return terrain;
@@ -519,7 +498,7 @@ VasnecovTerrain*VasnecovUniverse::addTerrain(const QString& name, VasnecovWorld*
 
 GLboolean VasnecovUniverse::removeTerrain(VasnecovTerrain* terrain)
 {
-    return false;
+    return designerRemoveSimpleElement(terrain);
 }
 
 VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *world, GLfloat width, GLfloat height)
@@ -542,19 +521,19 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
     {
         QString corTextureName = VasnecovResourceManager::correctFileId(textureName, Vasnecov::cfg_textureFormat);
 
-        texture = m_resourceManager->designerFindTexture(m_resourceManager->texturesIPref() + corTextureName);
+        texture = _resourceManager->designerFindTexture(_resourceManager->texturesIPref() + corTextureName);
 
         if(!texture)
         {
             // Попытка загрузить насильно
             // Метод загрузки сам управляет мьютексом
-            if(!m_resourceManager->loadTextureFile(m_resourceManager->texturesIPref() + corTextureName))
+            if(!_resourceManager->loadTextureFile(_resourceManager->texturesIPref() + corTextureName))
             {
                 Vasnecov::problem("Не найдена заданная текстура");
                 return nullptr;
             }
 
-            texture = m_resourceManager->designerFindTexture(m_resourceManager->texturesIPref() + corTextureName);
+            texture = _resourceManager->designerFindTexture(_resourceManager->texturesIPref() + corTextureName);
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
@@ -565,15 +544,15 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
     }
 
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан не верно");
         return nullptr;
     }
 
-    label = new VasnecovLabel(&m_pipeline, name, QVector2D(width, height), texture);
+    label = new VasnecovLabel(&_pipeline, name, QVector2D(width, height), texture);
 
-    if(m_elements.addElement(label))
+    if(_elements.addElement(label))
     {
         world->designerAddElement(label);
         return label;
@@ -596,13 +575,13 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
     }
 
     // Поиск в общем списке
-    if(!m_elements.findRawElement(label))
+    if(!_elements.findRawElement(label))
     {
         Vasnecov::problem("Заданная метка не найдена");
         return nullptr;
     }
     // Поиск мира в списке
-    if(!m_elements.findRawElement(world))
+    if(!_elements.findRawElement(world))
     {
         Vasnecov::problem("Мир задан неверно");
         return nullptr;
@@ -620,28 +599,7 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
 }
 GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
 {
-    if(!label)
-        return false;
-
-    if(m_elements.findRawElement(label))
-    {
-        m_elements.removeElement(label);
-
-        // Прочие удаления
-        // Удаление из мира
-        for(std::vector<VasnecovWorld *>::const_iterator wit = m_elements.rawWorlds().begin();
-            wit != m_elements.rawWorlds().end(); ++wit)
-        {
-            (*wit)->designerRemoveElement(label);
-        }
-
-        // Удаление чужих матриц
-        designerRemoveThisAlienMatrix(label->designerExportingMatrix());
-
-        return true;
-    }
-
-    return false;
+    return designerRemoveSimpleElement(label);
 }
 VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
 {
@@ -653,19 +611,19 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
         // Поиск текстуры в списке
         QString corTextureName = VasnecovResourceManager::correctFileId(textureName, Vasnecov::cfg_textureFormat);
 
-        texture = m_resourceManager->designerFindTexture(corTextureName);
+        texture = _resourceManager->designerFindTexture(corTextureName);
 
         if(!texture)
         {
             // Попытка загрузить насильно
             // Метод загрузки сам управляет мьютексом
-            if(!m_resourceManager->loadTextureFile(corTextureName))
+            if(!_resourceManager->loadTextureFile(corTextureName))
             {
                 Vasnecov::problem("Заданная текстура не найдена");
                 return nullptr;
             }
 
-            texture = m_resourceManager->designerFindTexture(corTextureName);
+            texture = _resourceManager->designerFindTexture(corTextureName);
 
             if(!texture)
             {
@@ -676,8 +634,8 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
         }
     }
 
-    VasnecovMaterial *material = new VasnecovMaterial(&m_pipeline, texture);
-    if(m_elements.addElement(material))
+    VasnecovMaterial *material = new VasnecovMaterial(&_pipeline, texture);
+    if(_elements.addElement(material))
     {
         return material;
     }
@@ -692,8 +650,8 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
 }
 VasnecovMaterial *VasnecovUniverse::addMaterial()
 {
-    VasnecovMaterial *material = new VasnecovMaterial(&m_pipeline);
-    if(m_elements.addElement(material))
+    VasnecovMaterial *material = new VasnecovMaterial(&_pipeline);
+    if(_elements.addElement(material))
     {
         return material;
     }
@@ -714,25 +672,25 @@ VasnecovTexture *VasnecovUniverse::textureByName(const QString& textureName, Vas
     switch(type)
     {
         case Vasnecov::TextureTypeDiffuse:
-            newName = m_resourceManager->texturesDPref() + textureName;
+            newName = _resourceManager->texturesDPref() + textureName;
             break;
         case Vasnecov::TextureTypeInterface:
-            newName = m_resourceManager->texturesIPref() + textureName;
+            newName = _resourceManager->texturesIPref() + textureName;
             break;
         case Vasnecov::TextureTypeNormal:
-            newName = m_resourceManager->texturesNPref() + textureName;
+            newName = _resourceManager->texturesNPref() + textureName;
             break;
         default: // Использовать путь без префиксов
             newName = textureName;
     }
 
-    texture = m_resourceManager->designerFindTexture(newName);
+    texture = _resourceManager->designerFindTexture(newName);
 
     return texture;
 }
 void VasnecovUniverse::setBackgroundColor(const QColor &color)
 {
-    m_backgroundColor.set(color);
+    _backgroundColor.set(color);
 }
 void VasnecovUniverse::setBackgroundColor(QRgb rgb)
 {
@@ -741,11 +699,11 @@ void VasnecovUniverse::setBackgroundColor(QRgb rgb)
 }
 GLboolean VasnecovUniverse::setTexturesDir(const QString& dir)
 {
-    return m_resourceManager->setTexturesDir(dir);
+    return _resourceManager->setTexturesDir(dir);
 }
 GLboolean VasnecovUniverse::setMeshesDir(const QString& dir)
 {
-    return m_resourceManager->setMeshesDir(dir);
+    return _resourceManager->setMeshesDir(dir);
 }
 void VasnecovUniverse::loadAll()
 {
@@ -757,19 +715,19 @@ GLboolean VasnecovUniverse::loadMesh(const QString& fileName)
     if(fileName.isEmpty())
         return false;
 
-    LoadingStatus lStatus(&m_loading);
+    LoadingStatus lStatus(&_loading);
     GLboolean res(false);
 
-    res = m_resourceManager->loadMeshFile(fileName);
+    res = _resourceManager->loadMeshFile(fileName);
 
     return res;
 }
 GLuint VasnecovUniverse::loadMeshes(const QString& dirName, GLboolean withSub)
 {
-    LoadingStatus lStatus(&m_loading);
+    LoadingStatus lStatus(&_loading);
     GLuint res(0);
 
-    res = m_resourceManager->handleMeshesDir(dirName, withSub);
+    res = _resourceManager->handleMeshesDir(dirName, withSub);
 
     return res;
 }
@@ -778,19 +736,19 @@ GLboolean VasnecovUniverse::loadTexture(const QString& fileName)
     if(fileName.isEmpty())
         return false;
 
-    LoadingStatus lStatus(&m_loading);
+    LoadingStatus lStatus(&_loading);
     GLboolean res(false);
 
-    res = m_resourceManager->loadTextureFile(fileName);
+    res = _resourceManager->loadTextureFile(fileName);
 
     return res;
 }
 GLuint VasnecovUniverse::loadTextures(const QString& dirName, GLboolean withSub)
 {
-    LoadingStatus lStatus(&m_loading);
+    LoadingStatus lStatus(&_loading);
     GLuint res(0);
 
-    res = m_resourceManager->handleTexturesDir(dirName, withSub);
+    res = _resourceManager->handleTexturesDir(dirName, withSub);
 
     return res;
 }
@@ -802,33 +760,33 @@ QString VasnecovUniverse::info(GLuint type)
     switch (type)
     {
         case GL_VERSION:
-            m_techVersion.update();
-            res = m_techVersion.pure();
+            _techVersion.update();
+            res = _techVersion.pure();
             break;
         case GL_RENDERER:
-            m_techRenderer.update();
-            res = m_techRenderer.pure();
+            _techRenderer.update();
+            res = _techRenderer.pure();
             break;
 #ifndef _MSC_VER
         case GL_SHADING_LANGUAGE_VERSION:
-            m_techSL.update();
-            res = m_techSL.pure();
+            _techSL.update();
+            res = _techSL.pure();
             break;
 #endif
         case GL_EXTENSIONS:
-            m_techExtensions.update();
-            res = m_techExtensions.pure();
+            _techExtensions.update();
+            res = _techExtensions.pure();
             break;
         default:
-            m_techVersion.update();
-            m_techRenderer.update();
-            m_techSL.update();
-            m_techExtensions.update();
+            _techVersion.update();
+            _techRenderer.update();
+            _techSL.update();
+            _techExtensions.update();
 
-            res = "OpenGL " + m_techVersion.pure() +
-                  " at " + m_techRenderer.pure() +
-                  " with " + m_techSL.pure() +
-                  " and \n" + m_techExtensions.pure();
+            res = "OpenGL " + _techVersion.pure() +
+                  " at " + _techRenderer.pure() +
+                  " with " + _techSL.pure() +
+                  " and \n" + _techExtensions.pure();
             break;
     }
 
@@ -837,47 +795,42 @@ QString VasnecovUniverse::info(GLuint type)
 void VasnecovUniverse::renderInitialize()
 {
     // Инициализация состояний
-    m_pipeline.initialize();
+    _pipeline.initialize();
 
-    glGetIntegerv(GL_MAX_LIGHTS, reinterpret_cast<GLint *>(&m_lampsCountMax));
+    glGetIntegerv(GL_MAX_LIGHTS, reinterpret_cast<GLint *>(&_lampsCountMax));
 
     // Заполнение общих данных
     QString exts(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)));
     exts = exts.replace(" ", "\n");
 
     BMCL_INFO() << "OpenGL " << reinterpret_cast<const char *>(glGetString(GL_VERSION));
-    m_techRenderer.set(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
-    m_techVersion.set(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+    _techRenderer.set(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    _techVersion.set(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 #ifndef _MSC_VER
-    m_techSL.set(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    _techSL.set(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 #endif
-    m_techExtensions.set(exts);
+    _techExtensions.set(exts);
 }
 
 GLboolean VasnecovUniverse::designerRemoveThisAlienMatrix(const QMatrix4x4 *alienMs)
 {
     GLboolean res(false);
 
-    for(std::vector<VasnecovLamp *>::const_iterator lit = m_elements.rawLamps().begin();
-        lit != m_elements.rawLamps().end(); ++lit)
-    {
-        res |= (*lit)->designerRemoveThisAlienMatrix(alienMs);
-    }
-    for(std::vector<VasnecovProduct *>::const_iterator pit = m_elements.rawProducts().begin();
-        pit != m_elements.rawProducts().end(); ++pit)
-    {
-        res |= (*pit)->designerRemoveThisAlienMatrix(alienMs);
-    }
-    for(std::vector<VasnecovFigure *>::const_iterator lit = m_elements.rawFigures().begin();
-        lit != m_elements.rawFigures().end(); ++lit)
-    {
-        res |= (*lit)->designerRemoveThisAlienMatrix(alienMs);
-    }
-    for(std::vector<VasnecovLabel *>::const_iterator lit = m_elements.rawLabels().begin();
-        lit != m_elements.rawLabels().end(); ++lit)
-    {
-        res |= (*lit)->designerRemoveThisAlienMatrix(alienMs);
-    }
+    for(const auto element : _elements.rawLamps())
+        res |= element->designerRemoveThisAlienMatrix(alienMs);
+
+    for(const auto element : _elements.rawProducts())
+        res |= element->designerRemoveThisAlienMatrix(alienMs);
+
+    for(const auto element : _elements.rawFigures())
+        res |= element->designerRemoveThisAlienMatrix(alienMs);
+
+    for(const auto element : _elements.rawTerrains())
+        res |= element->designerRemoveThisAlienMatrix(alienMs);
+
+    for(const auto element : _elements.rawLabels())
+        res |= element->designerRemoveThisAlienMatrix(alienMs);
+
     return res;
 }
 
@@ -888,51 +841,52 @@ GLenum VasnecovUniverse::renderUpdateData()
     // Обновление настроек
     if(raw_data.wasUpdated)
     {
-        if(m_context.update())
+        if(_context.update())
         {
-            m_pipeline.setContext(m_context.pure());
+            _pipeline.setContext(_context.pure());
         }
 
-        m_loading.update();
-        m_backgroundColor.update();
+        _loading.update();
+        _backgroundColor.update();
     }
 
     // Обновление содержимого списков
-    wasUpdated |= m_elements.synchronizeAll();
+    wasUpdated |= _elements.synchronizeAll();
 
     if(wasUpdated)
     {
         // Обновление индексов фонарей
         GLuint index(GL_LIGHT0);
-        for(std::vector<VasnecovLamp *>::const_iterator lit = m_elements.pureLamps().begin();
-            lit != m_elements.pureLamps().end(); ++lit, ++index)
+        for(std::vector<VasnecovLamp *>::const_iterator lit = _elements.pureLamps().begin();
+            lit != _elements.pureLamps().end(); ++lit, ++index)
         {
             (*lit)->renderSetIndex(index);
         }
     }
 
-    if(m_resourceManager->renderUpdate())
+    if(_resourceManager->renderUpdate())
     {
-        glBindTexture(GL_TEXTURE_2D, m_pipeline.m_texture2D); // Возврат текущей текстуры
+        glBindTexture(GL_TEXTURE_2D, _pipeline.m_texture2D); // Возврат текущей текстуры
         wasUpdated = true;
     }
 
     // Обновление данных элементов
-    m_elements.forEachPureWorld(renderUpdateElementData<VasnecovWorld>);
-    m_elements.forEachPureMaterial(renderUpdateElementData<VasnecovMaterial>);
+    _elements.forEachPureWorld(renderUpdateElementData<VasnecovWorld>);
+    _elements.forEachPureMaterial(renderUpdateElementData<VasnecovMaterial>);
 
-    m_elements.forEachPureLamp(renderUpdateElementData<VasnecovLamp>);
-    m_elements.forEachPureProduct(renderUpdateElementData<VasnecovProduct>);
-    m_elements.forEachPureFigure(renderUpdateElementData<VasnecovFigure>);
-    m_elements.forEachPureLabel(renderUpdateElementData<VasnecovLabel>);
+    _elements.forEachPureLamp(renderUpdateElementData<VasnecovLamp>);
+    _elements.forEachPureProduct(renderUpdateElementData<VasnecovProduct>);
+    _elements.forEachPureFigure(renderUpdateElementData<VasnecovFigure>);
+    _elements.forEachPureTerrain(renderUpdateElementData<VasnecovTerrain>);
+    _elements.forEachPureLabel(renderUpdateElementData<VasnecovLabel>);
 
 
     raw_data.wasUpdated = 0;
 
-    if(m_pipeline.wasSomethingUpdated())
+    if(_pipeline.wasSomethingUpdated())
     {
         wasUpdated = true;
-        m_pipeline.clearSomethingUpdates();
+        _pipeline.clearSomethingUpdates();
     }
 
     return wasUpdated;
@@ -944,7 +898,7 @@ void VasnecovUniverse::renderDrawLoadingImage()
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluOrtho2D(0, m_width, 0, m_height); // Ортогональная проекция
+        gluOrtho2D(0, _width, 0, _height); // Ортогональная проекция
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -956,25 +910,25 @@ void VasnecovUniverse::renderDrawLoadingImage()
 #ifndef _MSC_VER
         clock_gettime(CLOCK_MONOTONIC, &tm);
 
-        diff = (tm.tv_sec - m_loadingImageTimer.tv_sec)*1e3 + (tm.tv_nsec - m_loadingImageTimer.tv_nsec)*1e-6;
+        diff = (tm.tv_sec - _loadingImageTimer.tv_sec)*1e3 + (tm.tv_nsec - _loadingImageTimer.tv_nsec)*1e-6;
         if(diff > Vasnecov::cfg_loadingImagePause * 2)
         {
-            clock_gettime(CLOCK_MONOTONIC, &m_loadingImageTimer);
-            image = &m_loadingImage0;
+            clock_gettime(CLOCK_MONOTONIC, &_loadingImageTimer);
+            image = &_loadingImage0;
         }
         else if(diff > Vasnecov::cfg_loadingImagePause)
         {
-            image = &m_loadingImage1;
+            image = &_loadingImage1;
         }
         else
         {
-            image = &m_loadingImage0;
+            image = &_loadingImage0;
         }
 #endif
         if(image && !image->isNull())
         {
-            glRasterPos2i(0.5f*m_width - image->width()*0.5f,
-                          0.5f*m_height - image->height()*0.5f);
+            glRasterPos2i(0.5f*_width - image->width()*0.5f,
+                          0.5f*_height - image->height()*0.5f);
             glDrawPixels(image->width(), image->height(), GL_BGRA_EXT, GL_UNSIGNED_BYTE, image->bits());
         }
     }
@@ -985,33 +939,33 @@ void VasnecovUniverse::renderDrawAll(GLsizei width, GLsizei height)
     renderUpdateData();
 
     {
-        m_width = width;
-        m_height = height;
+        _width = width;
+        _height = height;
 
         // Очистка экрана и т.п.
-        m_pipeline.setBackgroundColor(m_backgroundColor.pure());
-        m_pipeline.clearAll();
+        _pipeline.setBackgroundColor(_backgroundColor.pure());
+        _pipeline.clearAll();
 
         // Включение параметров
-        m_pipeline.enableBlending(true);
-        m_pipeline.enableDepth(true);
+        _pipeline.enableBlending(true);
+        _pipeline.enableDepth(true);
 
 
         // Прогонка миров по списку
-        m_elements.forEachPureWorld(VasnecovWorld::renderDrawElement<VasnecovWorld>);
+        _elements.forEachPureWorld(VasnecovWorld::renderDrawElement<VasnecovWorld>);
 
         // Возврат для отрисовки интерфейса
-        m_pipeline.setDrawingType(Vasnecov::PolygonDrawingTypeNormal);
-        m_pipeline.disableDepth(true); // Иначе Qt рисует коряво, почему-то
-        m_pipeline.enableBackFaces(true);
-        m_pipeline.enableTexture2D(0, true);
-        m_pipeline.clearZBuffer();
+        _pipeline.setDrawingType(Vasnecov::PolygonDrawingTypeNormal);
+        _pipeline.disableDepth(true); // Иначе Qt рисует коряво, почему-то
+        _pipeline.enableBackFaces(true);
+        _pipeline.enableTexture2D(0, true);
+        _pipeline.clearZBuffer();
 
-        m_pipeline.setViewport(0, 0, m_width, m_height);
+        _pipeline.setViewport(0, 0, _width, _height);
     }
 
     // Индикатор факта загрузки
-    if(m_loading.pure())
+    if(_loading.pure())
     {
         renderDrawLoadingImage();
     }
