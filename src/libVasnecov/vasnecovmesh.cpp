@@ -17,13 +17,6 @@
 #include <algorithm>
 #include "technologist.h"
 
-/*!
- \brief
-
- \fn VasnecovMesh::VasnecovMesh
- \param meshPath
- \param name
-*/
 VasnecovMesh::VasnecovMesh(const QString &meshPath, const QString &name) :
     m_type(VasnecovPipeline::Points),
     m_name(name),
@@ -42,14 +35,6 @@ VasnecovMesh::VasnecovMesh(const QString &meshPath, const QString &name) :
     m_massCenter()
 {
 }
-
-/*!
- \brief
-
- \fn VasnecovMesh::loadModel
- \param readFromMTL
- \return GLboolean
-*/
 GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
 {
     if(!m_meshPath.isEmpty())
@@ -61,15 +46,6 @@ GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
         return false;
     }
 }
-/*!
- \brief
-
- \fn VasnecovMesh::loadModel
- \param path
- \param readFromMTL
- \return GLboolean
-*/
-
 GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 {
     m_meshPath = path;
@@ -446,13 +422,6 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 
     return m_isLoaded;
 }
-
-/*!
- \brief
-
- \fn VasnecovMesh::drawModel
- \param scale
-*/
 void VasnecovMesh::drawModel(VasnecovPipeline* pipeline)
 {
     if(pipeline == nullptr)
@@ -479,12 +448,6 @@ void VasnecovMesh::drawModel(VasnecovPipeline* pipeline)
                                texts);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovMesh::drawBorderBox
-*/
 void VasnecovMesh::drawBorderBox(VasnecovPipeline* pipeline)
 {
     if(pipeline == nullptr)

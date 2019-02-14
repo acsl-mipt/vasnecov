@@ -12,13 +12,6 @@
 #include <QFile>
 #include <QSize>
 
-/*!
- \brief
-
- \fn VasnecovFigure::VasnecovFigure
- \param pipeline
- \param imya_
-*/
 VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString& name) :
     VasnecovElement(pipeline, name),
     m_type(raw_wasUpdated, Type, VasnecovPipeline::LoopLine),
@@ -28,11 +21,6 @@ VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString& name) 
     m_depth(raw_wasUpdated, Depth, true)
 {
 }
-/*!
- \brief
-
- \fn VasnecovFigure::~VasnecovFigure
-*/
 VasnecovFigure::~VasnecovFigure()
 {
 }
@@ -154,23 +142,10 @@ std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const QString& fileName
 
     return points;
 }
-
-/*!
- \brief
-
- \fn VasnecovFigure::ZadatTochki
- \param toch
-*/
 void VasnecovFigure::setPoints(const std::vector <QVector3D> &points)
 {
     m_points.set(points);
 }
-/*!
- \brief
-
- \fn VasnecovFigure::DobavitTochku
- \param toch
-*/
 void VasnecovFigure::addLastPoint(const QVector3D &point)
 {
     m_points.addLast(point);
@@ -185,11 +160,6 @@ void VasnecovFigure::replaceLastPoint(const QVector3D &point)
 {
     m_points.replaceLast(point);
 }
-/*!
- \brief
-
- \fn VasnecovFigure::OchistitTochki
-*/
 void VasnecovFigure::clearPoints()
 {
     m_points.clear();
@@ -213,13 +183,6 @@ void VasnecovFigure::replaceFirstPoint(const QVector3D &point)
 {
     m_points.replaceFirst(point);
 }
-/*!
- \brief
-
- \fn VasnecovFigure::ZadatTip
- \param tip_
- \return GLboolean
-*/
 GLboolean VasnecovFigure::setType(VasnecovFigure::Types type)
 {
     return designerSetType(type);
@@ -245,13 +208,6 @@ VasnecovFigure::Types VasnecovFigure::type() const
             return TypeUnknown;
     }
 }
-/*!
- \brief
-
- \fn VasnecovFigure::ZadatTolschinu
- \param tol_
- \return GLint
-*/
 GLint VasnecovFigure::setThickness(GLfloat thick)
 {
     if(thick >= 1.0f && thick <= 16.0f)
@@ -587,12 +543,6 @@ GLenum VasnecovFigure::renderUpdateData()
 
     return updated;
 }
-
-/*!
- \brief
-
- \fn VasnecovFigure::RisovatFiguru
-*/
 void VasnecovFigure::renderDraw()
 {
     if(!m_isHidden.pure())

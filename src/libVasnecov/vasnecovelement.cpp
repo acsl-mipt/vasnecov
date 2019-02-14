@@ -10,26 +10,6 @@
 #include "vasnecovelement.h"
 #include "technologist.h"
 
-/*!
-  \class VasnecovAbstractElement
-   \brief Абстрактный класс трехмерных элементов, задействованных в сцене.
-
-   Класс обеспечивает обозначение, позиционирование (в т.ч. числе ссылочное) и управление видимостью
-   любого объекта. От него наследуются все классы, которые описывают трёхмерный объекты.
-
-   \sa VasnecovElement
- */
-
-//--------------------------------------------------------------------------------------------------
-
-/*!
- \brief Конструктор абстрактного класса
-
- \param pipeline указатель на конвейер OpenGL
- \param name имя объекта
-
- \sa VasnecovPipeline
-*/
 VasnecovAbstractElement::VasnecovAbstractElement(VasnecovPipeline *pipeline, const QString& name) :
     Vasnecov::CoreObject(pipeline, name),
     raw_coordinates(),
@@ -44,12 +24,6 @@ VasnecovAbstractElement::VasnecovAbstractElement(VasnecovPipeline *pipeline, con
     raw_qZ = raw_qZ.fromAxisAndAngle(0.0, 0.0, 1.0, raw_angles.z());
 }
 
-/*!
- \brief
-
- \fn VasnecovAbstractElement::setCoordinates
- \param coordinates
-*/
 void VasnecovAbstractElement::setCoordinates(const QVector3D &coordinates)
 {
     if(raw_coordinates != coordinates)
@@ -58,26 +32,12 @@ void VasnecovAbstractElement::setCoordinates(const QVector3D &coordinates)
         designerUpdateMatrixMs();
     }
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::setCoordinates
- \param x
- \param y
- \param z
-*/
 void VasnecovAbstractElement::setCoordinates(GLfloat x, GLfloat y, GLfloat z)
 {
     QVector3D coordinates(x, y, z);
 
     setCoordinates(coordinates);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::incrementCoordinates
- \param increment
-*/
 void VasnecovAbstractElement::incrementCoordinates(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
@@ -86,38 +46,17 @@ void VasnecovAbstractElement::incrementCoordinates(const QVector3D &increment)
         designerUpdateMatrixMs();
     }
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::incrementCoordinates
- \param x
- \param y
- \param z
-*/
 void VasnecovAbstractElement::incrementCoordinates(GLfloat x, GLfloat y, GLfloat z)
 {
     QVector3D increment(x, y, z);
 
     incrementCoordinates(increment);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::coordinates
- \return QVector3D
-*/
 QVector3D VasnecovAbstractElement::coordinates() const
 {
     QVector3D coordinates(raw_coordinates);
     return coordinates;
 }
-
-/*!
- \brief
-
- \fn VasnecovAbstractElement::setAngles
- \param angles
-*/
 void VasnecovAbstractElement::setAngles(const QVector3D &angles)
 {
     if(raw_angles != angles)
@@ -149,26 +88,12 @@ void VasnecovAbstractElement::setAngles(const QVector3D &angles)
         }
     }
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::setAngles
- \param x
- \param y
- \param z
-*/
 void VasnecovAbstractElement::setAngles(GLfloat x, GLfloat y, GLfloat z)
 {
     QVector3D angles(x, y, z);
 
     setAngles(angles);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::incrementAngles
- \param increment
-*/
 void VasnecovAbstractElement::incrementAngles(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
@@ -200,70 +125,28 @@ void VasnecovAbstractElement::incrementAngles(const QVector3D &increment)
         }
     }
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::incrementAngles
- \param x
- \param y
- \param z
-*/
 void VasnecovAbstractElement::incrementAngles(GLfloat x, GLfloat y, GLfloat z)
 {
     QVector3D increment(x, y, z);
 
     incrementAngles(increment);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::setAnglesRad
- \param angles
-*/
 void VasnecovAbstractElement::setAnglesRad(const QVector3D &angles)
 {
     setAngles(angles.x() * c_radToDeg, angles.y() * c_radToDeg, angles.z() * c_radToDeg);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::setAnglesRad
- \param x
- \param y
- \param z
-*/
 void VasnecovAbstractElement::setAnglesRad(GLfloat x, GLfloat y, GLfloat z)
 {
     setAngles(x * c_radToDeg, y * c_radToDeg, z * c_radToDeg);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::incrementAnglesRad
- \param increment
-*/
 void VasnecovAbstractElement::incrementAnglesRad(const QVector3D &increment)
 {
     incrementAngles(increment.x() * c_radToDeg, increment.y() * c_radToDeg, increment.z() * c_radToDeg);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::incrementAnglesRad
- \param x
- \param y
- \param z
-*/
 void VasnecovAbstractElement::incrementAnglesRad(GLfloat x, GLfloat y, GLfloat z)
 {
     incrementAngles(x * c_radToDeg, y * c_radToDeg, z * c_radToDeg);
 }
-/*!
- \brief
-
- \fn VasnecovAbstractElement::angles
- \return QVector3D
-*/
 QVector3D VasnecovAbstractElement::angles() const
 {
     QVector3D angles(raw_angles);
@@ -278,10 +161,6 @@ void VasnecovAbstractElement::setPositionFromElement(const VasnecovAbstractEleme
         m_Ms.set(element->designerMatrixMs());
     }
 }
-/*!
- \brief Удаляет чужую матрицу преобразований.
-
-*/
 void VasnecovAbstractElement::detachFromOtherElement()
 {
     m_alienMs.set(nullptr);
@@ -308,12 +187,6 @@ void VasnecovAbstractElement::designerUpdateMatrixMs()
     m_Ms.set(newMatrix);
 }
 
-/*!
- \brief
-
- \fn VasnecovAbstractElement::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovAbstractElement::renderUpdateData()
 {
     GLenum updated(raw_wasUpdated);
@@ -331,15 +204,7 @@ GLenum VasnecovAbstractElement::renderUpdateData()
 
     return updated;
 }
-//==================================================================================================
 
-/*!
- \brief
-
- \fn VasnecovElement::VasnecovElement
- \param pipeline
- \param name
-*/
 VasnecovElement::VasnecovElement(VasnecovPipeline *pipeline, const QString& name) :
     VasnecovAbstractElement(pipeline, name),
     m_color(raw_wasUpdated, Color, QColor(255, 255, 255, 255)),
@@ -349,120 +214,51 @@ VasnecovElement::VasnecovElement(VasnecovPipeline *pipeline, const QString& name
     pure_distance(0.0f)
 {
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColor
- \param color
-*/
 void VasnecovElement::setColor(const QColor &color)
 {
     m_color.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColor
- \param r
- \param g
- \param b
- \param a
-*/
 void VasnecovElement::setColor(GLint r, GLint g, GLint b, GLint a)
 {
     QColor newColor;
     newColor.setRgb(r, g, b, a);
     setColor(newColor);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColorF
- \param r
- \param g
- \param b
- \param a
-*/
 void VasnecovElement::setColorF(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     QColor newColor;
     newColor.setRgbF(r, g, b, a);
     setColor(newColor);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColor
- \param rgb
-*/
 void VasnecovElement::setColor(QRgb rgb)
 {
     QColor newColor;
     newColor.setRgb(rgb);
     setColor(newColor);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColorWithAlpha
- \param rgba
-*/
 void VasnecovElement::setColorWithAlpha(QRgb rgba)
 {
     QColor newColor;
     newColor.setRgba(rgba);
     setColor(newColor);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColorAlpha
- \param alpha
-*/
 void VasnecovElement::setColorAlpha(GLint alpha)
 {
     QColor newColor(color());
     newColor.setAlpha(alpha);
     setColor(newColor);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setColorAlphaF
- \param alpha
-*/
 void VasnecovElement::setColorAlphaF(GLfloat alpha)
 {
     QColor newColor(color());
     newColor.setAlphaF(alpha);
     setColor(newColor);
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::color
- \return QColor
-*/
 QColor VasnecovElement::color() const
 {
     QColor color(m_color.raw());
     return color;
 }
-
-/*!
- \brief
-
- \fn VasnecovElement::setScale
- \param scale
-*/
 void VasnecovElement::setScale(GLfloat scale)
 {
     if(m_scale.set(scale))
@@ -470,23 +266,11 @@ void VasnecovElement::setScale(GLfloat scale)
         designerUpdateMatrixMs();
     }
 }
-/*!
- \brief
-
- \fn VasnecovElement::scale
- \return GLfloat
-*/
 GLfloat VasnecovElement::scale() const
 {
     GLfloat scale(m_scale.raw());
     return scale;
 }
-/*!
- \brief
-
- \fn VasnecovElement::isTransparency
- \return GLboolean
-*/
 GLboolean VasnecovElement::isTransparency() const
 {
     GLboolean transparency(m_isTransparency.raw());
@@ -541,12 +325,6 @@ void VasnecovElement::designerUpdateMatrixMs()
 
     m_Ms.set(newMatrix);
 }
-/*!
- \brief
-
- \fn VasnecovElement::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovElement::renderUpdateData()
 {
     GLenum updated(raw_wasUpdated);

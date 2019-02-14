@@ -12,20 +12,6 @@
 #include <QGLContext>
 #include "configuration.h"
 
-/*!
-  \class VasnecovPipeline
-  \brief Обёртка вычислительного конвейера OpenGL.
-
-  Класс управляет и контролирует состояния конвейера. По сути, является прослойкой для абстракции вызовов
-  OpenGL. Если задаваемый параметр уже имеет такое же значение, то его состояния не меняется, вызова
-  функций OpenGL не происходит.
-  */
-
-/*!
- \brief Конструктор конвейера.
-
- Производит базовые инициализации. Установка начального состония выполняется методом \a initialize()
-*/
 VasnecovPipeline::VasnecovPipeline(QGLContext* context) :
     m_context(context),
     m_backgroundColor(0, 0, 0, 255),
@@ -65,12 +51,6 @@ VasnecovPipeline::VasnecovPipeline(QGLContext* context) :
     m_activatedLamps.reserve(8); // Минимальное количество источников в OpenGL
 }
 
-/*!
- \brief Начальная инициализация состояний конвейера
-
- Выставляет определенные значения состояний вычислительного конвейера OpenGL. Данный метод должен
- быть вызван перед вызовами любых других методов конвейера.
-*/
 void VasnecovPipeline::initialize(QGLContext *context)
 {
     m_context = context;
@@ -106,14 +86,6 @@ void VasnecovPipeline::initialize(QGLContext *context)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-
-/*!
- \brief
-
- \fn VasnecovPipeline::setPerspective
- \param perspective
- \param camera
-*/
 void VasnecovPipeline::setPerspective(const Vasnecov::Perspective &perspective, const CameraAttributes &camera)
 {
     glMatrixMode(GL_PROJECTION);
@@ -126,13 +98,6 @@ void VasnecovPipeline::setPerspective(const Vasnecov::Perspective &perspective, 
 
     glMatrixMode(GL_MODELVIEW);
 }
-/*!
- \brief
-
- \fn VasnecovPipeline::setOrtho
- \param ortho
- \param camera
-*/
 void VasnecovPipeline::setOrtho(const Vasnecov::Ortho &ortho, const CameraAttributes &camera)
 {
     glMatrixMode(GL_PROJECTION);
@@ -145,13 +110,6 @@ void VasnecovPipeline::setOrtho(const Vasnecov::Ortho &ortho, const CameraAttrib
 
     glMatrixMode(GL_MODELVIEW);
 }
-
-/*!
- \brief
-
- \fn VasnecovPipeline::setPerspective
- \param perspective
-*/
 void VasnecovPipeline::setPerspective(const Vasnecov::Perspective &perspective)
 {
     glMatrixMode(GL_PROJECTION);
@@ -162,12 +120,6 @@ void VasnecovPipeline::setPerspective(const Vasnecov::Perspective &perspective)
 
     glMatrixMode(GL_MODELVIEW);
 }
-/*!
- \brief
-
- \fn VasnecovPipeline::setOrtho
- \param ortho
-*/
 void VasnecovPipeline::setOrtho(const Vasnecov::Ortho &ortho)
 {
     glMatrixMode(GL_PROJECTION);
@@ -178,20 +130,6 @@ void VasnecovPipeline::setOrtho(const Vasnecov::Ortho &ortho)
 
     glMatrixMode(GL_MODELVIEW);
 }
-
-/*!
- \brief Включает "технологический" режим двухмерной отрисовки
-
- Данный метод меняет матрицу проектирования на ортогональную для вывода непосредственно на плоскость
- экрана. Вывод осуществляется с учетом установленного окна просмотра. Глубина задается в диапазоне
- [-1; 1].
-
- Режим является технологическим, потому что предыдущая матрица проектирования сохраняется внутри конвейера
- и может быть использована в последующих вычислениях проекций. Возврат к предыдущему состоянию производится
- вызовом \a unsetOrtho2D()
-
- \sa setViewport()
-*/
 void VasnecovPipeline::setOrtho2D()
 {
     glMatrixMode(GL_PROJECTION);
@@ -208,14 +146,6 @@ void VasnecovPipeline::unsetOrtho2D()
 
     glMatrixMode(GL_MODELVIEW);
 }
-/*!
- \brief Задает положение и размер окна просмотра
-
- \param x горизонтальное положение левой нижней точки
- \param y вертикальное положение левой нижней точки
- \param width ширина окна
- \param height высота окна
-*/
 void VasnecovPipeline::setViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     m_viewX = x;
@@ -224,10 +154,6 @@ void VasnecovPipeline::setViewport(GLint x, GLint y, GLsizei width, GLsizei heig
     m_viewHeight = height;
     glViewport(m_viewX, m_viewY, m_viewWidth, m_viewHeight);
 }
-/*!
-   \brief VasnecovPipeline::setMatrixOrtho2D
-   \param MV
- */
 void VasnecovPipeline::setMatrixOrtho2D(const QMatrix4x4 &MV)
 {
     QMatrix4x4 matrix;
@@ -235,23 +161,6 @@ void VasnecovPipeline::setMatrixOrtho2D(const QMatrix4x4 &MV)
 
     glLoadMatrixf(matrix.constData());
 }
-/*!
-   \brief Вычисление проекции точки на плоскость экрана.
-
-   Принцип действия аналогичен gluProject(). Основное отличие в том, что используется фактическая
-   матрица проектирования без учета вызова метода \a setOrtho2D(). А результат
-   пересчитывается не в координаты экрана, а в координаты окна просмотра, задаваемого \a setViewport() .
-
-   Координата глубины выдаётся в диапазоне значений [-1; 1].
-
-   \param MV матрица модельно-видовых преобразований
-   \param point кординаты точки в трехмерном пространстве
-   \return QVector4D координаты точки на плоскости экрана
-
-   \sa setOrtho2D()
-   \sa setViewport()
-   \sa setMatrixOrtho2D()
- */
 QVector4D VasnecovPipeline::projectPoint(const QMatrix4x4 &MV, const QVector3D &point)
 {
     QVector4D wPoint(point);
@@ -273,12 +182,6 @@ QVector4D VasnecovPipeline::projectPoint(const QMatrix4x4 &MV, const QVector3D &
 
     return pos;
 }
-/*!
- \brief
-
- \fn VasnecovPipeline::setColor
- \param color
-*/
 void VasnecovPipeline::setColor(const QColor &color)
 {
     if(color != m_color)
@@ -287,12 +190,6 @@ void VasnecovPipeline::setColor(const QColor &color)
         glColor4f(m_color.redF(), m_color.greenF(), m_color.blueF(), m_color.alphaF());
     }
 }
-/*!
- \brief
-
- \fn VasnecovPipeline::setAmbientColor
- \param color
-*/
 void VasnecovPipeline::setAmbientColor(const QColor &color)
 {
     if(color != m_ambientColor)
@@ -306,13 +203,6 @@ void VasnecovPipeline::setAmbientColor(const QColor &color)
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovPipeline::disableAllConcreteLamps
- \param strong
-*/
 void VasnecovPipeline::disableAllConcreteLamps(GLboolean strong)
 {
     if(!strong)
@@ -332,17 +222,6 @@ void VasnecovPipeline::disableAllConcreteLamps(GLboolean strong)
         }
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovPipeline::setMaterialColors
- \param ambient
- \param diffuse
- \param specular
- \param emission
- \param shininess
-*/
 void VasnecovPipeline::setMaterialColors(const QColor &ambient, const QColor &diffuse, const QColor &specular, const QColor &emission, GLfloat shininess)
 {
     if(m_materialColoring)
@@ -391,11 +270,6 @@ void VasnecovPipeline::setMaterialColors(const QColor &ambient, const QColor &di
 
     setMaterialShininess(shininess);
 }
-/*!
- \brief
-
- \fn VasnecovPipeline::applyMaterialColors
-*/
 void VasnecovPipeline::applyMaterialColors()
 {
     // From Qt3D setMaterial()
@@ -427,13 +301,6 @@ void VasnecovPipeline::applyMaterialColors()
     glMaterialfv(m_face, GL_EMISSION, params + 12);
     glMaterialf(m_face, GL_SPECULAR, m_materialShininess);
 }
-
-/*!
- \brief
-
- \fn VasnecovPipeline::setCamera
- \param camera
-*/
 void VasnecovPipeline::setCamera(const CameraAttributes &camera)
 {
     // Преобразования камеры

@@ -20,19 +20,6 @@
 #include "vasnecovmesh.h"
 #include "vasnecovresourcemanager.h"
 
-/*!
-   \class VasnecovUniverse
-   \brief Класс Вселенной. Обеспечивает добавление и удаление объектов, контролирует их состояния.
-
-   Основной класс библиотеки. С помощью него создаются миры и элементы. Им уже удаляются. Так же
-   позволяет задавать некоторые параметры отрисовки. Ну, и конечно же, загружать внешние ресурсы. Все
-   методы, создающие объекты, возвращают указатель на этот объект в случае успеха, и ноль - в случае
-   провала. Методы удаления элементов возвращают true в случае успеха.
- */
-
-/*!
- \brief Конструктор Вселенной.
-*/
 VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, const QGLContext *context) :
     m_pipeline(),
     m_context(raw_data.wasUpdated, Context, context),
@@ -82,28 +69,10 @@ VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, con
 VasnecovUniverse::VasnecovUniverse(const QGLContext* context)
     : VasnecovUniverse(new VasnecovResourceManager(), context)
 {}
-
-/*!
- \brief
-
- \fn VasnecovUniverse::~VasnecovUniverse
-*/
 VasnecovUniverse::~VasnecovUniverse()
 {
     Q_CLEANUP_RESOURCE(vasnecov);
 }
-
-/*!
- \brief Добавление мира во Вселенную.
-
- Метод добавляет новый мир. Дальнейшее управление осуществляется через указатель на этот мир.
-
- \param posX горизонтальная позиция левой нижней точки окна мира
- \param posY вертикальная позиция левой нижней точки окна мира
- \param width ширина окна
- \param height высота окна
- \return VasnecovWorld указатель на созданный мир
-*/
 VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width, GLsizei height)
 {
     if(width > Vasnecov::cfg_worldWidthMin && width < Vasnecov::cfg_worldWidthMax &&
@@ -119,15 +88,6 @@ VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width,
     Vasnecov::problem("Неверные размеры мира");
     return nullptr;
 }
-
-/*!
- \brief Добавление источника света во Вселенную.
-
- \param name наименование источника (уникальность не требуется)
- \param world мир, в котором размещается источник
- \param type тип источника света
- \return VasnecovLamp указатель на созданный источник
-*/
 VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *world, VasnecovLamp::LampTypes type)
 {
     if(!world)
@@ -167,21 +127,6 @@ VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *worl
         return nullptr;
     }
 }
-
-/*!
- \brief Создание ссылки на источник света в другом мире.
-
- Если источник отсутствует во Вселенной или уже есть в этом мире, то метод возвращает ноль.
- При этом создаётся именно ссылка, а не копия. Благодаря чему источник изменяется извне единожды, но
- отображается в обоих мира.
-
-  Подобное поведение удобно для создания двух миров, которые описывают одно и то же пространство, но
-  отображают его с разных положений камеры, каждый в своём окне.
-
- \param lamp указатель дублируемого источника
- \param world мир. в который дублируется источник
- \return VasnecovLamp указатель на сам источник в случае успеха, ноль - в случае провала
-*/
 VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWorld *world)
 {
     if(!lamp || !world)
@@ -213,15 +158,6 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
         return nullptr;
     }
 }
-
-/*!
- \brief
-
- \param name
- \param world
- \param parent
- \return VasnecovProduct
-*/
 VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorld *world, VasnecovProduct *parent)
 {
     if(!world)
@@ -271,31 +207,10 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorl
 
     return assembly;
 }
-
-/*!
- \brief
-
- \param name
- \param world
- \param meshName
- \param parent
- \return VasnecovProduct
-*/
 VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *world, const QString& meshName, VasnecovProduct *parent)
 {
     return addPart(name, world, meshName, nullptr, parent);
 }
-
-/*!
- \brief
-
- \param name
- \param world
- \param meshName
- \param material
- \param parent
- \return VasnecovProduct
-*/
 VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *world, const QString& meshName, VasnecovMaterial *material, VasnecovProduct *parent)
 {
     if(!world)
@@ -388,17 +303,6 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
 
     return part;
 }
-
-/*!
- \brief
-
- \param name
- \param world
- \param meshName
- \param textureName
- \param parent
- \return VasnecovProduct
-*/
 VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *world, const QString& meshName, const QString& textureName, VasnecovProduct *parent)
 {
     if(!textureName.isEmpty())
@@ -410,14 +314,6 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
         return addPart(name, world, meshName, nullptr, parent);
     }
 }
-
-/*!
- \brief
-
- \param product
- \param world
- \return VasnecovProduct
-*/
 VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product, VasnecovWorld *world)
 {
     if(!product || !world)
@@ -449,20 +345,6 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
         return nullptr;
     }
 }
-
-/*!
- \brief Удаление продукта и всех дочерних продуктов.
-
- Удаляет продукт и все дочерние продукты из всех списков и аннулирует все внутренние ссылки на него.
-
- \note В зависимости от количества элементов и сложности структуры взаимных связей между элементами
- выполнение этого метода может быть ресурсоёмким. Если конечное приложение содержит больше одного управляющего
- потока, то остальные управляющие потоки будут находится в ожидании, т.к. данный метод блокирует мьютекс
- на всё время выполнения.
-
- \param product укзатель на удаляемый продукт.
- \return GLboolean true в случае успешного удаления.
-*/
 GLboolean VasnecovUniverse::removeProduct(VasnecovProduct *product)
 {
     if(!product)
@@ -598,28 +480,10 @@ GLboolean VasnecovUniverse::removeFigure(VasnecovFigure *figure)
 
     return false;
 }
-/*!
-   \brief Добавление новой метки
-
-   Поведение аналогично \a VasnecovUniverse::addLamp.
-
-   \param name наименование
-   \param world мир, в котором создаётся метка
-   \param width ширина метки
-   \param height высота метки
-   \return VasnecovLabel указатель на успешно созданную метку.
- */
 VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *world, GLfloat width, GLfloat height)
 {
     return addLabel(name, world, width, height, "");
 }
-/*!
-   \brief Перегруженная версия \a VasnecovUniverse::addLabel
-
-   Добавляет интерфейсную текстуру, заданную по имени.
-
-   \param textureName имя интерфейсной текстуры. См. \a VasnecovUniverse::loadTextures.
- */
 VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *world, GLfloat width, GLfloat height, const QString& textureName)
 {
     if(!world)
@@ -713,14 +577,6 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
         return nullptr;
     }
 }
-/*!
-   \brief Удаление метки.
-
-   Удаляет метку из всех списков и аннулирует все внутренние ссылки на неё.
-
-   \param label - указатель на метку.
-   \return true в случае успеха.
- */
 GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
 {
     if(!label)
@@ -746,13 +602,6 @@ GLboolean VasnecovUniverse::removeLabel(VasnecovLabel *label)
 
     return false;
 }
-
-/*!
- \brief
-
- \param textureName
- \return VasnecovMaterial
-*/
 VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
 {
     VasnecovTexture *texture(nullptr);
@@ -800,12 +649,6 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
         return nullptr;
     }
 }
-
-/*!
- \brief
-
- \return VasnecovMaterial
-*/
 VasnecovMaterial *VasnecovUniverse::addMaterial()
 {
     VasnecovMaterial *material = new VasnecovMaterial(&m_pipeline);
@@ -822,14 +665,6 @@ VasnecovMaterial *VasnecovUniverse::addMaterial()
         return nullptr;
     }
 }
-
-/*!
- \brief
-
- \param textureName
- \param type
- \return VasnecovTexture
-*/
 VasnecovTexture *VasnecovUniverse::textureByName(const QString& textureName, Vasnecov::TextureTypes type)
 {
     VasnecovTexture *texture(nullptr);
@@ -854,66 +689,28 @@ VasnecovTexture *VasnecovUniverse::textureByName(const QString& textureName, Vas
 
     return texture;
 }
-
-/*!
- \brief
-
- \param color
-*/
 void VasnecovUniverse::setBackgroundColor(const QColor &color)
 {
     m_backgroundColor.set(color);
 }
-/*!
- \brief
-
- \param rgb
-*/
 void VasnecovUniverse::setBackgroundColor(QRgb rgb)
 {
     QColor color(rgb);
     setBackgroundColor(color);
 }
-/*!
- \brief
-
- \param dir
- \return GLboolean
-*/
 GLboolean VasnecovUniverse::setTexturesDir(const QString& dir)
 {
     return m_resourceManager->setTexturesDir(dir);
 }
-/*!
- \brief
-
- \param dir
- \return GLboolean
-*/
 GLboolean VasnecovUniverse::setMeshesDir(const QString& dir)
 {
     return m_resourceManager->setMeshesDir(dir);
 }
-
-/*!
- \brief Загрузка всех ресурсов из всех соответствующих директорий.
-
- \note В зависимости от объема данных метод может выполняться длительное время. Поэтому имеет смысл
- вызывать его только на этапах начальной загрузки приложения.
-
-*/
 void VasnecovUniverse::loadAll()
 {
     loadMeshes();
     loadTextures();
 }
-
-/*!
- \brief
-
- \param fileName
- \return GLboolean
-*/
 GLboolean VasnecovUniverse::loadMesh(const QString& fileName)
 {
     if(fileName.isEmpty())
@@ -926,13 +723,6 @@ GLboolean VasnecovUniverse::loadMesh(const QString& fileName)
 
     return res;
 }
-/*!
- \brief
-
- \param dirName
- \param withSub
- \return GLuint
-*/
 GLuint VasnecovUniverse::loadMeshes(const QString& dirName, GLboolean withSub)
 {
     LoadingStatus lStatus(&m_loading);
@@ -942,13 +732,6 @@ GLuint VasnecovUniverse::loadMeshes(const QString& dirName, GLboolean withSub)
 
     return res;
 }
-
-/*!
- \brief
-
- \param fileName
- \return GLboolean
-*/
 GLboolean VasnecovUniverse::loadTexture(const QString& fileName)
 {
     if(fileName.isEmpty())
@@ -961,13 +744,6 @@ GLboolean VasnecovUniverse::loadTexture(const QString& fileName)
 
     return res;
 }
-/*!
- \brief
-
- \param dirName
- \param withSub
- \return GLuint
-*/
 GLuint VasnecovUniverse::loadTextures(const QString& dirName, GLboolean withSub)
 {
     LoadingStatus lStatus(&m_loading);
@@ -1017,11 +793,6 @@ QString VasnecovUniverse::info(GLuint type)
 
     return res;
 }
-
-/*!
- \brief
-
-*/
 void VasnecovUniverse::renderInitialize()
 {
     // Инициализация состояний
@@ -1125,11 +896,6 @@ GLenum VasnecovUniverse::renderUpdateData()
 
     return wasUpdated;
 }
-
-/*!
- \brief
-
-*/
 void VasnecovUniverse::renderDrawLoadingImage()
 {
     // Выводить сообщение о процессе загрузки
@@ -1172,12 +938,6 @@ void VasnecovUniverse::renderDrawLoadingImage()
         }
     }
 }
-/*!
- \brief
-
- \param width
- \param height
-*/
 void VasnecovUniverse::renderDrawAll(GLsizei width, GLsizei height)
 {
     // Обновление данных
@@ -1216,13 +976,6 @@ void VasnecovUniverse::renderDrawAll(GLsizei width, GLsizei height)
     }
 }
 
-//--------------------------------------------------------------------------------------------------
-
-/*!
- \brief
-
- \fn VasnecovUniverse::UniverseElementList::UniverseElementList
-*/
 VasnecovUniverse::UniverseElementList::UniverseElementList() :
     Vasnecov::ElementList<VasnecovUniverse::ElementFullBox>(),
     m_worlds(),

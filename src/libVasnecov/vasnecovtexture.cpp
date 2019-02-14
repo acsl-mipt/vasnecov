@@ -12,12 +12,6 @@
 #include <GL/glu.h>
 #include "technologist.h"
 
-/*!
- \brief
-
- \fn VasnecovTexture::VasnecovTexture
- \param image
-*/
 VasnecovTexture::VasnecovTexture(const QImage& image):
     m_id(0),
     m_image(image),
@@ -25,12 +19,6 @@ VasnecovTexture::VasnecovTexture(const QImage& image):
     m_isTransparency(false)
 {
 }
-
-/*!
- \brief
-
- \fn VasnecovTexture::~VasnecovTexture
-*/
 VasnecovTexture::~VasnecovTexture()
 {
     if(m_id)
@@ -38,25 +26,10 @@ VasnecovTexture::~VasnecovTexture()
         glDeleteTextures(1, &m_id);
     }
 }
-
-//--------------------------------------------------------------------------------------------------
-
-/*!
- \brief
-
- \fn VasnecovTextureDiffuse::VasnecovTextureDiffuse
- \param image
-*/
 VasnecovTextureDiffuse::VasnecovTextureDiffuse(const QImage& image) :
     VasnecovTexture(image)
 {
 }
-/*!
- \brief
-
- \fn VasnecovTextureDiffuse::loadImage
- \return GLboolean
-*/
 GLboolean VasnecovTextureDiffuse::loadImage()
 {
     if(!m_image.isNull())
@@ -89,25 +62,10 @@ GLboolean VasnecovTextureDiffuse::loadImage()
     Vasnecov::problem("Текстура не может быть загружена");
     return 0;
 }
-
-//--------------------------------------------------------------------------------------------------
-
-/*!
- \brief
-
- \fn VasnecovTextureInterface::VasnecovTextureInterface
- \param image
-*/
 VasnecovTextureInterface::VasnecovTextureInterface(const QImage& image) :
     VasnecovTexture(image)
 {
 }
-/*!
- \brief
-
- \fn VasnecovTextureInterface::loadImage
- \return GLboolean
-*/
 GLboolean VasnecovTextureInterface::loadImage()
 {
     if(!m_image.isNull())
@@ -141,15 +99,6 @@ GLboolean VasnecovTextureInterface::loadImage()
     Vasnecov::problem("Текстура не может быть загружена");
     return 0;
 }
-
-//--------------------------------------------------------------------------------------------------
-
-/*!
- \brief
-
- \fn VasnecovTextureNormal::VasnecovTextureNormal
- \param image
-*/
 VasnecovTextureNormal::VasnecovTextureNormal(const QImage& image) :
     VasnecovTextureInterface(image)
 {

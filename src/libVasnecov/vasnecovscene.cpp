@@ -11,12 +11,6 @@
 #include "vasnecovuniverse.h"
 #include <QPainter>
 
-/*!
- \brief
-
- \fn VasnecovScene::VasnecovScene
- \param parent
-*/
 VasnecovScene::VasnecovScene(QObject *parent) :
     QGraphicsScene(parent),
     m_width(0),
@@ -24,14 +18,6 @@ VasnecovScene::VasnecovScene(QObject *parent) :
     m_universe(nullptr)
 {
 }
-
-/*!
- \brief
-
- \fn VasnecovScene::drawBackground
- \param painter
- \param
-*/
 void VasnecovScene::drawBackground(QPainter *painter, const QRectF &)
 {
     m_width = painter->device()->width();
@@ -42,13 +28,6 @@ void VasnecovScene::drawBackground(QPainter *painter, const QRectF &)
         m_universe->renderDrawAll(m_width, m_height);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovScene::setUniverse
- \param universe
-*/
 void VasnecovScene::setUniverse(VasnecovUniverse *universe)
 {
     if(universe)

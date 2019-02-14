@@ -296,7 +296,6 @@ inline void VasnecovUniverse::setContext(const QGLContext *context)
     m_context.set(context);
 }
 
-//--------------------------------------------------------------------------------------------------
 template <typename T>
 VasnecovUniverse::ElementFullBox<T>::ElementFullBox() :
     m_deleting()

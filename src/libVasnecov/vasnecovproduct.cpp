@@ -12,15 +12,6 @@
 #include "vasnecovmaterial.h"
 #include "vasnecovmesh.h"
 
-/*!
- \brief
-
- \fn VasnecovProduct::VasnecovProduct
- \param pipeline
- \param type
- \param parent
- \param level
-*/
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::ProductTypes type, VasnecovProduct* parent, GLuint level) :
     VasnecovElement(pipeline),
     raw_M1(),
@@ -38,17 +29,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, VasnecovProduct::Pr
 {
     init();
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::VasnecovProduct
- \param pipeline
- \param name
- \param type
- \param parent
- \param level
-*/
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name, VasnecovProduct::ProductTypes type, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
     raw_M1(),
@@ -66,16 +46,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name
 {
     init();
 }
-/*!
- \brief
-
- \fn VasnecovProduct::VasnecovProduct
- \param pipeline
- \param name
- \param mesh
- \param parent
- \param level
-*/
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name, VasnecovMesh *mesh, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
     raw_M1(),
@@ -93,18 +63,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name
 {
     init();
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::VasnecovProduct
- \param pipeline
- \param name
- \param mesh
- \param material
- \param parent
- \param level
-*/
 VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name, VasnecovMesh *mesh, VasnecovMaterial *material, VasnecovProduct *parent, GLuint level) :
     VasnecovElement(pipeline, name),
     raw_M1(),
@@ -122,11 +80,6 @@ VasnecovProduct::VasnecovProduct(VasnecovPipeline *pipeline, const QString& name
 {
     init();
 }
-/*!
- \brief
-
- \fn VasnecovProduct::~VasnecovProduct
-*/
 VasnecovProduct::~VasnecovProduct()
 {
     /*
@@ -233,12 +186,6 @@ GLfloat VasnecovProduct::renderCalculateDistanceToPlane(const QVector3D &planePo
 
     return pure_distance;
 }
-/*!
- \brief
-
- \fn VasnecovProduct::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovProduct::renderUpdateData()
 {
     // Проверка прозрачности
@@ -277,12 +224,6 @@ GLenum VasnecovProduct::renderUpdateData()
 
     return updated;
 }
-
-/*!
- \brief Отрисовка продукта через OpenGL-конвейер.
-
- \note Отрисовщик не возвращает конвейер в исходное состояние.
-*/
 void VasnecovProduct::renderDraw()
 {
     if(!m_isHidden.pure() &&
@@ -308,14 +249,6 @@ void VasnecovProduct::renderDraw()
         m_mesh.pure()->drawModel(pure_pipeline);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::designerAddChild
- \param child
- \return GLboolean
-*/
 GLboolean VasnecovProduct::designerAddChild(VasnecovProduct *child)
 {
     GLboolean res(false);
@@ -337,14 +270,6 @@ GLboolean VasnecovProduct::designerAddChild(VasnecovProduct *child)
 
     return res;
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::designerRemoveChild
- \param child
- \return GLboolean
-*/
 GLboolean VasnecovProduct::designerRemoveChild(VasnecovProduct *child)
 {
     GLboolean res(false);
@@ -371,12 +296,6 @@ GLboolean VasnecovProduct::designerRemoveChild(VasnecovProduct *child)
 
     return res;
 }
-/*!
- \brief
-
- \fn VasnecovProduct::designerAllChildren
- \return std::vector<VasnecovProduct *>
-*/
 std::vector<VasnecovProduct *> VasnecovProduct::designerAllChildren()
 {
     std::vector<VasnecovProduct *> children;
@@ -394,12 +313,6 @@ std::vector<VasnecovProduct *> VasnecovProduct::designerAllChildren()
     }
     return children;
 }
-/*!
- \brief
-
- \fn VasnecovProduct::setMaterial
- \param material
-*/
 void VasnecovProduct::setMaterial(VasnecovMaterial *material)
 {
     if(material)
@@ -410,23 +323,11 @@ void VasnecovProduct::setMaterial(VasnecovMaterial *material)
         }
     }
 }
-/*!
- \brief
-
- \fn VasnecovProduct::material
- \return VasnecovMaterial
-*/
 VasnecovMaterial *VasnecovProduct::material() const
 {
     VasnecovMaterial * material(m_material.raw());
     return material;
 }
-/*!
- \brief
-
- \fn VasnecovProduct::setMesh
- \param mesh
-*/
 void VasnecovProduct::setMesh(VasnecovMesh *mesh)
 {
     if(mesh)
@@ -437,47 +338,21 @@ void VasnecovProduct::setMesh(VasnecovMesh *mesh)
         }
     }
 }
-/*!
- \brief
-
- \fn VasnecovProduct::mesh
- \return VasnecovMesh
-*/
 VasnecovMesh *VasnecovProduct::mesh() const
 {
     VasnecovMesh *mesh(m_mesh.raw());
     return mesh;
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::level
- \return GLuint
-*/
 GLuint VasnecovProduct::level() const
 {
     GLuint level(m_level.raw());
     return level;
 }
-/*!
- \brief
-
- \fn VasnecovProduct::type
- \return VasnecovProduct::ProductTypes
-*/
 VasnecovProduct::ProductTypes VasnecovProduct::type() const
 {
     VasnecovProduct::ProductTypes type(m_type.raw());
     return type;
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::parent
- \return VasnecovProduct
-*/
 VasnecovProduct *VasnecovProduct::parent() const
 {
     VasnecovProduct *parent(m_parent.raw());
@@ -500,25 +375,11 @@ void VasnecovProduct::changeParent(VasnecovProduct *newParent)
         designerSetMatrixM1Recursively(QMatrix4x4());
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::children
- \return std::vector<VasnecovProduct *>
-*/
 std::vector<VasnecovProduct *> VasnecovProduct::children() const
 {
     std::vector<VasnecovProduct *> children(m_children.raw());
     return children;
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::setColor
- \param color
-*/
 void VasnecovProduct::setColor(const QColor &color)
 {
     if(m_color.raw() != color)
@@ -526,12 +387,6 @@ void VasnecovProduct::setColor(const QColor &color)
         designerSetColorRecursively(color);
     }
 }
-/*!
- \brief
-
- \fn VasnecovProduct::setCoordinates
- \param coordinates
-*/
 void VasnecovProduct::setCoordinates(const QVector3D &coordinates)
 {
     if(raw_coordinates != coordinates)
@@ -542,13 +397,6 @@ void VasnecovProduct::setCoordinates(const QVector3D &coordinates)
         designerUpdateChildrenMatrix();
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::incrementCoordinates
- \param increment
-*/
 void VasnecovProduct::incrementCoordinates(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
@@ -559,24 +407,11 @@ void VasnecovProduct::incrementCoordinates(const QVector3D &increment)
         designerUpdateChildrenMatrix();
     }
 }
-/*!
- \brief
-
- \fn VasnecovProduct::globalCoordinates
- \return QVector3D
-*/
 QVector3D VasnecovProduct::globalCoordinates()
 {
     QVector3D coordinates(m_Ms.raw()(0, 3), m_Ms.raw()(1, 3), m_Ms.raw()(2, 3));
     return coordinates;
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::setAngles
- \param angles
-*/
 void VasnecovProduct::setAngles(const QVector3D &angles)
 {
     if(raw_angles != angles)
@@ -609,13 +444,6 @@ void VasnecovProduct::setAngles(const QVector3D &angles)
         }
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::incrementAngles
- \param increment
-*/
 void VasnecovProduct::incrementAngles(const QVector3D &increment)
 {
     if(increment.x() != 0.0f || increment.y() != 0.0f || increment.z() != 0.0f)
@@ -648,13 +476,6 @@ void VasnecovProduct::incrementAngles(const QVector3D &increment)
         }
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::setScale
- \param scale
-*/
 void VasnecovProduct::setScale(GLfloat scale)
 {
     if(m_scale.set(scale))
@@ -663,13 +484,6 @@ void VasnecovProduct::setScale(GLfloat scale)
         designerUpdateChildrenMatrix();
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::designerSetMatrixM1
- \param M1
-*/
 void VasnecovProduct::designerSetMatrixM1(const QMatrix4x4 &M1)
 {
     if(raw_M1 != M1)
@@ -677,13 +491,6 @@ void VasnecovProduct::designerSetMatrixM1(const QMatrix4x4 &M1)
         designerSetMatrixM1Recursively(M1);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::designerSetColorRecursively
- \param color
-*/
 void VasnecovProduct::designerSetColorRecursively(const QColor &color)
 {
     m_color.set(color);
@@ -702,11 +509,6 @@ void VasnecovProduct::designerSetColorRecursively(const QColor &color)
         m_material.raw()->designerSetAmbientAndDiffuseColor(color);
     }
 }
-/*!
- \brief
-
- \fn VasnecovProduct::designerUpdateChildrenMatrix
-*/
 void VasnecovProduct::designerUpdateChildrenMatrix()
 {
     if(!m_children.raw().empty())
@@ -720,13 +522,6 @@ void VasnecovProduct::designerUpdateChildrenMatrix()
         }
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovProduct::designerSetMatrixM1Recursively
- \param M1
-*/
 void VasnecovProduct::designerSetMatrixM1Recursively(const QMatrix4x4 &M1)
 {
     designerUpdateMatrixM1(M1);

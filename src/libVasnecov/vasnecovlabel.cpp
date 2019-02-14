@@ -11,15 +11,6 @@
 #include <QImage>
 #include "vasnecovtexture.h"
 
-/*!
- \brief
-
- \fn VasnecovLabel::VasnecovLabel
- \param pipeline
- \param name
- \param size
- \param texture
-*/
 VasnecovLabel::VasnecovLabel(VasnecovPipeline *pipeline, const QString& name, const QVector2D &size, VasnecovTexture* texture) :
     VasnecovElement(pipeline, name),
     m_position(size.x() * 0.5f, size.y() * 0.5f),
@@ -48,25 +39,10 @@ VasnecovLabel::VasnecovLabel(VasnecovPipeline *pipeline, const QString& name, co
     m_indices[4] = 3;
     m_indices[5] = 0;
 }
-/*!
- \brief
-
- \fn VasnecovLabel::~VasnecovLabel
-*/
 VasnecovLabel::~VasnecovLabel()
 {
     updaterRemoveOldPersonalTexture();
 }
-
-/*!
- \brief
-
- \fn VasnecovLabel::setTextureZone
- \param x
- \param y
- \param width
- \param height
-*/
 void VasnecovLabel::setTextureZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
     if(raw_dataLabel.texturePoint != QVector2D(x ,y) ||
@@ -88,14 +64,6 @@ void VasnecovLabel::setTextureZone(GLfloat x, GLfloat y, GLfloat width, GLfloat 
         updaterSetUpdateFlag(Zone);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovLabel::setTexture
- \param texture
- \return GLboolean
-*/
 GLboolean VasnecovLabel::setTexture(VasnecovTexture *texture)
 {
     if(texture)
@@ -109,18 +77,6 @@ GLboolean VasnecovLabel::setTexture(VasnecovTexture *texture)
     }
     return false;
 }
-
-/*!
- \brief
-
- \fn VasnecovLabel::setTexture
- \param texture
- \param x
- \param y
- \param width
- \param height
- \return GLboolean
-*/
 GLboolean VasnecovLabel::setTexture(VasnecovTexture *texture, GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
     if(setTexture(texture))
@@ -130,13 +86,6 @@ GLboolean VasnecovLabel::setTexture(VasnecovTexture *texture, GLfloat x, GLfloat
     }
     return false;
 }
-/*!
- \brief
-
- \fn VasnecovLabel::setImage
- \param image
- \return GLboolean
-*/
 GLboolean VasnecovLabel::setImage(const QImage &image)
 {
     if(!image.isNull())
@@ -153,17 +102,6 @@ GLboolean VasnecovLabel::setImage(const QImage &image)
     }
     return false;
 }
-/*!
- \brief
-
- \fn VasnecovLabel::setImage
- \param image
- \param x
- \param y
- \param width
- \param height
- \return GLboolean
-*/
 GLboolean VasnecovLabel::setImage(const QImage &image, GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
     if(setImage(image))
@@ -173,13 +111,6 @@ GLboolean VasnecovLabel::setImage(const QImage &image, GLfloat x, GLfloat y, GLf
     }
     return false;
 }
-
-/*!
- \brief Обновляет зону текстуры, которая накладывается на полигон.
-
-  Положение отсчитывается из левой нижней точки текстуры по правой тройке.
-
-*/
 bool VasnecovLabel::updaterCalculateTexturePosition()
 {
     if(m_texture)
@@ -223,13 +154,6 @@ bool VasnecovLabel::updaterCalculateTexturePosition()
 
     return true;
 }
-
-/*!
- \brief
-
- \fn VasnecovLabel::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovLabel::renderUpdateData()
 {
     GLenum updated(false);
@@ -292,11 +216,6 @@ GLenum VasnecovLabel::renderUpdateData()
 
     return updated;
 }
-/*!
- \brief
-
- \fn VasnecovLabel::renderDraw
-*/
 void VasnecovLabel::renderDraw()
 {
     if(!m_isHidden.pure() && m_texture)

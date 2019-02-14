@@ -178,7 +178,6 @@ inline const QMatrix4x4 &VasnecovAbstractElement::renderMatrixMs() const
     return m_Ms.pure();
 }
 
-//--------------------------------------------------------------------------------------------------
 inline GLfloat VasnecovElement::renderDistance() const
 {
     return pure_distance;

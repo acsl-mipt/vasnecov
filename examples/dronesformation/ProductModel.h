@@ -80,8 +80,6 @@ private:
     Q_DISABLE_COPY(ProductModel)
 };
 
-//--------------------------------------------------------------------------------------------------
-
 inline void EmptyModel::setTools(VasnecovUniverse *universe, VasnecovWorld *world)
 {
     _universe = universe;

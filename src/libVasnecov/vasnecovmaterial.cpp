@@ -10,12 +10,6 @@
 #include "vasnecovmaterial.h"
 #include "vasnecovpipeline.h"
 
-/*!
- \brief
-
- \fn VasnecovMaterial::VasnecovMaterial
- \param pipeline
-*/
 VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
                                    const QString &name) :
     Vasnecov::CoreObject(pipeline, name),
@@ -37,14 +31,6 @@ VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
 //	m_diffuseColor.set(c);
 }
 
-/*!
- \brief
-
- \fn VasnecovMaterial::VasnecovMaterial
- \param pipeline
- \param textureD
- \param textureN
-*/
 VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
                                    VasnecovTexture *textureD,
                                    VasnecovTexture *textureN,
@@ -61,181 +47,75 @@ VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
 {
 }
 
-/*!
- \brief
-
- \fn VasnecovMaterial::setTextureD
- \param textureD
-*/
 void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 {
     m_textureD.set(textureD);
 }
 
-/*!
- \brief
-
- \fn VasnecovMaterial::textureD
- \return VasnecovTexture
-*/
 VasnecovTexture *VasnecovMaterial::textureD() const
 {
     VasnecovTexture *texture(m_textureD.raw());
     return texture;
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::setTextureN
- \param textureN
-*/
 void VasnecovMaterial::setTextureN(VasnecovTexture *textureN)
 {
     m_textureN.set(textureN);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::textureN
- \return VasnecovTexture
-*/
 VasnecovTexture *VasnecovMaterial::textureN() const
 {
     VasnecovTexture *texture(m_textureN.raw());
     return texture;
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::setAmbientColor
- \param color
-*/
 void VasnecovMaterial::setAmbientColor(const QColor &color)
 {
     m_ambientColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::setDiffuseColor
- \param color
-*/
 void VasnecovMaterial::setDiffuseColor(const QColor &color)
 {
     m_diffuseColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::setSpecularColor
- \param color
-*/
 void VasnecovMaterial::setSpecularColor(const QColor &color)
 {
     m_specularColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::setEmissionColor
- \param color
-*/
 void VasnecovMaterial::setEmissionColor(const QColor &color)
 {
     m_emissionColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::setShininess
- \param shininess
-*/
 void VasnecovMaterial::setShininess(GLfloat shininess)
 {
     m_shininess.set(shininess);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::ambientColor
- \return QColor
-*/
 QColor VasnecovMaterial::ambientColor() const
 {
     QColor color(m_ambientColor.raw());
     return color;
 }
-/*!
- \brief
-
- \fn VasnecovMaterial::diffuseColor
- \return QColor
-*/
 QColor VasnecovMaterial::diffuseColor() const
 {
     QColor color(m_diffuseColor.raw());
     return color;
 }
-/*!
- \brief
-
- \fn VasnecovMaterial::specularColor
- \return QColor
-*/
 QColor VasnecovMaterial::specularColor() const
 {
     QColor color(m_specularColor.raw());
     return color;
 }
-/*!
- \brief
-
- \fn VasnecovMaterial::emissionColor
- \return QColor
-*/
 QColor VasnecovMaterial::emissionColor() const
 {
     QColor color(m_emissionColor.raw());
     return color;
 }
-/*!
- \brief
-
- \fn VasnecovMaterial::shininess
- \return GLfloat
-*/
 GLfloat VasnecovMaterial::shininess() const
 {
     GLfloat shininess(m_shininess.raw());
     return shininess;
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::designerSetAmbientAndDiffuseColor
- \param color
-*/
 void VasnecovMaterial::designerSetAmbientAndDiffuseColor(const QColor &color)
 {
     m_ambientColor.set(color);
     m_diffuseColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovMaterial::renderUpdateData()
 {
     GLenum updated(raw_wasUpdated);
@@ -259,12 +139,6 @@ GLenum VasnecovMaterial::renderUpdateData()
 
     return updated;
 }
-
-/*!
- \brief
-
- \fn VasnecovMaterial::renderDraw
-*/
 void VasnecovMaterial::renderDraw()
 {
     pure_pipeline->setMaterialColors(m_ambientColor.pure(),

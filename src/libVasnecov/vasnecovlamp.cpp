@@ -9,15 +9,6 @@
 
 #include "vasnecovlamp.h"
 
-/*!
- \brief
-
- \fn VasnecovLamp::VasnecovLamp
- \param pipeline
- \param name
- \param type
- \param index
-*/
 VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, VasnecovLamp::LampTypes type, GLuint index) :
     VasnecovAbstractElement(pipeline, name),
     m_type(raw_wasUpdated, Type, type),
@@ -44,82 +35,32 @@ VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, Vasn
         designerUpdateMatrixMs();
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setType
- \param type
-*/
 void VasnecovLamp::setType(LampTypes type)
 {
     m_type.set(type);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setCelestialDirection
- \param direction
-*/
 void VasnecovLamp::setCelestialDirection(const QVector3D &direction)
 {
     setType(LampTypeCelestial);
     setCoordinates(direction);
 }
-/*!
- \brief
-
- \fn VasnecovLamp::setCelestialDirection
- \param x
- \param y
- \param z
-*/
 void VasnecovLamp::setCelestialDirection(GLfloat x, GLfloat y, GLfloat z)
 {
     setType(LampTypeCelestial);
     setCoordinates(x, y, z);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setAmbientColor
- \param color
-*/
 void VasnecovLamp::setAmbientColor(const QColor &color)
 {
     m_ambientColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setDiffuseColor
- \param color
-*/
 void VasnecovLamp::setDiffuseColor(const QColor &color)
 {
     m_diffuseColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setSpecularColor
- \param color
-*/
 void VasnecovLamp::setSpecularColor(const QColor &color)
 {
     m_specularColor.set(color);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setSpotDirection
- \param direction
-*/
 void VasnecovLamp::setSpotDirection(const QVector3D &direction)
 {
     if(m_spotDirection.set(direction))
@@ -127,13 +68,6 @@ void VasnecovLamp::setSpotDirection(const QVector3D &direction)
         m_type.set(LampTypeHeadlight);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setSpotExponent
- \param exponent
-*/
 void VasnecovLamp::setSpotExponent(GLfloat exponent)
 {
     if(m_spotExponent.set(exponent))
@@ -141,13 +75,6 @@ void VasnecovLamp::setSpotExponent(GLfloat exponent)
         m_type.set(LampTypeHeadlight);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setSpotAngle
- \param angle
-*/
 void VasnecovLamp::setSpotAngle(GLfloat angle)
 {
     if(m_spotAngle.set(angle))
@@ -164,45 +91,18 @@ void VasnecovLamp::setSpotAngle(GLfloat angle)
         m_type.set(LampTypeHeadlight);
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setConstantAttenuation
- \param attenuation
-*/
 void VasnecovLamp::setConstantAttenuation(GLfloat attenuation)
 {
     m_constantAttenuation.set(attenuation);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setLinearAttenuation
- \param attenuation
-*/
 void VasnecovLamp::setLinearAttenuation(GLfloat attenuation)
 {
     m_linearAttenuation.set(attenuation);
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::setQuadraticAttenuation
- \param attenuation
-*/
 void VasnecovLamp::setQuadraticAttenuation(GLfloat attenuation)
 {
     m_quadraticAttenuation.set(attenuation);
 }
-/*!
- \brief
-
- \fn VasnecovLamp::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovLamp::renderUpdateData()
 {
     GLenum updated(raw_wasUpdated);
@@ -232,12 +132,6 @@ GLenum VasnecovLamp::renderUpdateData()
 
     return updated;
 }
-
-/*!
- \brief
-
- \fn VasnecovLamp::renderDraw
-*/
 void VasnecovLamp::renderDraw()
 {
     if(!m_isHidden.pure())

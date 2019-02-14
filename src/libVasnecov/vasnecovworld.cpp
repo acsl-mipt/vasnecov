@@ -17,16 +17,6 @@
 #include <QSize>
 #include <QRect>
 
-/*!
- \brief
-
- \fn VasnecovWorld::VasnecovWorld
- \param pipeline
- \param mx
- \param my
- \param width
- \param height
-*/
 VasnecovWorld::VasnecovWorld(VasnecovPipeline* pipeline,
                              GLint mx, GLint my,
                              GLsizei width, GLsizei height,
@@ -53,21 +43,9 @@ VasnecovWorld::VasnecovWorld(VasnecovPipeline* pipeline,
 
     renderUpdateData();
 }
-/*!
- \brief
-
- \fn VasnecovWorld::~VasnecovWorld
-*/
 VasnecovWorld::~VasnecovWorld()
 {
 }
-
-/*!
- \brief Обновление данных для ортогональной проекции.
-
- Составляется матрица проектирования для ортогональной проекции, основанная на матрице перспективной
- проекции и положению камеры. Камера нужна для определения передней/задней ограничивающих плоскостей.
-*/
 void VasnecovWorld::designerUpdateOrtho()
 {
     // Ортогональная проекция (по данным перспективной и положению камеры)
@@ -90,14 +68,6 @@ void VasnecovWorld::designerUpdateOrtho()
 
     m_ortho.set(ortho);
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::setCameraAngles
- \param yaw
- \param pitch
-*/
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
 {
     QVector3D vec(1.0, 0.0, 0.0); // Единичный вектор по направлению X
@@ -117,14 +87,6 @@ void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch)
         designerUpdateOrtho();
     }
 }
-/*!
- \brief
-
- \fn VasnecovWorld::setCameraAngles
- \param yaw
- \param pitch
- \param roll
-*/
 void VasnecovWorld::setCameraAngles(GLfloat yaw, GLfloat pitch, GLfloat roll)
 {
     if(m_camera.raw().roll() != roll)
@@ -298,13 +260,6 @@ void VasnecovWorld::tiltCamera(GLfloat roll)
         designerUpdateOrtho();
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::renderUpdateData
- \return GLenum
-*/
 GLenum VasnecovWorld::renderUpdateData()
 {
     GLenum updated(0);
@@ -328,12 +283,6 @@ GLenum VasnecovWorld::renderUpdateData()
     }
     return updated;
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::renderDraw
-*/
 void VasnecovWorld::renderDraw()
 {
     if(!m_isHidden.pure())
@@ -547,13 +496,6 @@ void VasnecovWorld::renderDraw()
         }
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::worldParameters
- \return Vasnecov::WorldParameters
-*/
 Vasnecov::WorldParameters VasnecovWorld::worldParameters() const
 {
     Vasnecov::WorldParameters parameters(m_parameters.raw());
@@ -590,12 +532,6 @@ QSize VasnecovWorld::size() const
 {
     return QSize(m_parameters.raw().width(), m_parameters.raw().height());
 }
-/*!
- \brief
-
- \fn VasnecovWorld::window
- \return QRect прямоугольник окна, где x, y - координата левой нижней точки (в отличие от Qt)
-*/
 QRect VasnecovWorld::window() const
 {
     return QRect(m_parameters.raw().x(),
@@ -603,12 +539,6 @@ QRect VasnecovWorld::window() const
                  m_parameters.raw().width(),
                  m_parameters.raw().height());
 }
-/*!
- \brief
-
- \fn VasnecovWorld::setDrawingType
- \param type
-*/
 void VasnecovWorld::setDrawingType(Vasnecov::PolygonDrawingTypes type)
 {
     if(m_parameters.raw().drawingType() != type)
@@ -625,14 +555,6 @@ void VasnecovWorld::setCameraPosition(const QVector3D &position)
         designerUpdateOrtho();
     }
 }
-/*!
- \brief
-
- \fn VasnecovWorld::setCameraPosition
- \param x
- \param y
- \param z
-*/
 void VasnecovWorld::setCameraPosition(GLfloat x, GLfloat y, GLfloat z)
 {
     setCameraPosition(QVector3D(x, y, z));
@@ -645,36 +567,15 @@ void VasnecovWorld::setCameraTarget(const QVector3D &target)
         designerUpdateOrtho();
     }
 }
-/*!
- \brief
-
- \fn VasnecovWorld::setCameraTarget
- \param x
- \param y
- \param z
-*/
 void VasnecovWorld::setCameraTarget(GLfloat x, GLfloat y, GLfloat z)
 {
     setCameraTarget(QVector3D(x, y, z));
 }
-/*!
- \brief
-
- \fn VasnecovWorld::setCamera
- \param camera
-*/
 void VasnecovWorld::setCamera(const Vasnecov::Camera &camera)
 {
     if(m_camera.set(camera))
         designerUpdateOrtho(); // т.к. изменяется расстояние между фронтальными границами
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::Camera
- \return Vasnecov::Camera
-*/
 Vasnecov::Camera VasnecovWorld::camera() const
 {
     Vasnecov::Camera camera(m_camera.raw());
@@ -720,37 +621,16 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 
     return Vasnecov::Line();
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::perspective
- \return Vasnecov::Perspective
-*/
 Vasnecov::Perspective VasnecovWorld::perspective() const
 {
     Vasnecov::Perspective perspective(m_perspective.raw());
     return perspective;
 }
-/*!
- \brief
-
- \fn VasnecovWorld::ortho
- \return Vasnecov::Ortho
-*/
 Vasnecov::Ortho VasnecovWorld::ortho() const
 {
     Vasnecov::Ortho orto(m_ortho.raw());
     return orto;
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::setProjection
- \param type
- \return GLboolean
-*/
 GLboolean VasnecovWorld::setProjection(Vasnecov::WorldTypes type)
 {
     if(type == Vasnecov::WorldTypePerspective || type == Vasnecov::WorldTypeOrthographic)
@@ -766,16 +646,6 @@ GLboolean VasnecovWorld::setProjection(Vasnecov::WorldTypes type)
         return 0;
     }
 }
-/*!
- \brief
-
- \fn VasnecovWorld::setWindow
- \param x
- \param y
- \param width
- \param height
- \return GLboolean
-*/
 GLboolean VasnecovWorld::setWindow(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     if(width > Vasnecov::cfg_worldWidthMin && width < Vasnecov::cfg_worldWidthMax &&
@@ -824,14 +694,6 @@ GLboolean VasnecovWorld::setWindow(GLint x, GLint y, GLsizei width, GLsizei heig
         return 0;
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::setParameters
- \param parameters
- \return GLboolean
-*/
 GLboolean VasnecovWorld::setParameters(Vasnecov::WorldParameters parameters) // TODO: to different parameters
 {
     if(parameters.width() > Vasnecov::cfg_worldWidthMin && parameters.width() < Vasnecov::cfg_worldWidthMax &&
@@ -859,16 +721,6 @@ GLboolean VasnecovWorld::setParameters(Vasnecov::WorldParameters parameters) // 
         return 0;
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::setPerspective
- \param angle
- \param frontBorder
- \param backBorder
- \return GLboolean
-*/
 GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfloat backBorder)
 {
     if((angle > 0.0f && angle < 180.0f) && frontBorder > 0.0f)
@@ -903,22 +755,11 @@ GLboolean VasnecovWorld::setPerspective(GLfloat angle, GLfloat frontBorder, GLfl
         return 0;
     }
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::setDepth
-*/
 void VasnecovWorld::setDepth()
 {
     if(!m_parameters.raw().depth())
         m_parameters.editableRaw().setDepth(true);
 }
-/*!
- \brief
-
- \fn VasnecovWorld::unsetDepth
-*/
 void VasnecovWorld::unsetDepth()
 {
     if(m_parameters.raw().depth())
@@ -934,22 +775,11 @@ void VasnecovWorld::switchDepth()
 {
     m_parameters.editableRaw().setDepth(!m_parameters.raw().depth());
 }
-
-/*!
- \brief
-
- \fn VasnecovWorld::setLight
-*/
 void VasnecovWorld::setLight()
 {
     if(!m_parameters.raw().light())
         m_parameters.editableRaw().setLight(true);
 }
-/*!
- \brief
-
- \fn VasnecovWorld::unsetLight
-*/
 void VasnecovWorld::unsetLight()
 {
     if(m_parameters.editableRaw().light())
