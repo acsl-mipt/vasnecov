@@ -14,6 +14,12 @@
 class VasnecovTerrain : public VasnecovElement
 {
 public:
+    enum Types
+    {
+        TypeLines = 0,
+        TypeTriangles
+    };
+
     VasnecovTerrain(VasnecovPipeline* pipeline, const QString& name = QString());
     ~VasnecovTerrain();
 
@@ -21,10 +27,15 @@ public:
     void clearPoints();
     GLuint pointsAmount() const;
 
+    void setType(Types type);
+
 protected:
     void renderDraw();
 
 private:
+    void updateIndices();
+
+    Types                               _type;
     std::vector<QVector3D>              _points;
     std::vector<QVector3D>              _colors;
     std::vector<std::vector<GLuint>>    _indices;

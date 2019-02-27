@@ -13,15 +13,15 @@
 #include <QSize>
 #include <cmath>
 
-VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name) :
-    VasnecovElement(pipeline, name)
+VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name)
+    : VasnecovElement(pipeline, name)
+    , _type(TypeLines)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {}
 
 void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std::vector<QVector3D>& colors)
 {
-    _indices.clear();
     _points = points;
     if(colors.size() == points.size())
         _colors = colors;
@@ -31,33 +31,7 @@ void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std
     if(_points.empty())
         return;
 
-    size_t lineSize = std::sqrt(_points.size());
-    if((lineSize * lineSize) != _points.size())
-    {
-        _points.clear();
-        Vasnecov::problem("Terrain is not squad");
-        return;
-    }
-
-    _indices.reserve(lineSize * lineSize * 2);
-    // Horizontal (X)
-    for(size_t i = 0; i < lineSize; ++i)
-    {
-        _indices.push_back(std::vector<GLuint>());
-        for(size_t j = 0; j < lineSize; ++j)
-        {
-            _indices.back().push_back(j + i * lineSize);
-        }
-    }
-    // Vertical (Y)
-    for(size_t i = 0; i < lineSize; ++i)
-    {
-        _indices.push_back(std::vector<GLuint>());
-        for(size_t j = 0; j < lineSize; ++j)
-        {
-            _indices.back().push_back(j * lineSize + i);
-        }
-    }
+    updateIndices();
 }
 
 void VasnecovTerrain::clearPoints()
@@ -68,6 +42,15 @@ void VasnecovTerrain::clearPoints()
 GLuint VasnecovTerrain::pointsAmount() const
 {
     return _points.size();
+}
+
+void VasnecovTerrain::setType(VasnecovTerrain::Types type)
+{
+    if(type == _type)
+        return;
+
+    _type = type;
+    updateIndices();
 }
 
 void VasnecovTerrain::renderDraw()
@@ -88,5 +71,45 @@ void VasnecovTerrain::renderDraw()
                                     nullptr,
                                     nullptr,
                                     &_colors);
+    }
+}
+
+void VasnecovTerrain::updateIndices()
+{
+    _indices.clear();
+
+    size_t lineSize = std::sqrt(_points.size());
+    if((lineSize * lineSize) != _points.size())
+    {
+        _points.clear();
+        Vasnecov::problem("Terrain is not squad");
+        return;
+    }
+
+    if(_type == TypeLines)
+    {
+        _indices.reserve(lineSize * lineSize * 2);
+        // Horizontal (X)
+        for(size_t i = 0; i < lineSize; ++i)
+        {
+            _indices.push_back(std::vector<GLuint>());
+            for(size_t j = 0; j < lineSize; ++j)
+            {
+                _indices.back().push_back(j + i * lineSize);
+            }
+        }
+        // Vertical (Y)
+        for(size_t i = 0; i < lineSize; ++i)
+        {
+            _indices.push_back(std::vector<GLuint>());
+            for(size_t j = 0; j < lineSize; ++j)
+            {
+                _indices.back().push_back(j * lineSize + i);
+            }
+        }
+    }
+    else if (_type == TypeTriangles)
+    {
+
     }
 }
