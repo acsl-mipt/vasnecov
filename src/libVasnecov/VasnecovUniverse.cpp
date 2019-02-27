@@ -54,7 +54,7 @@ VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, con
     if(!_loadingImage0.load(":/share/loading0.png") ||
        !_loadingImage1.load(":/share/loading1.png"))
     {
-        Vasnecov::problem("Не загрузилась иконка предзагрузки");
+        Vasnecov::problem("Can't load loading image");
     }
     if(!_loadingImage0.isNull())
     {
@@ -67,7 +67,7 @@ VasnecovUniverse::VasnecovUniverse(VasnecovResourceManager* resourceManager, con
 #ifndef _MSC_VER
     if(clock_gettime(CLOCK_MONOTONIC, &_loadingImageTimer) < 0)
     {
-        Vasnecov::problem("Проблемы с таймером картинки загрузки");
+        Vasnecov::problem("Problems with loading image timer");
     }
 #endif
 }
@@ -91,14 +91,14 @@ VasnecovWorld *VasnecovUniverse::addWorld(GLint posX, GLint posY, GLsizei width,
         return newWorld;
     }
 
-    Vasnecov::problem("Неверные размеры мира");
+    Vasnecov::problem("Incorrect world size");
     return nullptr;
 }
 VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *world, Vasnecov::LampTypes type)
 {
     if(!world)
     {
-        Vasnecov::problem("Мир не задан");
+        Vasnecov::problem("World is not set");
         return nullptr;
     }
 
@@ -107,7 +107,7 @@ VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *worl
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан неверно");
+        Vasnecov::problem("World is set incorrectly");
         return nullptr;
     }
     size_t count = _elements.rawLampsCount();
@@ -129,7 +129,7 @@ VasnecovLamp *VasnecovUniverse::addLamp(const QString& name, VasnecovWorld *worl
         delete lamp;
         lamp = nullptr;
 
-        Vasnecov::problem("Неверный фонарь либо дублирование данных");
+        Vasnecov::problem("Incorrect lamp or data duplication");
         return nullptr;
     }
 }
@@ -137,20 +137,20 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
 {
     if(!lamp || !world)
     {
-        Vasnecov::problem("Фонарь или мир не заданы");
+        Vasnecov::problem("Lamp or world is incorrect");
         return nullptr;
     }
 
     // Поиск фонаря в общем списке
     if(!_elements.findRawElement(lamp))
     {
-        Vasnecov::problem("Заданный фонарь не найден");
+        Vasnecov::problem("Lamp is not found");
         return nullptr;
     }
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан неверно");
+        Vasnecov::problem("Wrong world");
         return nullptr;
     }
 
@@ -160,7 +160,7 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
     }
     else
     {
-        Vasnecov::problem("Неверный фонарь либо дублирование данных");
+        Vasnecov::problem("Incorrect lamp or data duplicating");
         return nullptr;
     }
 }
@@ -168,7 +168,7 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorl
 {
     if(!world)
     {
-        Vasnecov::problem("Мир не задан");
+        Vasnecov::problem("World is not set");
         return nullptr;
     }
 
@@ -178,7 +178,7 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorl
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан неверно");
+        Vasnecov::problem("Wrong world");
         return nullptr;
     }
 
@@ -189,13 +189,13 @@ VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorl
             level = parent->designerLevel() + 1;
             if(level > Vasnecov::cfg_elementMaxLevel)
             {
-                Vasnecov::problem("Превышен максимальный уровень вложенности изделия");
+                Vasnecov::problem("Maximum nesting level is exceeded");
                 return nullptr;
             }
         }
         else
         {
-            Vasnecov::problem("Родительский узел не найден");
+            Vasnecov::problem("Parent node is not found");
             return nullptr;
         }
     }
@@ -221,7 +221,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
 {
     if(!world)
     {
-        Vasnecov::problem("Мир не задан");
+        Vasnecov::problem("World is not set");
         return nullptr;
     }
 
@@ -242,7 +242,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
             // Метод загрузки сам управляет мьютексом
             if(!_resourceManager->loadMeshFile(corMeshName))
             {
-                Vasnecov::problem("Не найден заданный меш");
+                Vasnecov::problem("Mesh is not found");
                 return nullptr;
             }
 
@@ -251,21 +251,21 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
             if(!mesh)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Не найден заданный меш");
+                Vasnecov::problem("Mesh is not found");
                 return nullptr;
             }
         }
     }
     else
     {
-        Vasnecov::problem("Не указан меш");
+        Vasnecov::problem("Mesh is not set");
         return nullptr;
     }
 
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан не верно");
+        Vasnecov::problem("Wrong world");
         return nullptr;
     }
     // Поиск материала
@@ -273,7 +273,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
     {
         if(!_elements.findRawElement(material))
         {
-            Vasnecov::problem("Не найден заданный материал");
+            Vasnecov::problem("Material is not found");
             return nullptr;
         }
     }
@@ -285,13 +285,13 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
             level = parent->designerLevel() + 1;
             if(level > Vasnecov::cfg_elementMaxLevel)
             {
-                Vasnecov::problem("Превышен максимальный уровень вложенности изделия");
+                Vasnecov::problem("Maximum nesting level is exceeded");
                 return nullptr;
             }
         }
         else
         {
-            Vasnecov::problem("Родительский узел не найден");
+            Vasnecov::problem("Parent node is not found");
             return nullptr;
         }
     }
@@ -324,20 +324,20 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
 {
     if(!product || !world)
     {
-        Vasnecov::problem("Элемент или мир не заданы");
+        Vasnecov::problem("Element or world is not found");
         return nullptr;
     }
 
     // Поиск изделия в общем списке
     if(!_elements.findRawElement(product))
     {
-        Vasnecov::problem("Заданное изделие не найдено");
+        Vasnecov::problem("Product is not found");
         return nullptr;
     }
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан неверно");
+        Vasnecov::problem("Wrong world");
         return nullptr;
     }
 
@@ -347,7 +347,7 @@ VasnecovProduct *VasnecovUniverse::referProductToWorld(VasnecovProduct *product,
     }
     else
     {
-        Vasnecov::problem("Неверное изделие либо дублирование данных");
+        Vasnecov::problem("Incorrect product or data duplicating");
         return nullptr;
     }
 }
@@ -456,7 +456,7 @@ VasnecovFigure *VasnecovUniverse::addFigure(const QString& name, VasnecovWorld *
         delete figure;
         figure = nullptr;
 
-        Vasnecov::problem("Неверная фигура либо дублирование данных");
+        Vasnecov::problem("Incorrect figure or data duplicating");
         return nullptr;
     }
 }
@@ -509,7 +509,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
 {
     if(!world)
     {
-        Vasnecov::problem("Мир не задан");
+        Vasnecov::problem("World is not set");
         return nullptr;
     }
 
@@ -529,7 +529,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
             // Метод загрузки сам управляет мьютексом
             if(!_resourceManager->loadTextureFile(_resourceManager->texturesIPref() + corTextureName))
             {
-                Vasnecov::problem("Не найдена заданная текстура");
+                Vasnecov::problem("Texture is not found");
                 return nullptr;
             }
 
@@ -537,7 +537,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Не найдена заданная текстура");
+                Vasnecov::problem("Texture is not found");
                 return nullptr;
             }
         }
@@ -546,7 +546,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан не верно");
+        Vasnecov::problem("Wrong world");
         return nullptr;
     }
 
@@ -562,7 +562,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
         delete label;
         label = nullptr;
 
-        Vasnecov::problem("Неверная метка либо дублирование данных");
+        Vasnecov::problem("Incorrect label or data duplicating");
         return nullptr;
     }
 }
@@ -570,20 +570,20 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
 {
     if(!label || !world)
     {
-        Vasnecov::problem("Элемент или мир не заданы");
+        Vasnecov::problem("Element or world is not set");
         return nullptr;
     }
 
     // Поиск в общем списке
     if(!_elements.findRawElement(label))
     {
-        Vasnecov::problem("Заданная метка не найдена");
+        Vasnecov::problem("Label is not found");
         return nullptr;
     }
     // Поиск мира в списке
     if(!_elements.findRawElement(world))
     {
-        Vasnecov::problem("Мир задан неверно");
+        Vasnecov::problem("Wrong world");
         return nullptr;
     }
 
@@ -593,7 +593,7 @@ VasnecovLabel *VasnecovUniverse::referLabelToWorld(VasnecovLabel *label, Vasneco
     }
     else
     {
-        Vasnecov::problem("Неверная метка либо дублирование данных");
+        Vasnecov::problem("Incorrect label or data duplicating");
         return nullptr;
     }
 }
@@ -619,7 +619,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
             // Метод загрузки сам управляет мьютексом
             if(!_resourceManager->loadTextureFile(corTextureName))
             {
-                Vasnecov::problem("Заданная текстура не найдена");
+                Vasnecov::problem("Texture is not found");
                 return nullptr;
             }
 
@@ -628,7 +628,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Заданная текстура не найдена");
+                Vasnecov::problem("Texture is not found");
                 return nullptr;
             }
         }
@@ -644,7 +644,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
         delete material;
         material = nullptr;
 
-        Vasnecov::problem("Неверный материал либо дублирование данных");
+        Vasnecov::problem("Incorrect material or data duplicating");
         return nullptr;
     }
 }
@@ -660,7 +660,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial()
         delete material;
         material = nullptr;
 
-        Vasnecov::problem("Неверный материал либо дублирование данных");
+        Vasnecov::problem("Incorrect material or data duplicating");
         return nullptr;
     }
 }

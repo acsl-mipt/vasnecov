@@ -14,6 +14,7 @@
 #include "VasnecovLamp.h"
 #include "VasnecovMaterial.h"
 #include "VasnecovProduct.h"
+#include "VasnecovTerrain.h"
 #include "VasnecovWorld.h"
 
 #include <QSize>
@@ -372,6 +373,16 @@ void VasnecovWorld::renderDraw()
             renderSwitchLamps();
         }
 
+        // Draw terrains
+        if(_elements.hasPureTerrains())
+        {
+            // Задание материала по умолчанию
+            VasnecovMaterial mat(pure_pipeline);
+            mat.renderDraw();
+
+            for(auto terrain : _elements.pureTerrains())
+                terrain->renderDraw();
+        }
 
         // Отрисовка непрозрачных изделий (деталей)
         std::vector<VasnecovProduct *> transProducts;

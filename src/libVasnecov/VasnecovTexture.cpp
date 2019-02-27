@@ -59,7 +59,7 @@ GLboolean VasnecovTextureDiffuse::loadImage()
         return static_cast<GLboolean>(m_id);
     }
 
-    Vasnecov::problem("Текстура не может быть загружена");
+    Vasnecov::problem("Can't load texture");
     return 0;
 }
 VasnecovTextureInterface::VasnecovTextureInterface(const QImage& image) :
@@ -96,7 +96,7 @@ GLboolean VasnecovTextureInterface::loadImage()
         return static_cast<GLboolean>(m_id);
     }
 
-    Vasnecov::problem("Текстура не может быть загружена");
+    Vasnecov::problem("Can't load texture");
     return 0;
 }
 VasnecovTextureNormal::VasnecovTextureNormal(const QImage& image) :

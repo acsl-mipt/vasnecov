@@ -110,7 +110,7 @@ GLboolean VasnecovResourceManager::loadTextureFile(const QString& fileName)
                             texture = new VasnecovTextureNormal(image);
                             break;
                         default:
-                            Vasnecov::problem("Тип текстуры указан неверно: ", path);
+                            Vasnecov::problem("Incorrent texture type: ", path);
                             return false;
                     }
 
@@ -124,7 +124,7 @@ GLboolean VasnecovResourceManager::loadTextureFile(const QString& fileName)
                 }
                 else
                 {
-                    Vasnecov::problem("Текстура неверного размера: ", path);
+                    Vasnecov::problem("Incorrect texture size: ", path);
                 }
             }
         }
@@ -205,7 +205,7 @@ GLboolean VasnecovResourceManager::addTexture(VasnecovTexture* texture, const QS
 
         return added;
     }
-    Vasnecov::problem("Неверная текстура либо дублирование данных");
+    Vasnecov::problem("Incorrect texture or data duplicating");
     return false;
 }
 
@@ -228,7 +228,7 @@ GLboolean VasnecovResourceManager::addMesh(VasnecovMesh* mesh, const QString& fi
 
         return added;
     }
-    Vasnecov::problem("Неверный меш либо дублирование данных");
+    Vasnecov::problem("Incorrect mesh or data duplicating");
     return false;
 }
 

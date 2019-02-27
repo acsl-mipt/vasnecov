@@ -61,7 +61,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
     QFile objFile(path);
     if(!objFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        Vasnecov::problem("Не удалось открыть файл модели: " + m_meshPath);
+        Vasnecov::problem("Can't open model file: " + m_meshPath);
         return 0;
     }
 
@@ -302,7 +302,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 
     if(vm == 0)
     {
-        Vasnecov::problem("Модель не содержит точек: " + m_meshPath);
+        Vasnecov::problem("Model does not have points: " + m_meshPath);
 
         m_isLoaded = false;
         return m_isLoaded;
@@ -358,7 +358,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 
     if(fails > 0)
     {
-        Vasnecov::problem("Некорректные данные модели: " + m_meshPath + ", битых индексов: ", fails);
+        Vasnecov::problem("Incorrect geometry data: " + m_meshPath + ", wrong indices: ", fails);
 
         m_isLoaded = false;
         return m_isLoaded;

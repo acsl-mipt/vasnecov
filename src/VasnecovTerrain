@@ -1,2 +1,2 @@
-#include "libVasnecov/vasnecovterrian.h"
-#include "libVasnecov/version.h"
+#include "libVasnecov/VasnecovTerrain.h"
+#include "libVasnecov/Version.h"

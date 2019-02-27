@@ -310,10 +310,11 @@ void VasnecovPipeline::setCamera(const CameraAttributes &camera)
     m_P.lookAt(camera.eye, camera.center, camera.up);
 }
 void VasnecovPipeline::drawElements(VasnecovPipeline::ElementDrawingMethods method,
-                                    const std::vector<GLuint> *indices,
-                                    const std::vector<QVector3D> *vertices,
-                                    const std::vector<QVector3D> *normals,
-                                    const std::vector<QVector2D> *textures) const
+                                    const std::vector<GLuint>*    indices,
+                                    const std::vector<QVector3D>* vertices,
+                                    const std::vector<QVector3D>* normals,
+                                    const std::vector<QVector2D>* textures,
+                                    const std::vector<QVector3D>* colors) const
 {
     if(indices && vertices)
     {
@@ -329,6 +330,11 @@ void VasnecovPipeline::drawElements(VasnecovPipeline::ElementDrawingMethods meth
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
             glTexCoordPointer(2, GL_FLOAT, 0, textures->data());
         }
+        if(colors && !colors->empty())
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+            glColorPointer(3, GL_FLOAT, 0, colors->data());
+        }
 
         glDrawElements(method, indices->size(), GL_UNSIGNED_INT, indices->data());
 
@@ -339,6 +345,10 @@ void VasnecovPipeline::drawElements(VasnecovPipeline::ElementDrawingMethods meth
         if(normals)
         {
             glDisableClientState(GL_NORMAL_ARRAY);
+        }
+        if(colors)
+        {
+            glDisableClientState(GL_COLOR_ARRAY);
         }
         glDisableClientState(GL_VERTEX_ARRAY);
     }

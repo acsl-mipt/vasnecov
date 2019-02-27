@@ -132,12 +132,12 @@ std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const QString& fileName
 
         if(fails > 0)
         {
-            Vasnecov::problem("Некорректные данные геометрии: " + fileName + ", битых индексов: ", fails);
+            Vasnecov::problem("Incorrect geometry data: " + fileName + ", wrong indices: ", fails);
         }
     }
     else
     {
-        Vasnecov::problem("Не удалось открыть файл геометрии: " + fileName);
+        Vasnecov::problem("Can't open file of geometry: " + fileName);
     }
 
     return points;

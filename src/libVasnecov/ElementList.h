@@ -85,7 +85,7 @@ namespace Vasnecov
                 return true;
             }
         }
-        Vasnecov::problem("Неверный элемент либо дублирование данных");
+        Vasnecov::problem("Incorrect element or data duplicate");
         return false;
     }
 

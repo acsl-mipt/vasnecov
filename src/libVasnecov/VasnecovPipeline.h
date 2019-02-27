@@ -149,11 +149,12 @@ public:
     void setLineWidth(float width);
     void setPointSize(float size);
 
-    void drawElements(ElementDrawingMethods method,
-                      const std::vector<GLuint>* indices,
+    void drawElements(ElementDrawingMethods         method,
+                      const std::vector<GLuint>*    indices,
                       const std::vector<QVector3D>* vertices,
                       const std::vector<QVector3D>* normals = nullptr,
-                      const std::vector<QVector2D>* textures = nullptr) const;
+                      const std::vector<QVector2D>* textures = nullptr,
+                      const std::vector<QVector3D>* colors = nullptr) const;
 
     void setSomethingWasUpdated() {m_wasSomethingUpdated = true;}
 
