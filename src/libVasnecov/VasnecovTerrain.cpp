@@ -45,7 +45,7 @@ void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std
         _indices.push_back(std::vector<GLuint>());
         for(size_t j = 0; j < lineSize; ++j)
         {
-            _indices.back().emplace_back(j + i);
+            _indices.back().push_back(j + i * lineSize);
         }
     }
 }
@@ -67,6 +67,9 @@ void VasnecovTerrain::renderDraw()
 
     renderApplyTranslation();
 
+    if(_colors.empty())
+        pure_pipeline->setColor(m_color.pure());
+
     for(auto& indVec : _indices)
     {
         pure_pipeline->drawElements(VasnecovPipeline::PolyLine,
@@ -76,5 +79,4 @@ void VasnecovTerrain::renderDraw()
                                     nullptr,
                                     &_colors);
     }
-    qDebug(" !!! %ld", _indices.size());
 }
