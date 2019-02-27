@@ -39,13 +39,23 @@ void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std
         return;
     }
 
-    _indices.reserve(lineSize * 2);
+    _indices.reserve(lineSize * lineSize * 2);
+    // Horizontal (X)
     for(size_t i = 0; i < lineSize; ++i)
     {
         _indices.push_back(std::vector<GLuint>());
         for(size_t j = 0; j < lineSize; ++j)
         {
             _indices.back().push_back(j + i * lineSize);
+        }
+    }
+    // Vertical (Y)
+    for(size_t i = 0; i < lineSize; ++i)
+    {
+        _indices.push_back(std::vector<GLuint>());
+        for(size_t j = 0; j < lineSize; ++j)
+        {
+            _indices.back().push_back(j * lineSize + i);
         }
     }
 }
