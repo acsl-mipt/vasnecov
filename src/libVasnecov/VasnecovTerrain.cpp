@@ -87,19 +87,15 @@ void VasnecovTerrain::renderDraw()
 
     if(_type == TypeSurface)
     {
-        pure_pipeline->drawElements(VasnecovPipeline::Triangles,
-                                    &_indices[0],
-                                    &_points,
-                                    nullptr,
-                                    nullptr,
-                                    &_colors);
-
-        pure_pipeline->drawElements(VasnecovPipeline::Points,
-                                    &_indices[1],
-                                    &_points,
-                                    nullptr,
-                                    nullptr,
-                                    &_colors);
+        for(auto& indValue : _indices)
+        {
+            pure_pipeline->drawElements(VasnecovPipeline::Triangles,
+                                        &indValue,
+                                        &_points,
+                                        nullptr,
+                                        nullptr,
+                                        &_colors);
+        }
     }
     else if(_type == TypeMesh)
     {
@@ -123,14 +119,14 @@ void VasnecovTerrain::renderDraw()
 
 void VasnecovTerrain::updateCornerPoints()
 {
-    if(_lineSize > 0)
-    {
-        GLuint vecSize = _lineSize * _lineSize;
-        if(_points.size() > vecSize)
-            _points.erase(_points.begin() + vecSize, _points.end());
-        if(!_colors.empty() && _colors.size() > vecSize)
-            _colors.erase(_colors.begin() + vecSize, _colors.end());
-    }
+    if(_points.empty())
+        return;
+
+    GLuint vecSize = _lineSize * _lineSize;
+    if(_points.size() > vecSize)
+        _points.erase(_points.begin() + vecSize, _points.end());
+    if(!_colors.empty() && _colors.size() > vecSize)
+        _colors.erase(_colors.begin() + vecSize, _colors.end());
 
     if(_type == TypeMesh)
     {
@@ -198,6 +194,9 @@ void VasnecovTerrain::updateCornerPoints()
 
 void VasnecovTerrain::updateIndices()
 {
+    if(_points.empty())
+        return;
+
     _indices.clear();
 
     if(_type == TypeMesh)
@@ -272,9 +271,51 @@ void VasnecovTerrain::updateIndices()
         // Corners
         _indices.push_back(std::vector<GLuint>());
         ind = &_indices.back();
-        ind->reserve(_lineSize * 4);
-        for(size_t i = _lineSize * _lineSize; i < _points.size(); ++i)
-            ind->push_back(i);
+        ind->reserve(_lineSize * 4 * 3);
+
+        /////
+        _indices.front().clear();
+        /////
+
+        auto createSecondVerticalTriangle = [ind]()
+        {
+            ind->push_back(*(ind->end() - 1));
+            ind->push_back(*(ind->end() - 3));
+            ind->push_back(*(ind->end() - 4) + 1);
+        };
+
+        // YZ left plane
+        for(GLuint i = 0; i < _lineSize - 1; ++i)
+        {
+            // First triangle
+            ind->push_back(i * _lineSize);
+            ind->push_back(_lineSize * _lineSize + i);
+            ind->push_back((i + 1) * _lineSize);
+
+            createSecondVerticalTriangle();
+        }
+
+        // XZ bottom plane
+        for(GLuint i = 0; i < _lineSize - 1; ++i)
+        {
+            // First triangle
+            ind->push_back((_lineSize - 1) * _lineSize + i);
+            ind->push_back(_lineSize * _lineSize + _lineSize + i);
+            ind->push_back((_lineSize - 1) * _lineSize + i + 1);
+
+            createSecondVerticalTriangle();
+        }
+
+        // YZ right plane
+        for(GLuint i = 0; i < _lineSize - 1; ++i)
+        {
+            // First triangle
+            ind->push_back((_lineSize * _lineSize - 1) - (i * _lineSize));
+            ind->push_back(_lineSize * _lineSize + _lineSize * 2 + i);
+            ind->push_back((_lineSize * _lineSize - 1) - ((i - 1) * _lineSize));
+
+//            createSecondVerticalTriangle();
+        }
     }
 }
 

@@ -316,40 +316,40 @@ void VasnecovPipeline::drawElements(VasnecovPipeline::ElementDrawingMethods meth
                                     const std::vector<QVector2D>* textures,
                                     const std::vector<QVector3D>* colors) const
 {
-    if(indices && vertices)
+    if(indices == nullptr || vertices == nullptr || indices->empty())
+        return;
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices->data());
+    if(normals && !normals->empty())
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, vertices->data());
-        if(normals && !normals->empty())
-        {
-            glEnableClientState(GL_NORMAL_ARRAY);
-            glNormalPointer(GL_FLOAT, 0, normals->data());
-        }
-        if(textures && !textures->empty())
-        {
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glTexCoordPointer(2, GL_FLOAT, 0, textures->data());
-        }
-        if(colors && !colors->empty())
-        {
-            glEnableClientState(GL_COLOR_ARRAY);
-            glColorPointer(3, GL_FLOAT, 0, colors->data());
-        }
-
-        glDrawElements(method, indices->size(), GL_UNSIGNED_INT, indices->data());
-
-        if(textures)
-        {
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        }
-        if(normals)
-        {
-            glDisableClientState(GL_NORMAL_ARRAY);
-        }
-        if(colors)
-        {
-            glDisableClientState(GL_COLOR_ARRAY);
-        }
-        glDisableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, 0, normals->data());
     }
+    if(textures && !textures->empty())
+    {
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, textures->data());
+    }
+    if(colors && !colors->empty())
+    {
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(3, GL_FLOAT, 0, colors->data());
+    }
+
+    glDrawElements(method, indices->size(), GL_UNSIGNED_INT, indices->data());
+
+    if(textures)
+    {
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+    if(normals)
+    {
+        glDisableClientState(GL_NORMAL_ARRAY);
+    }
+    if(colors)
+    {
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
