@@ -15,7 +15,7 @@
 
 VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name)
     : VasnecovElement(pipeline, name)
-    , _type(TypeLines)
+    , _type(TypeSurface)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {}
@@ -65,7 +65,11 @@ void VasnecovTerrain::renderDraw()
 
     for(auto& indVec : _indices)
     {
-        pure_pipeline->drawElements(VasnecovPipeline::PolyLine,
+        VasnecovPipeline::ElementDrawingMethods type = VasnecovPipeline::PolyLine;
+        if(_type == TypeSurface)
+            type = VasnecovPipeline::Triangles;
+
+        pure_pipeline->drawElements(type,
                                     &indVec,
                                     &_points,
                                     nullptr,
@@ -78,7 +82,7 @@ void VasnecovTerrain::updateIndices()
 {
     _indices.clear();
 
-    size_t lineSize = std::sqrt(_points.size());
+    GLuint lineSize = std::sqrt(_points.size());
     if((lineSize * lineSize) != _points.size())
     {
         _points.clear();
@@ -86,30 +90,47 @@ void VasnecovTerrain::updateIndices()
         return;
     }
 
-    if(_type == TypeLines)
+    if(_type == TypeMesh)
     {
         _indices.reserve(lineSize * lineSize * 2);
         // Horizontal (X)
-        for(size_t i = 0; i < lineSize; ++i)
+        for(GLuint i = 0; i < lineSize; ++i)
         {
             _indices.push_back(std::vector<GLuint>());
-            for(size_t j = 0; j < lineSize; ++j)
+            for(GLuint j = 0; j < lineSize; ++j)
             {
                 _indices.back().push_back(j + i * lineSize);
             }
         }
         // Vertical (Y)
-        for(size_t i = 0; i < lineSize; ++i)
+        for(GLuint i = 0; i < lineSize; ++i)
         {
             _indices.push_back(std::vector<GLuint>());
-            for(size_t j = 0; j < lineSize; ++j)
+            for(GLuint j = 0; j < lineSize; ++j)
             {
                 _indices.back().push_back(j * lineSize + i);
             }
         }
     }
-    else if (_type == TypeTriangles)
+    else if (_type == TypeSurface)
     {
+        _indices.push_back(std::vector<GLuint>());
+        _indices.back().reserve(_points.size() * 3);
 
+        for (GLuint raw = 0; raw < lineSize - 1; ++raw)
+        {
+            for (GLuint col = 0; col < lineSize - 1; ++col)
+            {
+                // First triangle
+                _indices.back().push_back(raw * lineSize + col);
+                _indices.back().push_back((raw + 1) * lineSize + col);
+                _indices.back().push_back(*(_indices.back().end() - 2) + 1);
+
+                // Second triangle
+                _indices.back().push_back(*(_indices.back().end() - 1));
+                _indices.back().push_back(*(_indices.back().end() - 3));
+                _indices.back().push_back(*(_indices.back().end() - 1) + 1);
+            }
+        }
     }
 }

@@ -16,8 +16,8 @@ class VasnecovTerrain : public VasnecovElement
 public:
     enum Types
     {
-        TypeLines = 0,
-        TypeTriangles
+        TypeMesh = 0,
+        TypeSurface
     };
 
     VasnecovTerrain(VasnecovPipeline* pipeline, const QString& name = QString());
