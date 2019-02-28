@@ -28,17 +28,20 @@ public:
     GLuint pointsAmount() const;
 
     void setType(Types type);
+    Types type() const {return _type;}
 
 protected:
     void renderDraw();
 
 private:
+    void updateCornerPoints();
     void updateIndices();
 
     Types                               _type;
     std::vector<QVector3D>              _points;
     std::vector<QVector3D>              _colors;
     std::vector<std::vector<GLuint>>    _indices;
+    GLuint                              _lineSize;
 
     enum Updated
     {

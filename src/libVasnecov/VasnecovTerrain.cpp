@@ -15,7 +15,8 @@
 
 VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name)
     : VasnecovElement(pipeline, name)
-    , _type(TypeMesh)
+    , _type(TypeSurface)
+    , _lineSize(0)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {}
@@ -30,16 +31,32 @@ void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std
 
     if(_points.empty())
     {
+        _lineSize = 0;
+        _colors.clear();
         _indices.clear();
         return;
     }
 
+    _lineSize = std::sqrt(_points.size());
+    if((_lineSize * _lineSize) != _points.size())
+    {
+        _lineSize = 0;
+        _points.clear();
+        _colors.clear();
+        _indices.clear();
+        Vasnecov::problem("Terrain is not squad");
+        return;
+    }
+
+    updateCornerPoints();
     updateIndices();
 }
 
 void VasnecovTerrain::clearPoints()
 {
     _points.clear();
+    _colors.clear();
+    _indices.clear();
 }
 
 GLuint VasnecovTerrain::pointsAmount() const
@@ -53,6 +70,8 @@ void VasnecovTerrain::setType(VasnecovTerrain::Types type)
         return;
 
     _type = type;
+
+    updateCornerPoints();
     updateIndices();
 }
 
@@ -98,16 +117,15 @@ void VasnecovTerrain::renderDraw()
     }
 }
 
-void VasnecovTerrain::updateIndices()
+void VasnecovTerrain::updateCornerPoints()
 {
-    _indices.clear();
-
-    GLuint lineSize = std::sqrt(_points.size());
-    if((lineSize * lineSize) != _points.size())
+    if(_lineSize > 0)
     {
-        _points.clear();
-        Vasnecov::problem("Terrain is not squad");
-        return;
+        GLuint vecSize = _lineSize * _lineSize;
+        if(_points.size() > vecSize)
+            _points.erase(_points.begin() + vecSize, _points.end());
+        if(!_colors.empty() && _colors.size() > vecSize)
+            _colors.erase(_colors.begin() + vecSize, _colors.end());
     }
 
     if(_type == TypeMesh)
@@ -118,13 +136,13 @@ void VasnecovTerrain::updateIndices()
         size_t cor = 0;
         _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
 
-        cor = (lineSize - 1) * lineSize;
+        cor = (_lineSize - 1) * _lineSize;
         _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
 
-        cor = lineSize * lineSize - 1;
+        cor = _lineSize * _lineSize - 1;
         _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
 
-        cor = lineSize - 1;
+        cor = _lineSize - 1;
         _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
 
         if(!_colors.empty())
@@ -133,33 +151,46 @@ void VasnecovTerrain::updateIndices()
             for(int j = 0; j < 4; ++j)
                 _colors.push_back(QVector3D(0.0f, 0.65f, 1.0f));
         }
+    }
+    else if(_type == TypeSurface)
+    {
+        // Corner flats
 
-        _indices.reserve(lineSize * lineSize * 2);
+    }
+}
+
+void VasnecovTerrain::updateIndices()
+{
+    _indices.clear();
+
+    if(_type == TypeMesh)
+    {
+        _indices.reserve(_lineSize * _lineSize * 2);
         // Horizontal (X)
-        for(GLuint i = 0; i < lineSize; ++i)
+        for(GLuint i = 0; i < _lineSize; ++i)
         {
             _indices.push_back(std::vector<GLuint>());
-            for(GLuint j = 0; j < lineSize; ++j)
+            for(GLuint j = 0; j < _lineSize; ++j)
             {
-                _indices.back().push_back(j + i * lineSize);
+                _indices.back().push_back(j + i * _lineSize);
             }
         }
         // Vertical (Y)
-        for(GLuint i = 0; i < lineSize; ++i)
+        for(GLuint i = 0; i < _lineSize; ++i)
         {
             _indices.push_back(std::vector<GLuint>());
-            for(GLuint j = 0; j < lineSize; ++j)
+            for(GLuint j = 0; j < _lineSize; ++j)
             {
-                _indices.back().push_back(j * lineSize + i);
+                _indices.back().push_back(j * _lineSize + i);
             }
         }
 
         // Ground mesh
         _indices.push_back(std::vector<GLuint>());
         _indices.back().reserve(5);
-        for(GLuint i = lineSize * lineSize; i < lineSize * lineSize + 4; ++i)
+        for(GLuint i = _lineSize * _lineSize; i < _lineSize * _lineSize + 4; ++i)
             _indices.back().push_back(i);
-        _indices.back().push_back(lineSize * lineSize);
+        _indices.back().push_back(_lineSize * _lineSize);
 
         // Vertical lines from ground
         _indices.push_back(std::vector<GLuint>());
@@ -167,34 +198,31 @@ void VasnecovTerrain::updateIndices()
         ind->reserve(2 * 4);
 
         ind->push_back(0);
-        ind->push_back(lineSize * lineSize);
+        ind->push_back(_lineSize * _lineSize);
 
-        ind->push_back((lineSize - 1) * lineSize);
-        ind->push_back(lineSize * lineSize + 1);
+        ind->push_back((_lineSize - 1) * _lineSize);
+        ind->push_back(_lineSize * _lineSize + 1);
 
-        ind->push_back(lineSize * lineSize - 1);
-        ind->push_back(lineSize * lineSize + 2);
+        ind->push_back(_lineSize * _lineSize - 1);
+        ind->push_back(_lineSize * _lineSize + 2);
 
-        ind->push_back(lineSize - 1);
-        ind->push_back(lineSize * lineSize + 3);
+        ind->push_back(_lineSize - 1);
+        ind->push_back(_lineSize * _lineSize + 3);
     }
     else if (_type == TypeSurface)
     {
-        // Corner flats
-
-
         _indices.push_back(std::vector<GLuint>());
 
         std::vector<GLuint>* ind = &_indices.back();
         ind->reserve(_points.size() * 3);
 
-        for (GLuint raw = 0; raw < lineSize - 1; ++raw)
+        for (GLuint raw = 0; raw < _lineSize - 1; ++raw)
         {
-            for (GLuint col = 0; col < lineSize - 1; ++col)
+            for (GLuint col = 0; col < _lineSize - 1; ++col)
             {
                 // First triangle
-                ind->push_back(raw * lineSize + col);
-                ind->push_back((raw + 1) * lineSize + col);
+                ind->push_back(raw * _lineSize + col);
+                ind->push_back((raw + 1) * _lineSize + col);
                 ind->push_back(*(ind->end() - 2) + 1);
 
                 // Second triangle
@@ -208,3 +236,5 @@ void VasnecovTerrain::updateIndices()
 //        ind->reserve(ind->size() + () * 4)
     }
 }
+
+
