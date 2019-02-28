@@ -171,15 +171,15 @@ void VasnecovTerrain::updateCornerPoints()
             _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
         }
         // YZ right plane
-        for(int i = _lineSize - 1; i >= 0; --i)
+        for(size_t i = 0; i < _lineSize; ++i)
         {
             cornInd = (_lineSize * _lineSize - 1) - (i * _lineSize);
             _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
         }
         // XZ top plane
-        for(int i = _lineSize - 1; i >= 0; --i)
+        for(size_t i = 0; i < _lineSize; ++i)
         {
-            cornInd = i;
+            cornInd = _lineSize - 1 - i;
             _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
         }
 
@@ -273,10 +273,6 @@ void VasnecovTerrain::updateIndices()
         ind = &_indices.back();
         ind->reserve(_lineSize * 4 * 3);
 
-        /////
-        _indices.front().clear();
-        /////
-
         auto createSecondVerticalTriangle = [ind]()
         {
             ind->push_back(*(ind->end() - 1));
@@ -312,9 +308,20 @@ void VasnecovTerrain::updateIndices()
             // First triangle
             ind->push_back((_lineSize * _lineSize - 1) - (i * _lineSize));
             ind->push_back(_lineSize * _lineSize + _lineSize * 2 + i);
-            ind->push_back((_lineSize * _lineSize - 1) - ((i - 1) * _lineSize));
+            ind->push_back((_lineSize * _lineSize - 1) - ((i + 1) * _lineSize));
 
-//            createSecondVerticalTriangle();
+            createSecondVerticalTriangle();
+        }
+
+        // XZ top plane
+        for(GLuint i = 0; i < _lineSize - 1; ++i)
+        {
+            // First triangle
+            ind->push_back(_lineSize - 1 - i);
+            ind->push_back(_lineSize * _lineSize + _lineSize * 3 + i);
+            ind->push_back(_lineSize - 1 - i - 1);
+
+            createSecondVerticalTriangle();
         }
     }
 }
