@@ -58,7 +58,7 @@ void VasnecovTerrain::setType(VasnecovTerrain::Types type)
 
 void VasnecovTerrain::renderDraw()
 {
-    if(m_isHidden.pure())
+    if(m_isHidden.pure() || _indices.empty())
         return;
 
     renderApplyTranslation();
@@ -66,14 +66,31 @@ void VasnecovTerrain::renderDraw()
     if(_colors.empty())
         pure_pipeline->setColor(m_color.pure());
 
-    for(auto& indVec : _indices)
+    if(_type == TypeSurface)
     {
-        VasnecovPipeline::ElementDrawingMethods type = VasnecovPipeline::PolyLine;
-        if(_type == TypeSurface)
-            type = VasnecovPipeline::Triangles;
-
-        pure_pipeline->drawElements(type,
-                                    &indVec,
+        for(auto& indVec : _indices)
+        {
+            pure_pipeline->drawElements(VasnecovPipeline::Triangles,
+                                        &indVec,
+                                        &_points,
+                                        nullptr,
+                                        nullptr,
+                                        &_colors);
+        }
+    }
+    else if(_type == TypeMesh)
+    {
+        for(size_t i = 0; i < _indices.size() - 1; ++i)
+        {
+            pure_pipeline->drawElements(VasnecovPipeline::PolyLine,
+                                        &_indices[i],
+                                        &_points,
+                                        nullptr,
+                                        nullptr,
+                                        &_colors);
+        }
+        pure_pipeline->drawElements(VasnecovPipeline::Lines,
+                                    &_indices.back(),
                                     &_points,
                                     nullptr,
                                     nullptr,
@@ -137,12 +154,29 @@ void VasnecovTerrain::updateIndices()
             }
         }
 
+        // Ground mesh
         _indices.push_back(std::vector<GLuint>());
+        _indices.back().reserve(5);
         for(GLuint i = lineSize * lineSize; i < lineSize * lineSize + 4; ++i)
             _indices.back().push_back(i);
         _indices.back().push_back(lineSize * lineSize);
 
-        qDebug("%ld (%d); %ld", _points.size(), lineSize, _indices.back().size());
+        // Vertical lines from ground
+        _indices.push_back(std::vector<GLuint>());
+        std::vector<GLuint>* ind = &_indices.back();
+        ind->reserve(2 * 4);
+
+        ind->push_back(0);
+        ind->push_back(lineSize * lineSize);
+
+        ind->push_back((lineSize - 1) * lineSize);
+        ind->push_back(lineSize * lineSize + 1);
+
+        ind->push_back(lineSize * lineSize - 1);
+        ind->push_back(lineSize * lineSize + 2);
+
+        ind->push_back(lineSize - 1);
+        ind->push_back(lineSize * lineSize + 3);
     }
     else if (_type == TypeSurface)
     {
