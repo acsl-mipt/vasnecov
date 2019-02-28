@@ -15,7 +15,7 @@
 
 VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name)
     : VasnecovElement(pipeline, name)
-    , _type(TypeSurface)
+    , _type(TypeMesh)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {}
@@ -29,7 +29,10 @@ void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std
         _colors.clear();
 
     if(_points.empty())
+    {
+        _indices.clear();
         return;
+    }
 
     updateIndices();
 }
@@ -92,6 +95,28 @@ void VasnecovTerrain::updateIndices()
 
     if(_type == TypeMesh)
     {
+        // Corner vertices
+        _points.reserve(_points.size() + 4);
+
+        size_t cor = 0;
+        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+
+        cor = (lineSize - 1) * lineSize;
+        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+
+        cor = lineSize * lineSize - 1;
+        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+
+        cor = lineSize - 1;
+        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+
+        if(!_colors.empty())
+        {
+            _colors.reserve(_colors.size() + 4);
+            for(int j = 0; j < 4; ++j)
+                _colors.push_back(QVector3D(0.0f, 0.65f, 1.0f));
+        }
+
         _indices.reserve(lineSize * lineSize * 2);
         // Horizontal (X)
         for(GLuint i = 0; i < lineSize; ++i)
@@ -111,26 +136,41 @@ void VasnecovTerrain::updateIndices()
                 _indices.back().push_back(j * lineSize + i);
             }
         }
+
+        _indices.push_back(std::vector<GLuint>());
+        for(GLuint i = lineSize * lineSize; i < lineSize * lineSize + 4; ++i)
+            _indices.back().push_back(i);
+        _indices.back().push_back(lineSize * lineSize);
+
+        qDebug("%ld (%d); %ld", _points.size(), lineSize, _indices.back().size());
     }
     else if (_type == TypeSurface)
     {
+        // Corner flats
+
+
         _indices.push_back(std::vector<GLuint>());
-        _indices.back().reserve(_points.size() * 3);
+
+        std::vector<GLuint>* ind = &_indices.back();
+        ind->reserve(_points.size() * 3);
 
         for (GLuint raw = 0; raw < lineSize - 1; ++raw)
         {
             for (GLuint col = 0; col < lineSize - 1; ++col)
             {
                 // First triangle
-                _indices.back().push_back(raw * lineSize + col);
-                _indices.back().push_back((raw + 1) * lineSize + col);
-                _indices.back().push_back(*(_indices.back().end() - 2) + 1);
+                ind->push_back(raw * lineSize + col);
+                ind->push_back((raw + 1) * lineSize + col);
+                ind->push_back(*(ind->end() - 2) + 1);
 
                 // Second triangle
-                _indices.back().push_back(*(_indices.back().end() - 1));
-                _indices.back().push_back(*(_indices.back().end() - 3));
-                _indices.back().push_back(*(_indices.back().end() - 1) + 1);
+                ind->push_back(*(ind->end() - 1));
+                ind->push_back(*(ind->end() - 3));
+                ind->push_back(*(ind->end() - 1) + 1);
             }
         }
+
+        // Corners
+//        ind->reserve(ind->size() + () * 4)
     }
 }
