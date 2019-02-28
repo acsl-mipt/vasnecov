@@ -87,15 +87,19 @@ void VasnecovTerrain::renderDraw()
 
     if(_type == TypeSurface)
     {
-        for(auto& indVec : _indices)
-        {
-            pure_pipeline->drawElements(VasnecovPipeline::Triangles,
-                                        &indVec,
-                                        &_points,
-                                        nullptr,
-                                        nullptr,
-                                        &_colors);
-        }
+        pure_pipeline->drawElements(VasnecovPipeline::Triangles,
+                                    &_indices[0],
+                                    &_points,
+                                    nullptr,
+                                    nullptr,
+                                    &_colors);
+
+        pure_pipeline->drawElements(VasnecovPipeline::Points,
+                                    &_indices[1],
+                                    &_points,
+                                    nullptr,
+                                    nullptr,
+                                    &_colors);
     }
     else if(_type == TypeMesh)
     {
@@ -133,29 +137,62 @@ void VasnecovTerrain::updateCornerPoints()
         // Corner vertices
         _points.reserve(_points.size() + 4);
 
-        size_t cor = 0;
-        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+        size_t cornInd = 0;
+        _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
 
-        cor = (_lineSize - 1) * _lineSize;
-        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+        cornInd = (_lineSize - 1) * _lineSize;
+        _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
 
-        cor = _lineSize * _lineSize - 1;
-        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+        cornInd = _lineSize * _lineSize - 1;
+        _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
 
-        cor = _lineSize - 1;
-        _points.push_back(QVector3D(_points[cor].x(), _points[cor].y(), 0.0f));
+        cornInd = _lineSize - 1;
+        _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
 
         if(!_colors.empty())
         {
             _colors.reserve(_colors.size() + 4);
-            for(int j = 0; j < 4; ++j)
+            for(size_t j = 0; j < 4; ++j)
                 _colors.push_back(QVector3D(0.0f, 0.65f, 1.0f));
         }
     }
     else if(_type == TypeSurface)
     {
-        // Corner flats
+        // Vertical flats
+        _points.reserve(_points.size() + _lineSize * 4);
 
+        // YZ left plane
+        size_t cornInd = 0;
+        for(size_t i = 0; i < _lineSize; ++i)
+        {
+            cornInd = i * _lineSize;
+            _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
+        }
+        // XZ bottom plane
+        for(size_t i = 0; i < _lineSize; ++i)
+        {
+            cornInd = (_lineSize - 1) * _lineSize + i;
+            _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
+        }
+        // YZ right plane
+        for(int i = _lineSize - 1; i >= 0; --i)
+        {
+            cornInd = (_lineSize * _lineSize - 1) - (i * _lineSize);
+            _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
+        }
+        // XZ top plane
+        for(int i = _lineSize - 1; i >= 0; --i)
+        {
+            cornInd = i;
+            _points.push_back(QVector3D(_points[cornInd].x(), _points[cornInd].y(), 0.0f));
+        }
+
+        if(!_colors.empty())
+        {
+            _colors.reserve(_colors.size() + _lineSize * 4);
+            for(size_t j = 0; j < _lineSize * 4; ++j)
+                _colors.push_back(QVector3D(0.0f, 0.65f, 1.0f));
+        }
     }
 }
 
@@ -233,7 +270,11 @@ void VasnecovTerrain::updateIndices()
         }
 
         // Corners
-//        ind->reserve(ind->size() + () * 4)
+        _indices.push_back(std::vector<GLuint>());
+        ind = &_indices.back();
+        ind->reserve(_lineSize * 4);
+        for(size_t i = _lineSize * _lineSize; i < _points.size(); ++i)
+            ind->push_back(i);
     }
 }
 
