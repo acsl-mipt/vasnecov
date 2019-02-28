@@ -49,6 +49,7 @@ void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std
     }
 
     updateCornerPoints();
+    updateNormals();
     updateIndices();
 }
 
@@ -72,6 +73,7 @@ void VasnecovTerrain::setType(VasnecovTerrain::Types type)
     _type = type;
 
     updateCornerPoints();
+    updateNormals();
     updateIndices();
 }
 
@@ -92,7 +94,7 @@ void VasnecovTerrain::renderDraw()
             pure_pipeline->drawElements(VasnecovPipeline::Triangles,
                                         &indValue,
                                         &_points,
-                                        nullptr,
+                                        &_normals,
                                         nullptr,
                                         &_colors);
         }
@@ -192,12 +194,43 @@ void VasnecovTerrain::updateCornerPoints()
     }
 }
 
-void VasnecovTerrain::updateIndices()
+void VasnecovTerrain::updateNormals()
 {
+    _normals.clear();
+
     if(_points.empty())
         return;
 
+    _normals.reserve(_points.size());
+    GLuint pSize = _lineSize * _lineSize;
+
+    for (GLuint row = 0; row < _lineSize; ++row)
+    {
+        for (GLuint col = 0; col < _lineSize; ++col)
+        {
+            QVector3D a = _points[row * _lineSize + col + 1] - _points[row * _lineSize + col];
+            QVector3D b = _points[row * _lineSize + col + 1] - _points[(row + 1) * _lineSize + col];
+            _normals.push_back(QVector3D::normal(a, b));
+        }
+    }
+
+    // Vertical planes
+    for(size_t i = 0; i < _lineSize; ++i)
+        _normals.push_back(QVector3D(-1.0f, 0.0f, 0.0f));
+    for(size_t i = 0; i < _lineSize; ++i)
+        _normals.push_back(QVector3D(0.0f, -1.0f, 0.0f));
+    for(size_t i = 0; i < _lineSize; ++i)
+        _normals.push_back(QVector3D(1.0f, 0.0f, 0.0f));
+    for(size_t i = 0; i < _lineSize; ++i)
+        _normals.push_back(QVector3D(0.0f, 1.0f, 0.0f));
+}
+
+void VasnecovTerrain::updateIndices()
+{
     _indices.clear();
+
+    if(_points.empty())
+        return;
 
     if(_type == TypeMesh)
     {
@@ -252,13 +285,13 @@ void VasnecovTerrain::updateIndices()
         std::vector<GLuint>* ind = &_indices.back();
         ind->reserve(_points.size() * 3);
 
-        for (GLuint raw = 0; raw < _lineSize - 1; ++raw)
+        for (GLuint row = 0; row < _lineSize - 1; ++row)
         {
             for (GLuint col = 0; col < _lineSize - 1; ++col)
             {
                 // First triangle
-                ind->push_back(raw * _lineSize + col);
-                ind->push_back((raw + 1) * _lineSize + col);
+                ind->push_back(row * _lineSize + col);
+                ind->push_back((row + 1) * _lineSize + col);
                 ind->push_back(*(ind->end() - 2) + 1);
 
                 // Second triangle

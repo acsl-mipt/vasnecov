@@ -35,12 +35,14 @@ protected:
 
 private:
     void updateCornerPoints();
+    void updateNormals();
     void updateIndices();
 
     Types                               _type;
     std::vector<QVector3D>              _points;
     std::vector<QVector3D>              _colors;
     std::vector<std::vector<GLuint>>    _indices;
+    std::vector<QVector3D>              _normals;
     GLuint                              _lineSize;
 
     enum Updated
