@@ -98,18 +98,6 @@ void VasnecovTerrain::renderDraw()
                                         nullptr,
                                         &_colors);
         }
-//        pure_pipeline->drawElements(VasnecovPipeline::Triangles,
-//                                    &_indices[0],
-//                                    &_points,
-//                                    &_normals,
-//                                    nullptr,
-//                                    &_colors);
-//        pure_pipeline->drawElements(VasnecovPipeline::Points,
-//                                    &_indices[1],
-//                                    &_points,
-//                                    &_normals,
-//                                    nullptr,
-//                                    &_colors);
     }
     else if(_type == TypeMesh)
     {
@@ -242,9 +230,30 @@ void VasnecovTerrain::updateNormals()
     {
         for (GLuint col = 0; col < _lineSize; ++col)
         {
-            QVector3D a = _points[row * _lineSize + col + 1] - _points[row * _lineSize + col];
-            QVector3D b = _points[row * _lineSize + col + 1] - _points[(row + 1) * _lineSize + col];
-            _normals.push_back(QVector3D::normal(a, b));
+            if(row == _lineSize - 1 && col == _lineSize - 1) // Right-bottom corner
+            {
+                QVector3D a = _points[row * _lineSize + col - 1] - _points[row * _lineSize + col];
+                QVector3D b = _points[row * _lineSize + col - 1] - _points[(row + 1) * _lineSize + col];
+                _normals.push_back(QVector3D::normal(a, b));
+            }
+            else if(row == _lineSize - 1) // Bottom line
+            {
+                QVector3D a = _points[row * _lineSize + col + 1] - _points[row * _lineSize + col];
+                QVector3D b = _points[row * _lineSize + col + 1] - _points[(row - 1) * _lineSize + col];
+                _normals.push_back(QVector3D::normal(b, a));
+            }
+            else if(col == _lineSize - 1) // Right line
+            {
+                QVector3D a = _points[row * _lineSize + col - 1] - _points[row * _lineSize + col];
+                QVector3D b = _points[row * _lineSize + col - 1] - _points[(row + 1) * _lineSize + col];
+                _normals.push_back(QVector3D::normal(b, a));
+            }
+            else
+            {
+                QVector3D a = _points[row * _lineSize + col + 1] - _points[row * _lineSize + col];
+                QVector3D b = _points[row * _lineSize + col + 1] - _points[(row + 1) * _lineSize + col];
+                _normals.push_back(QVector3D::normal(a, b));
+            }
         }
     }
 
@@ -353,7 +362,7 @@ void VasnecovTerrain::updateIndices()
         ind->reserve(_lineSize * 4 * 3);
 
         GLuint pSize = _lineSize * _lineSize;
-        for(GLuint i = 0; i < _lineSize * 2 * 4 - 1; ++++i)
+        for(GLuint i = 0; i < _lineSize * 2 * 4 - 2; ++++i)
         {
             ind->push_back(pSize + i);
             ind->push_back(pSize + i + 1);
