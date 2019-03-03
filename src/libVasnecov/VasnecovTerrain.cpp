@@ -21,11 +21,11 @@ VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name
 VasnecovTerrain::~VasnecovTerrain()
 {}
 
-void VasnecovTerrain::setPoints(const std::vector <QVector3D> &points, const std::vector<QVector3D>& colors)
+void VasnecovTerrain::setPoints(std::vector <QVector3D>&& points, std::vector<QVector3D>&& colors)
 {
-    _points = points;
+    _points = std::move(points);
     if(colors.size() == points.size())
-        _colors = colors;
+        _colors = std::move(colors);
     else
         _colors.clear();
 
@@ -230,28 +230,29 @@ void VasnecovTerrain::updateNormals()
     {
         for (GLuint col = 0; col < _lineSize; ++col)
         {
+            std::size_t index = row * _lineSize + col;
             if(row == _lineSize - 1 && col == _lineSize - 1) // Right-bottom corner
             {
-                QVector3D a = _points[row * _lineSize + col - 1] - _points[row * _lineSize + col];
-                QVector3D b = _points[row * _lineSize + col - 1] - _points[(row + 1) * _lineSize + col];
+                QVector3D a = _points[index - 1] - _points[index];
+                QVector3D b = _points[index - 1] - _points[index + _lineSize];
                 _normals.push_back(QVector3D::normal(a, b));
             }
             else if(row == _lineSize - 1) // Bottom line
             {
-                QVector3D a = _points[row * _lineSize + col + 1] - _points[row * _lineSize + col];
-                QVector3D b = _points[row * _lineSize + col + 1] - _points[(row - 1) * _lineSize + col];
+                QVector3D a = _points[index + 1] - _points[index];
+                QVector3D b = _points[index + 1] - _points[index - _lineSize];
                 _normals.push_back(QVector3D::normal(b, a));
             }
             else if(col == _lineSize - 1) // Right line
             {
-                QVector3D a = _points[row * _lineSize + col - 1] - _points[row * _lineSize + col];
-                QVector3D b = _points[row * _lineSize + col - 1] - _points[(row + 1) * _lineSize + col];
+                QVector3D a = _points[index - 1] - _points[index];
+                QVector3D b = _points[index - 1] - _points[index + _lineSize];
                 _normals.push_back(QVector3D::normal(b, a));
             }
             else
             {
-                QVector3D a = _points[row * _lineSize + col + 1] - _points[row * _lineSize + col];
-                QVector3D b = _points[row * _lineSize + col + 1] - _points[(row + 1) * _lineSize + col];
+                QVector3D a = _points[index + 1] - _points[index];
+                QVector3D b = _points[index + 1] - _points[index + _lineSize];
                 _normals.push_back(QVector3D::normal(a, b));
             }
         }
@@ -335,42 +336,52 @@ void VasnecovTerrain::updateIndices()
     }
     else if (_type == TypeSurface)
     {
-        _indices.push_back(std::vector<GLuint>());
-
-        std::vector<GLuint>* ind = &_indices.back();
-        ind->reserve(_points.size() * 3);
-
-        for (GLuint row = 0; row < _lineSize - 1; ++row)
         {
-            for (GLuint col = 0; col < _lineSize - 1; ++col)
-            {
-                // First triangle
-                ind->push_back(row * _lineSize + col);
-                ind->push_back((row + 1) * _lineSize + col);
-                ind->push_back(*(ind->end() - 2) + 1);
+            _indices.push_back(std::vector<GLuint>());
+            std::vector<GLuint>& ind = _indices.back();
+            ind.resize((_lineSize - 1)*(_lineSize - 1) * 6);
 
-                // Second triangle
-                ind->push_back(*(ind->end() - 1));
-                ind->push_back(*(ind->end() - 3));
-                ind->push_back(*(ind->end() - 1) + 1);
+            #pragma omp parallel
+            {
+                #pragma omp for
+                for (GLint row = 0; row < _lineSize - 1; ++row)
+                {
+                    for (GLint col = 0; col < _lineSize - 1; ++col)
+                    {
+                        GLint _1 = row * _lineSize + col;
+                        GLint _2 = _1 + _lineSize;
+                        GLint _3 = _1 + 1;
+                        GLint x = 6 * (_1 - row);
+                        // First triangle
+                        ind[x + 0] = _1;
+                        ind[x + 1] = _2;
+                        ind[x + 2] = _3;
+                        // Second triangle
+                        ind[x + 3] = _3;
+                        ind[x + 4] = _2;
+                        ind[x + 5] = _2 + 1;
+                    }
+                }
             }
         }
 
         // Corners
-        _indices.push_back(std::vector<GLuint>());
-        ind = &_indices.back();
-        ind->reserve(_lineSize * 4 * 3);
-
-        GLuint pSize = _lineSize * _lineSize;
-        for(GLuint i = 0; i < _lineSize * 2 * 4 - 2; ++++i)
         {
-            ind->push_back(pSize + i);
-            ind->push_back(pSize + i + 1);
-            ind->push_back(pSize + i + 2);
+            _indices.push_back(std::vector<GLuint>());
+            std::vector<GLuint>& ind = _indices.back();
+            ind.reserve(6 * (_lineSize * 2 * 4 - 2));
 
-            ind->push_back(pSize + i + 2);
-            ind->push_back(pSize + i + 1);
-            ind->push_back(pSize + i + 3);
+            GLuint pSize = _lineSize * _lineSize;
+            for (GLuint i = 0; i < _lineSize * 2 * 4 - 2; ++++i)
+            {
+                ind.push_back(pSize + i);
+                ind.push_back(pSize + i + 1);
+                ind.push_back(pSize + i + 2);
+
+                ind.push_back(pSize + i + 2);
+                ind.push_back(pSize + i + 1);
+                ind.push_back(pSize + i + 3);
+            }
         }
     }
 }

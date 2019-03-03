@@ -55,11 +55,13 @@ else
   libs += cc.find_library('GLU', required : true)
 endif
 
+omp_dep = dependency('openmp', required : true)
+
 vasnecov_lib = static_library('vasnecov',
   name_prefix : 'lib',
   sources : src + processed,
   include_directories : inc,
-  dependencies : [bmcl_dep, qt5_dep] + libs,
+  dependencies : [bmcl_dep, qt5_dep, omp_dep] + libs,
   cpp_args : cpp_args,
 )
 

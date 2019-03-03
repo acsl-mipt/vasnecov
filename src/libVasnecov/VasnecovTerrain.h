@@ -23,7 +23,7 @@ public:
     VasnecovTerrain(VasnecovPipeline* pipeline, const QString& name = QString());
     ~VasnecovTerrain();
 
-    void setPoints(const std::vector<QVector3D>& points, const std::vector<QVector3D>& colors = std::vector<QVector3D>());
+    void setPoints(std::vector<QVector3D>&& points, std::vector<QVector3D>&& colors = std::vector<QVector3D>());
     void clearPoints();
     GLuint pointsAmount() const;
 
