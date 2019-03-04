@@ -106,14 +106,14 @@ void VasnecovTerrain::renderDraw()
             pure_pipeline->drawElements(VasnecovPipeline::PolyLine,
                                         &_indices[i],
                                         &_points,
-                                        nullptr,
+                                        &_normals,
                                         nullptr,
                                         &_colors);
         }
         pure_pipeline->drawElements(VasnecovPipeline::Lines,
                                     &_indices.back(),
                                     &_points,
-                                    nullptr,
+                                    &_normals,
                                     nullptr,
                                     &_colors);
     }
@@ -258,26 +258,37 @@ void VasnecovTerrain::updateNormals()
         }
     }
 
-    // Vertical planes
-    for(size_t i = 0; i < _lineSize; ++i)
+    if(_type == TypeMesh)
     {
-        _normals.push_back(QVector3D(-1.0f, 0.0f, 0.0f));
-        _normals.push_back(_normals.back());
+        _normals.reserve(_normals.size() + 4);
+        _normals.push_back(QVector3D(-1.0f,  1.0f, 0.0f));
+        _normals.push_back(QVector3D(-1.0f, -1.0f, 0.0f));
+        _normals.push_back(QVector3D( 1.0f, -1.0f, 0.0f));
+        _normals.push_back(QVector3D( 1.0f,  1.0f, 0.0f));
     }
-    for(size_t i = 0; i < _lineSize; ++i)
+    else if (_type == TypeSurface)
     {
-        _normals.push_back(QVector3D(0.0f, -1.0f, 0.0f));
-        _normals.push_back(_normals.back());
-    }
-    for(size_t i = 0; i < _lineSize; ++i)
-    {
-        _normals.push_back(QVector3D(1.0f, 0.0f, 0.0f));
-        _normals.push_back(_normals.back());
-    }
-    for(size_t i = 0; i < _lineSize; ++i)
-    {
-        _normals.push_back(QVector3D(0.0f, 1.0f, 0.0f));
-        _normals.push_back(_normals.back());
+        // Vertical planes
+        for(size_t i = 0; i < _lineSize; ++i)
+        {
+            _normals.push_back(QVector3D(-1.0f, 0.0f, 0.0f));
+            _normals.push_back(_normals.back());
+        }
+        for(size_t i = 0; i < _lineSize; ++i)
+        {
+            _normals.push_back(QVector3D(0.0f, -1.0f, 0.0f));
+            _normals.push_back(_normals.back());
+        }
+        for(size_t i = 0; i < _lineSize; ++i)
+        {
+            _normals.push_back(QVector3D(1.0f, 0.0f, 0.0f));
+            _normals.push_back(_normals.back());
+        }
+        for(size_t i = 0; i < _lineSize; ++i)
+        {
+            _normals.push_back(QVector3D(0.0f, 1.0f, 0.0f));
+            _normals.push_back(_normals.back());
+        }
     }
 }
 
@@ -344,22 +355,22 @@ void VasnecovTerrain::updateIndices()
             #pragma omp parallel
             {
                 #pragma omp for
-                for (GLint row = 0; row < _lineSize - 1; ++row)
+                for (GLuint row = 0; row < _lineSize - 1; ++row)
                 {
-                    for (GLint col = 0; col < _lineSize - 1; ++col)
+                    for (GLuint col = 0; col < _lineSize - 1; ++col)
                     {
-                        GLint _1 = row * _lineSize + col;
-                        GLint _2 = _1 + _lineSize;
-                        GLint _3 = _1 + 1;
-                        GLint x = 6 * (_1 - row);
+                        GLuint v1 = row * _lineSize + col;
+                        GLuint v2 = v1 + _lineSize;
+                        GLuint v3 = v1 + 1;
+                        GLuint x = 6 * (v1 - row);
                         // First triangle
-                        ind[x + 0] = _1;
-                        ind[x + 1] = _2;
-                        ind[x + 2] = _3;
+                        ind[x + 0] = v1;
+                        ind[x + 1] = v2;
+                        ind[x + 2] = v3;
                         // Second triangle
-                        ind[x + 3] = _3;
-                        ind[x + 4] = _2;
-                        ind[x + 5] = _2 + 1;
+                        ind[x + 3] = v3;
+                        ind[x + 4] = v2;
+                        ind[x + 5] = v2 + 1;
                     }
                 }
             }
@@ -385,5 +396,3 @@ void VasnecovTerrain::updateIndices()
         }
     }
 }
-
-
