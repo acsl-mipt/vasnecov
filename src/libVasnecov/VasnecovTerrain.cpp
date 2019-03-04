@@ -24,7 +24,7 @@ VasnecovTerrain::~VasnecovTerrain()
 void VasnecovTerrain::setPoints(std::vector <QVector3D>&& points, std::vector<QVector3D>&& colors)
 {
     _points = std::move(points);
-    if(colors.size() == points.size())
+    if(colors.size() == _points.size())
         _colors = std::move(colors);
     else
         _colors.clear();
@@ -372,7 +372,7 @@ void VasnecovTerrain::updateIndices()
             ind.reserve(6 * (_lineSize * 2 * 4 - 2));
 
             GLuint pSize = _lineSize * _lineSize;
-            for (GLuint i = 0; i < _lineSize * 2 * 4 - 2; ++++i)
+            for (GLuint i = 0; i < _lineSize * 2 * 4 - 2; i=i+2)
             {
                 ind.push_back(pSize + i);
                 ind.push_back(pSize + i + 1);
