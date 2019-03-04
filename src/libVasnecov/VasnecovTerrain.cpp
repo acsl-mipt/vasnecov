@@ -234,7 +234,7 @@ void VasnecovTerrain::updateNormals()
             if(row == _lineSize - 1 && col == _lineSize - 1) // Right-bottom corner
             {
                 QVector3D a = _points[index - 1] - _points[index];
-                QVector3D b = _points[index - 1] - _points[index + _lineSize];
+                QVector3D b = _points[index - 1] - _points[index - _lineSize];
                 _normals.push_back(QVector3D::normal(a, b));
             }
             else if(row == _lineSize - 1) // Bottom line
@@ -355,9 +355,9 @@ void VasnecovTerrain::updateIndices()
             #pragma omp parallel
             {
                 #pragma omp for
-                for (GLuint row = 0; row < _lineSize - 1; ++row)
+                for (GLint row = 0; row < _lineSize - 1; ++row)
                 {
-                    for (GLuint col = 0; col < _lineSize - 1; ++col)
+                    for (GLint col = 0; col < _lineSize - 1; ++col)
                     {
                         GLuint v1 = row * _lineSize + col;
                         GLuint v2 = v1 + _lineSize;
