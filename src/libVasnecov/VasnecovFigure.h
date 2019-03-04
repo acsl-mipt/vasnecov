@@ -359,6 +359,7 @@ public:
     void disableLighting();
     GLboolean lighting() const;
 
+    void setDepth(bool depth);
     void enableDepth();
     void disableDepth();
     GLboolean depth() const;
@@ -429,6 +430,10 @@ inline GLboolean VasnecovFigure::lighting() const
     return m_lighting.raw();
 }
 
+inline void VasnecovFigure::setDepth(bool depth)
+{
+    m_depth.set(depth);
+}
 inline void VasnecovFigure::enableDepth()
 {
     m_depth.set(true);

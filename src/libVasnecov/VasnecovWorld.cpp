@@ -326,6 +326,19 @@ void VasnecovWorld::renderDraw()
             _elements.forEachPureLamp(renderDrawElement<VasnecovLamp>);
         }
 
+        // Draw terrains
+        if(_elements.hasPureTerrains())
+        {
+            pure_pipeline->enableDepth();
+
+            // Задание материала по умолчанию
+            VasnecovMaterial mat(pure_pipeline);
+            mat.renderDraw();
+
+            for(auto terrain : _elements.pureTerrains())
+                terrain->renderDraw();
+        }
+
         // Рисование фигур (непрозрачных)
         std::vector<VasnecovFigure *> transFigures;
 
@@ -371,17 +384,6 @@ void VasnecovWorld::renderDraw()
             pure_pipeline->disableBackFaces();
             pure_pipeline->enableSmoothShading();
             renderSwitchLamps();
-        }
-
-        // Draw terrains
-        if(_elements.hasPureTerrains())
-        {
-            // Задание материала по умолчанию
-            VasnecovMaterial mat(pure_pipeline);
-            mat.renderDraw();
-
-            for(auto terrain : _elements.pureTerrains())
-                terrain->renderDraw();
         }
 
         // Отрисовка непрозрачных изделий (деталей)

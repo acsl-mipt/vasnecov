@@ -208,6 +208,8 @@ VasnecovFigure::Types VasnecovFigure::type() const
             return TypeUnknown;
     }
 }
+
+
 GLint VasnecovFigure::setThickness(GLfloat thick)
 {
     if(thick >= 1.0f && thick <= 16.0f)
