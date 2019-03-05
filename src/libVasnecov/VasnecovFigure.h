@@ -15,6 +15,77 @@
 // Класс фигур (плоских, по сути)
 class VasnecovFigure : public VasnecovElement
 {
+public:
+    enum Types
+    {
+        TypeUnknown = 0,
+        TypePolyline  = 1, // Тип фигуры (ломаная линия) GL_LINE_STRIP
+        TypePolylineLoop = 2, // Замкнутая линия GL_LINE_LOOP
+        TypePolygons  = 3, // Сплошная заливка GL_TRIANGLE_FAN
+        TypeLines  = 4, // Линии (отрезки) GL_LINES
+        TypePoints  = 5, // Точки GL_POINTS
+        TypeTriangles  = 6 // Треугольники GL_TRIANGLES
+    };
+
+    VasnecovFigure(VasnecovPipeline* pipeline, const QString& name = QString());
+    ~VasnecovFigure();
+
+    static std::vector<QVector3D> readPointsFromObj(const QString& fileName);
+
+    void setPoints(const std::vector<QVector3D>& points);
+    void clearPoints();
+    GLuint pointsAmount() const;
+
+    void addFirstPoint(const QVector3D& point);
+    void removeFirstPoint();
+    void replaceFirstPoint(const QVector3D& point);
+
+    void addLastPoint(const QVector3D& point);
+    void removeLastPoint();
+    void replaceLastPoint(const QVector3D& point);
+
+    GLboolean setType(VasnecovFigure::Types type);
+    VasnecovFigure::Types type() const;
+
+    void enableLighting();
+    void disableLighting();
+    GLboolean lighting() const;
+
+    void setDepth(bool depth);
+    void enableDepth();
+    void disableDepth();
+    GLboolean depth() const;
+
+    GLint setThickness(GLfloat thick);
+    GLfloat thickness() const;
+
+    void setOptimization(GLboolean optimize);
+    GLboolean optimization() const;
+
+    // Making some simple figures
+    void createLine(GLfloat length, const QColor& color = QColor());
+    void createLine(const QVector3D& first, const QVector3D& second, const QColor& color = QColor());
+    void createLine(const Vasnecov::Line& line, const QColor& color = QColor());
+    void createCircle(GLfloat r, const QColor& color = QColor(), GLuint factor = 64); // Circle at horizontal plane
+    void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor& color = QColor(), GLuint factor = 128);
+    void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor& color = QColor(), GLuint factor = 128);
+    void createSquareGrid(GLfloat width, GLfloat height, const QColor& color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
+    void createMeshFromFile(const QString& fileName, const QColor& color = QColor());
+    void createMeshFromPoints(const std::vector<QVector3D>& points, const QColor& color = QColor());
+
+protected:
+    GLboolean designerSetType(VasnecovFigure::Types type);
+
+    GLenum renderUpdateData();
+    void renderDraw();
+
+    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
+
+    GLenum renderType() const;
+    QVector3D renderCm() const;
+    GLboolean renderLighting() const;
+
+private:
     // Класс для управления массивами вершин и индексов
     class VertexManager
     {
@@ -322,78 +393,6 @@ class VasnecovFigure : public VasnecovElement
         QVector3D pure_cm;
     };
 
-public:
-    enum Types
-    {
-        TypeUnknown = 0,
-        TypePolyline  = 1, // Тип фигуры (ломаная линия) GL_LINE_STRIP
-        TypePolylineLoop = 2, // Замкнутая линия GL_LINE_LOOP
-        TypePolygons  = 3, // Сплошная заливка GL_TRIANGLE_FAN
-        TypeLines  = 4, // Линии (отрезки) GL_LINES
-        TypePoints  = 5, // Точки GL_POINTS
-        TypeTriangles  = 6 // Треугольники GL_TRIANGLES
-    };
-
-public:
-    VasnecovFigure(VasnecovPipeline* pipeline, const QString& name = QString());
-    ~VasnecovFigure();
-
-    static std::vector<QVector3D> readPointsFromObj(const QString& fileName);
-
-    void setPoints(const std::vector<QVector3D>& points);
-    void clearPoints();
-    GLuint pointsAmount() const;
-
-    void addFirstPoint(const QVector3D& point);
-    void removeFirstPoint();
-    void replaceFirstPoint(const QVector3D& point);
-
-    void addLastPoint(const QVector3D& point);
-    void removeLastPoint();
-    void replaceLastPoint(const QVector3D& point);
-
-    GLboolean setType(VasnecovFigure::Types type);
-    VasnecovFigure::Types type() const;
-
-    void enableLighting();
-    void disableLighting();
-    GLboolean lighting() const;
-
-    void setDepth(bool depth);
-    void enableDepth();
-    void disableDepth();
-    GLboolean depth() const;
-
-    GLint setThickness(GLfloat thick);
-    GLfloat thickness() const;
-
-    void setOptimization(GLboolean optimize);
-    GLboolean optimization() const;
-
-    // Making some simple figures
-    void createLine(GLfloat length, const QColor& color = QColor());
-    void createLine(const QVector3D& first, const QVector3D& second, const QColor& color = QColor());
-    void createLine(const Vasnecov::Line& line, const QColor& color = QColor());
-    void createCircle(GLfloat r, const QColor& color = QColor(), GLuint factor = 64); // Circle at horizontal plane
-    void createArc(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor& color = QColor(), GLuint factor = 128);
-    void createPie(GLfloat r, GLfloat startAngle, GLfloat spanAngle, const QColor& color = QColor(), GLuint factor = 128);
-    void createSquareGrid(GLfloat width, GLfloat height, const QColor& color = QColor(), GLuint horizontals = 2, GLuint verticals = 2);
-    void createMeshFromFile(const QString& fileName, const QColor& color = QColor());
-    void createMeshFromPoints(const std::vector<QVector3D>& points, const QColor& color = QColor());
-
-protected:
-    GLboolean designerSetType(VasnecovFigure::Types type);
-
-    GLenum renderUpdateData();
-    void renderDraw();
-
-    GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
-
-    GLenum renderType() const;
-    QVector3D renderCm() const;
-    GLboolean renderLighting() const;
-
-protected:
     Vasnecov::MutualData<VasnecovPipeline::ElementDrawingMethods> m_type; // Тип отрисовки
     VertexManager m_points;
 

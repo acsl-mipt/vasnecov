@@ -19,11 +19,9 @@ VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString& name) 
     m_thickness(raw_wasUpdated, Thickness, 1.0f),
     m_lighting(raw_wasUpdated, Lighting, false),
     m_depth(raw_wasUpdated, Depth, true)
-{
-}
+{}
 VasnecovFigure::~VasnecovFigure()
-{
-}
+{}
 
 std::vector<QVector3D> VasnecovFigure::readPointsFromObj(const QString& fileName)
 {
