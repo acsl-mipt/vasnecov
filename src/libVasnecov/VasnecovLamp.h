@@ -19,6 +19,7 @@ class VasnecovLamp : public VasnecovAbstractElement
 {
 public:
     VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, Vasnecov::LampTypes type, GLuint index);
+    ~VasnecovLamp();
 
 public:
     void setType(Vasnecov::LampTypes type);

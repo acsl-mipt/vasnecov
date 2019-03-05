@@ -35,6 +35,9 @@ VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, Vasn
         designerUpdateMatrixMs();
     }
 }
+
+VasnecovLamp::~VasnecovLamp()
+{}
 void VasnecovLamp::setType(Vasnecov::LampTypes type)
 {
     m_type.set(type);
