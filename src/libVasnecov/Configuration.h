@@ -30,6 +30,7 @@ namespace Vasnecov
 
     const QString cfg_textureFormat = "png";
     const QString cfg_meshFormat = "obj";
+    const QString cfg_rawMeshFormat = "vmf";
     const GLboolean cfg_readFromMTL = 1; // Читать имя текстуры из мтл-библиотеки, указанной в обж
     const GLboolean cfg_sortTransparency = true;
     const GLuint cfg_elementMaxLevel = 16; // Количество максимальных уровней для ВЭлемента

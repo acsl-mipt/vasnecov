@@ -26,7 +26,8 @@ public:
     GLboolean loadMeshFileByPath(const QString& filePath);
     GLboolean loadTextureFile(const QString& fileName);
 
-    // Вспомогательные (не привязаны к внутренним данным)
+    size_t meshesAmount() const;
+
     static GLboolean setDirectory(const QString& newDir, QString& oldDir);
     static GLboolean correctPath(QString& path, QString& fileId, const QString& format); // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
     static QString correctFileId(const QString& fileId, const QString& format); // Удаляет формат из имени

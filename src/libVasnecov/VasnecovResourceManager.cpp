@@ -76,9 +76,9 @@ GLboolean VasnecovResourceManager::loadMeshFileByPath(const QString& filePath)
         VasnecovMesh *mesh = new VasnecovMesh(filePath, filePath);
         bool loaded(false);
 
-        if(filePath.endsWith(".obj"))
+        if(filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_meshFormat)))
             loaded = mesh->loadModel();
-        else if(filePath.endsWith(".vmf"))
+        else if(filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_rawMeshFormat)))
             loaded = mesh->loadRawModel();
 
         if(loaded)
@@ -154,6 +154,11 @@ GLboolean VasnecovResourceManager::loadTextureFile(const QString& fileName)
         }
     }
     return false;
+}
+
+size_t VasnecovResourceManager::meshesAmount() const
+{
+    return meshes.size();
 }
 
 GLboolean VasnecovResourceManager::setDirectory(const QString& newDir, QString& oldDir)

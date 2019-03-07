@@ -310,8 +310,6 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
         return _isLoaded;
     }
 
-    if(!checkIndices())
-        return 0;
     GLint fails(0);
 
     if(_type == VasnecovPipeline::Lines)
