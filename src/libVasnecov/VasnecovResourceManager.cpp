@@ -69,6 +69,30 @@ GLboolean VasnecovResourceManager::loadMeshFile(const QString& fileName)
     return false;
 }
 
+GLboolean VasnecovResourceManager::loadMeshFileByPath(const QString& filePath)
+{
+    if(!meshes.count(filePath))
+    {
+        VasnecovMesh *mesh = new VasnecovMesh(filePath, filePath);
+        bool loaded(false);
+
+        if(filePath.endsWith(".obj"))
+            loaded = mesh->loadModel();
+        else if(filePath.endsWith(".vmf"))
+            loaded = mesh->loadRawModel();
+
+        if(loaded)
+        {
+            if(addMesh(mesh, filePath))
+                return true;
+        }
+        delete mesh;
+        mesh = nullptr;
+    }
+
+    return false;
+}
+
 GLboolean VasnecovResourceManager::loadTextureFile(const QString& fileName)
 {
     // Поиск префикса типа текстуры в адресе

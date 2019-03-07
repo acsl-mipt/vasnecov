@@ -23,6 +23,7 @@ public:
     GLboolean setMeshesDir(const QString& dir);
 
     GLboolean loadMeshFile(const QString& fileName);
+    GLboolean loadMeshFileByPath(const QString& filePath);
     GLboolean loadTextureFile(const QString& fileName);
 
     // Вспомогательные (не привязаны к внутренним данным)

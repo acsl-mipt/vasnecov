@@ -215,7 +215,7 @@ public:
 
     void loadAll(); // Загрузка всех ресурсов из своих директорий
 
-    GLboolean loadMesh(const QString& fileName); // Загрузка конкретного меша
+    GLboolean loadMesh(const QString& filePath); // Загрузка конкретного меша
     GLuint loadMeshes(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
     GLboolean loadTexture(const QString& fileName);
     GLuint loadTextures(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех текстур

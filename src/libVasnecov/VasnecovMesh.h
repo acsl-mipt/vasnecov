@@ -25,31 +25,44 @@ public:
     VasnecovPipeline::ElementDrawingMethods type() const;
     GLboolean loadModel(GLboolean readFromMTL = Vasnecov::cfg_readFromMTL);
     GLboolean loadModel(const QString& path, GLboolean readFromMTL = Vasnecov::cfg_readFromMTL); // Загрузка модели (obj-файл)
+    GLboolean loadRawModel();
+    GLboolean loadRawModel(const QString& path);
     void drawModel(VasnecovPipeline* pipeline); // Отрисовка модели
     void drawBorderBox(VasnecovPipeline* pipeline); // Рисовать ограничивающий бокс
     const QVector3D& massCenter() const;
 
+    GLboolean writeRawModel(const QString& path);
+
 protected:
     void optimizeData();
     void calculateBox();
+    GLboolean checkIndices();
 
-protected:
-    VasnecovPipeline::ElementDrawingMethods m_type; // Тип отрисовки
-    QString m_name; // Имя меша (то, что пишется в мап мешей). Необязательный атрибут, для текстур и т.п.
-    GLboolean m_isHidden; // Флаг на отрисовку
-    QString m_meshPath; // Адрес (относительно директории приложения) файла модели.
-    GLboolean m_isLoaded;
+    template<typename T>
+    static T getPartOfArray(const char * &fromPos, const T &);
+    template<typename T>
+    static T getPartOfArray(const char * &fromPos);
 
-    std::vector<GLuint> m_indices; // Индексы для отрисовки
-    std::vector<QVector3D> m_vertices; // Координаты вершин
-    std::vector<QVector3D> m_normals; // Координаты нормалей
-    std::vector<QVector2D> m_textures; // Координаты текстур
+private:
+    VasnecovPipeline::
+    ElementDrawingMethods   _type; // Тип отрисовки
+    QString                 _name; // Имя меша (то, что пишется в мап мешей). Необязательный атрибут, для текстур и т.п.
+    GLboolean               _isHidden; // Флаг на отрисовку
+    QString                 _meshPath; // Адрес (относительно директории приложения) файла модели.
+    GLboolean               _isLoaded;
 
-    GLboolean m_hasTexture; // Флаг наличия внешней текстуры
+    std::vector<GLuint>     _indices; // Индексы для отрисовки
+    std::vector<QVector3D>  _vertices; // Координаты вершин
+    std::vector<QVector3D>  _normals; // Координаты нормалей
+    std::vector<QVector2D>  _textures; // Координаты текстур
 
-    std::vector<QVector3D> m_borderBoxVertices; // Координаты ограничивающего бокса
-    std::vector<GLuint> m_borderBoxIndices; // Индексы для ограничивающего бокса
-    QVector3D m_massCenter; // Координата центра масс (по вершинам ограничивающей коробки)
+    GLboolean               _hasTexture; // Флаг наличия внешней текстуры
+
+    std::vector<QVector3D>  _borderBoxVertices; // Координаты ограничивающего бокса
+    std::vector<GLuint>     _borderBoxIndices; // Индексы для ограничивающего бокса
+    QVector3D               _massCenter; // Координата центра масс (по вершинам ограничивающей коробки)
+
+    uint32_t                _magicNumber; // Always in BE (ex. 76 6d 66 01)
 
 private:
     struct QuadsIndices
@@ -118,15 +131,31 @@ private:
 
 inline void VasnecovMesh :: setName(const QString& name)
 {
-    m_name = name;
+    _name = name;
 }
 
 inline VasnecovPipeline::ElementDrawingMethods VasnecovMesh::type() const
 {
-    return m_type;
+    return _type;
 }
 
 inline const QVector3D& VasnecovMesh::massCenter() const
 {
-    return m_massCenter;
+    return _massCenter;
+}
+
+template<typename T>
+T VasnecovMesh::getPartOfArray(const char * &fromPos, const T &)
+{
+    const char *old = fromPos;
+    fromPos += sizeof(T);
+    return *reinterpret_cast<const T*>(old);
+}
+
+template<typename T>
+T VasnecovMesh::getPartOfArray(const char * &fromPos)
+{
+    const char *old = fromPos;
+    fromPos += sizeof(T);
+    return *reinterpret_cast<const T*>(old);
 }

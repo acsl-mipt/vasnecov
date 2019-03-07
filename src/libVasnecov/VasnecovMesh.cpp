@@ -9,6 +9,7 @@
 
 #include "VasnecovMesh.h"
 #include <QVector2D>
+#include <QtEndian>
 #include <QFile>
 #include <QVector>
 #include <iostream>
@@ -17,29 +18,30 @@
 #include <algorithm>
 #include "Technologist.h"
 
-VasnecovMesh::VasnecovMesh(const QString &meshPath, const QString &name) :
-    m_type(VasnecovPipeline::Points),
-    m_name(name),
-    m_isHidden(true),
-    m_meshPath(meshPath),
-    m_isLoaded(false),
+VasnecovMesh::VasnecovMesh(const QString& meshPath, const QString& name)
+    : _type(VasnecovPipeline::Points)
+    , _name(name)
+    , _isHidden(true)
+    , _meshPath(meshPath)
+    , _isLoaded(false)
 
-    m_indices(),
-    m_vertices(),
-    m_normals(),
-    m_textures(),
+    , _indices()
+    , _vertices()
+    , _normals()
+    , _textures()
 
-    m_hasTexture(false),
-    m_borderBoxVertices(8),
-    m_borderBoxIndices(24),
-    m_massCenter()
+    , _hasTexture(false)
+    , _borderBoxVertices(8)
+    , _borderBoxIndices(24)
+    , _massCenter()
+    , _magicNumber(qToBigEndian(0x766d6601))
 {
 }
 GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
 {
-    if(!m_meshPath.isEmpty())
+    if(!_meshPath.isEmpty())
     {
-        return loadModel(m_meshPath, readFromMTL);
+        return loadModel(_meshPath, readFromMTL);
     }
     else
     {
@@ -48,8 +50,8 @@ GLboolean VasnecovMesh::loadModel(GLboolean readFromMTL)
 }
 GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 {
-    m_meshPath = path;
-    m_type = VasnecovPipeline::Points;
+    _meshPath = path;
+    _type = VasnecovPipeline::Points;
 
     // Списки для данных в грубом виде
     std::vector <TrianglesIndices> rawIndices; // Набор индексов для всего подряд
@@ -61,7 +63,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
     QFile objFile(path);
     if(!objFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        Vasnecov::problem("Can't open model file: " + m_meshPath);
+        Vasnecov::problem("Can't open model file: " + _meshPath);
         return 0;
     }
 
@@ -181,9 +183,9 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                             if(correct)
                             {
                                 rawIndices.push_back(cIndex);
-                                if(m_type != VasnecovPipeline::Triangles)
+                                if(_type != VasnecovPipeline::Triangles)
                                 {
-                                    m_type = VasnecovPipeline::Triangles;
+                                    _type = VasnecovPipeline::Triangles;
                                 }
                             }
                         }
@@ -192,7 +194,7 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                 case 'l': // Отрисовка линиями, если не заданы полигоны
                     if(line.size() > 2 && line.at(1) == ' ')
                     {
-                        if(m_type != VasnecovPipeline::Triangles)
+                        if(_type != VasnecovPipeline::Triangles)
                         {
                             textLine = QString::fromLatin1(line.constData() + 2, line.size() - 2);
                             parts = textLine.splitRef(' ');
@@ -242,9 +244,9 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 
                                 if(correct)
                                 {
-                                    if(m_type != VasnecovPipeline::Lines)
+                                    if(_type != VasnecovPipeline::Lines)
                                     {
-                                        m_type = VasnecovPipeline::Lines;
+                                        _type = VasnecovPipeline::Lines;
                                     }
                                 }
                             }
@@ -268,13 +270,13 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                                     if(parts.at(1) != "(null)")
                                     {
 //        								m_textureD = parts.at(1);
-                                        m_hasTexture = 1;
+                                        _hasTexture = 1;
                                     }
                                 }
-                                else if(m_name != "")
+                                else if(_name != "")
                                 {
 //            						m_textureD = m_name;
-                                    m_hasTexture = 1;
+                                    _hasTexture = 1;
                                 }
                             }
                         }
@@ -297,20 +299,22 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
     GLuint nm = rawNormals.size();
     GLuint tm = rawTextures.size();
     GLuint indCount = rawIndices.size();
-    if(m_type == VasnecovPipeline::Lines)
+    if(_type == VasnecovPipeline::Lines)
         indCount = rawLinesIndices.size();
 
     if(vm == 0)
     {
-        Vasnecov::problem("Model does not have points: " + m_meshPath);
+        Vasnecov::problem("Model does not have points: " + _meshPath);
 
-        m_isLoaded = false;
-        return m_isLoaded;
+        _isLoaded = false;
+        return _isLoaded;
     }
 
+    if(!checkIndices())
+        return 0;
     GLint fails(0);
 
-    if(m_type == VasnecovPipeline::Lines)
+    if(_type == VasnecovPipeline::Lines)
     {
         for(GLuint i = 0; i < indCount; ++i)
         {
@@ -358,16 +362,16 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
 
     if(fails > 0)
     {
-        Vasnecov::problem("Incorrect geometry data: " + m_meshPath + ", wrong indices: ", fails);
+        Vasnecov::problem("Incorrect geometry data: " + _meshPath + ", wrong indices: ", fails);
 
-        m_isLoaded = false;
-        return m_isLoaded;
+        _isLoaded = false;
+        return _isLoaded;
     }
 
     // Приведение данных к нормальному виду (пригодному для отрисовки по общему индексу)
-    m_indices.reserve(indCount);
+    _indices.reserve(indCount);
 
-    if(m_type == VasnecovPipeline::Lines)
+    if(_type == VasnecovPipeline::Lines)
     {
         for(GLuint i = 0; i < indCount; ++i)
         {
@@ -376,14 +380,14 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                 GLuint vi = rawLinesIndices[i].vertices[j];
                 GLuint ti = rawLinesIndices[i].textures[j];
 
-                m_vertices.push_back(rawVertices[vi]);
+                _vertices.push_back(rawVertices[vi]);
 
                 if(tm)
                 {
-                    m_textures.push_back(rawTextures[ti]);
+                    _textures.push_back(rawTextures[ti]);
                 }
 
-                m_indices.push_back(m_vertices.size()-1);
+                _indices.push_back(_vertices.size()-1);
             }
         }
     }
@@ -397,18 +401,18 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
                 GLuint ni = rawIndices[i].normals[j];
                 GLuint ti = rawIndices[i].textures[j];
 
-                m_vertices.push_back(rawVertices[vi]);
+                _vertices.push_back(rawVertices[vi]);
 
                 if(nm)
                 {
-                    m_normals.push_back(rawNormals[ni]);
+                    _normals.push_back(rawNormals[ni]);
                 }
                 if(tm)
                 {
-                    m_textures.push_back(rawTextures[ti]);
+                    _textures.push_back(rawTextures[ti]);
                 }
 
-                m_indices.push_back(m_vertices.size()-1);
+                _indices.push_back(_vertices.size()-1);
             }
         }
     }
@@ -417,33 +421,131 @@ GLboolean VasnecovMesh::loadModel(const QString &path, GLboolean readFromMTL)
     calculateBox();
 
     // Выставление флагов
-    m_isLoaded = true;
-    m_isHidden = false;
+    _isLoaded = true;
+    _isHidden = false;
 
-    return m_isLoaded;
+    return _isLoaded;
+}
+
+GLboolean VasnecovMesh::loadRawModel()
+{
+    return loadRawModel(_meshPath);
+}
+
+GLboolean VasnecovMesh::loadRawModel(const QString& path)
+{
+    _meshPath = path;
+    QFile rawFile(path);
+    if(!rawFile.open(QIODevice::ReadOnly))
+    {
+        Vasnecov::problem("Can't open raw-model file: " + _meshPath);
+        return false;
+    }
+
+    QByteArray data;
+
+    data = rawFile.read(sizeof (_magicNumber) + sizeof (uint16_t) * 2);  // MN & block size & type
+
+    const char *dataPos = data.constData();
+    uint32_t magic = getPartOfArray(dataPos, magic);
+    if(magic != _magicNumber)
+    {
+        Vasnecov::problem("Model is not VMF-file: " + _meshPath);
+        return false;
+    }
+
+    uint16_t blocksAmount = getPartOfArray(dataPos, blocksAmount);
+    uint16_t type = getPartOfArray(dataPos, type);
+
+    // Sizes
+    data.append(rawFile.read(sizeof (uint32_t) * 4));
+    dataPos = data.constData() + 8;
+
+    uint32_t indicesSize = getPartOfArray(dataPos, indicesSize);
+    uint32_t verticesSize = getPartOfArray(dataPos, verticesSize);
+    uint32_t normalsSize = getPartOfArray(dataPos, normalsSize);
+    uint32_t texturesSize = getPartOfArray(dataPos, texturesSize);
+
+    // Indices
+    data = rawFile.read(indicesSize * sizeof (uint32_t));
+    dataPos = data.constData();
+    _indices.reserve(indicesSize);
+    for(size_t i = 0; i < indicesSize; ++i)
+    {
+        _indices.push_back(getPartOfArray<uint32_t>(dataPos));
+    }
+
+    // Vertices
+    data = rawFile.read(verticesSize * sizeof (float) * 3);
+    dataPos = data.constData();
+    _vertices.reserve(verticesSize);
+    for(size_t i = 0; i < verticesSize; ++i)
+    {
+        float x = getPartOfArray<float>(dataPos);
+        float y = getPartOfArray<float>(dataPos);
+        float z = getPartOfArray<float>(dataPos);
+
+        _vertices.emplace_back(x, y, z);
+    }
+
+    // Normals
+    data = rawFile.read(normalsSize * sizeof (float) * 3);
+    dataPos = data.constData();
+    _normals.reserve(normalsSize);
+    for(size_t i = 0; i < normalsSize; ++i)
+    {
+        float x = getPartOfArray<float>(dataPos);
+        float y = getPartOfArray<float>(dataPos);
+        float z = getPartOfArray<float>(dataPos);
+
+        _normals.emplace_back(x, y, z);
+    }
+
+    // Textures
+    data = rawFile.read(texturesSize * sizeof (float) * 3);
+    dataPos = data.constData();
+    _textures.reserve(texturesSize);
+    for(size_t i = 0; i < texturesSize; ++i)
+    {
+        float x = getPartOfArray<float>(dataPos);
+        float y = getPartOfArray<float>(dataPos);
+
+        _textures.emplace_back(x, y);
+    }
+
+    _type = static_cast<VasnecovPipeline::ElementDrawingMethods>(type);
+
+    calculateBox();
+
+    _isLoaded = true;
+    _isHidden = false;
+
+    // FIXME: check indices!
+
+    return true;
 }
 void VasnecovMesh::drawModel(VasnecovPipeline* pipeline)
 {
     if(pipeline == nullptr)
         return;
 
-    if(!m_isHidden && m_isLoaded)
+    if(!_isHidden && _isLoaded)
     {
         std::vector<QVector3D> *norms(nullptr);
         std::vector<QVector2D> *texts(nullptr);
 
-        if(!m_normals.empty())
+        if(!_normals.empty())
         {
-            norms = &m_normals;
+            norms = &_normals;
         }
-        if(!m_textures.empty())
+        if(!_textures.empty())
         {
-            texts = &m_textures;
+            texts = &_textures;
         }
 
-        pipeline->drawElements(m_type,
-                               &m_indices,
-                               &m_vertices,
+        pipeline->drawElements(_type,
+                               &_indices,
+                               &_vertices,
                                norms,
                                texts);
     }
@@ -453,27 +555,126 @@ void VasnecovMesh::drawBorderBox(VasnecovPipeline* pipeline)
     if(pipeline == nullptr)
         return;
 
-    if(!m_isHidden && m_isLoaded)
+    if(!_isHidden && _isLoaded)
     {
-        pipeline->drawElements(VasnecovPipeline::Lines, &m_borderBoxIndices, &m_borderBoxVertices);
+        pipeline->drawElements(VasnecovPipeline::Lines, &_borderBoxIndices, &_borderBoxVertices);
     }
+}
+
+/**
+  File structure (Little-endian):
+
+  --- Main header block [4+2+2]
+  [4] - magic number (BE: 0x766d6601 - vmf1, 1 - version number)
+  [2] - uint16_t - blocks amount 'a' (default - 4: indices, vertices, normals, textures)
+  [2] - uint16_t - type of drawing
+
+  --- Sizes [4 blocks example]
+  [4 * a] - uint32_t - sizes of indices, vertices, normals, textures ('i', 'v', 'n', 't')
+
+  --- Values [4 blocks example]
+  [4 * i] - uint32_t - Index
+  [4 * 3 * v] - float * 3 - Vertex 3D-vector
+  [4 * 3 * n] - float * 3 - Normal 3D-vector
+  [4 * 2 * t] - float * 2 - Texture 2D-vector
+
+ */
+
+
+GLboolean VasnecovMesh::writeRawModel(const QString& path)
+{
+    if(!_isLoaded)
+    {
+        Vasnecov::problem("Writing model was not loaded: ", _meshPath);
+        return false;
+    }
+
+    QFile rawFile(path);
+    if(!rawFile.open(QIODevice::WriteOnly))
+    {
+        Vasnecov::problem("Can't open writing raw-model file: " + _meshPath);
+        return false;
+    }
+    else
+    {
+        rawFile.write(reinterpret_cast<const char*>(&_magicNumber), sizeof(_magicNumber));
+
+        uint16_t blocksAmount(4); // Indices, vertices, normals, textures
+        rawFile.write(reinterpret_cast<const char*>(&blocksAmount), sizeof(blocksAmount));
+        uint16_t type(_type);
+        rawFile.write(reinterpret_cast<const char*>(&type), sizeof(type));
+
+        uint32_t blockSize(0);
+        blockSize = _indices.size();
+        rawFile.write(reinterpret_cast<const char*>(&blockSize), sizeof(blockSize));
+
+        blockSize = _vertices.size();
+        rawFile.write(reinterpret_cast<const char*>(&blockSize), sizeof(blockSize));
+
+        blockSize = _normals.size();
+        rawFile.write(reinterpret_cast<const char*>(&blockSize), sizeof(blockSize));
+
+        blockSize = _textures.size();
+        rawFile.write(reinterpret_cast<const char*>(&blockSize), sizeof(blockSize));
+
+        // data
+        for(auto ind : _indices)
+        {
+            uint32_t i = ind;
+            rawFile.write(reinterpret_cast<const char*>(&i), sizeof(i));
+        }
+
+        for(auto value : _vertices)
+        {
+            float c;
+            c = value.x();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+            c = value.y();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+            c = value.z();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+        }
+
+        for(auto value : _normals)
+        {
+            float c;
+            c = value.x();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+            c = value.y();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+            c = value.z();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+        }
+
+        for(auto value : _textures)
+        {
+            float c;
+            c = value.x();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+            c = value.y();
+            rawFile.write(reinterpret_cast<const char*>(&c), sizeof(c));
+        }
+
+    }
+
+    return true;
 }
 
 void VasnecovMesh::optimizeData()
 {
     // Оптимизация массивов
     // Проверка на наличие индексов
-    std::vector<GLuint> rawIndices(m_indices);
-    m_indices.clear();
+    std::vector<GLuint> rawIndices(_indices);
+    _indices.clear();
 
-    std::vector<QVector3D> rawVertices(m_vertices);
-    m_vertices.clear();
+    std::vector<QVector3D> rawVertices(_vertices);
+    _vertices.clear();
 
-    std::vector<QVector3D> rawNormals(m_normals);
-    m_normals.clear();
+    std::vector<QVector3D> rawNormals(_normals);
+    _normals.clear();
 
-    std::vector<QVector2D> rawTextures(m_textures);
-    m_textures.clear();
+    std::vector<QVector2D> rawTextures(_textures);
+    _textures.clear();
 
     // Массив oldIndices - индексы просто по порядку
     for(GLuint i = 0; i < rawIndices.size(); ++i)
@@ -483,15 +684,15 @@ void VasnecovMesh::optimizeData()
         GLuint fIndex(0);
 
         // Поиск точки в списке точек
-        for(fIndex = 0; fIndex < m_vertices.size(); ++fIndex)
+        for(fIndex = 0; fIndex < _vertices.size(); ++fIndex)
         {
-            if(m_vertices[fIndex] == ver)
+            if(_vertices[fIndex] == ver)
             {
                 found = true;
                 if(!rawNormals.empty())
                 {
                     // Есть нормали и их индексы не совпадают - переходим к следующей точке
-                    if(m_normals[fIndex] != rawNormals[i])
+                    if(_normals[fIndex] != rawNormals[i])
                     {
                         found = false;
                         continue;
@@ -499,7 +700,7 @@ void VasnecovMesh::optimizeData()
                 }
                 if(!rawTextures.empty())
                 {
-                    if(m_textures[fIndex] != rawTextures[i])
+                    if(_textures[fIndex] != rawTextures[i])
                     {
                         found = false;
                         continue;
@@ -511,109 +712,114 @@ void VasnecovMesh::optimizeData()
 
         if(found) // Точка найдена, пишем индекс дубля
         {
-            m_indices.push_back(fIndex);
+            _indices.push_back(fIndex);
         }
         else // Точка не найдена, заносим новые данные
         {
-            m_vertices.push_back(ver);
+            _vertices.push_back(ver);
             if(!rawNormals.empty())
             {
-                m_normals.push_back(rawNormals[i]);
+                _normals.push_back(rawNormals[i]);
             }
             if(!rawTextures.empty())
             {
-                m_textures.push_back(rawTextures[i]);
+                _textures.push_back(rawTextures[i]);
             }
 
-            m_indices.push_back(m_vertices.size() - 1); // Добавляем правильный индекс
+            _indices.push_back(_vertices.size() - 1); // Добавляем правильный индекс
         }
     }
 }
 
 void VasnecovMesh::calculateBox()
 {
-    GLuint vm = m_vertices.size();
+    GLuint vm = _vertices.size();
 
     // Определение ограничивающих боксов и центра "масс"
     if(vm > 0)
     {
-        m_borderBoxVertices[0].setX(m_vertices[0].x());
-        m_borderBoxVertices[0].setY(m_vertices[0].y());
-        m_borderBoxVertices[0].setZ(m_vertices[0].z());
+        _borderBoxVertices[0].setX(_vertices[0].x());
+        _borderBoxVertices[0].setY(_vertices[0].y());
+        _borderBoxVertices[0].setZ(_vertices[0].z());
 
-        m_borderBoxVertices[6].setX(m_vertices[0].x());
-        m_borderBoxVertices[6].setY(m_vertices[0].y());
-        m_borderBoxVertices[6].setZ(m_vertices[0].z());
+        _borderBoxVertices[6].setX(_vertices[0].x());
+        _borderBoxVertices[6].setY(_vertices[0].y());
+        _borderBoxVertices[6].setZ(_vertices[0].z());
     }
 
 
     for(GLuint i = 0; i < vm; ++i)
     {
         // Минимальная точка
-        if(m_vertices[i].x() < m_borderBoxVertices[0].x())
+        if(_vertices[i].x() < _borderBoxVertices[0].x())
         {
-            m_borderBoxVertices[0].setX(m_vertices[i].x());
+            _borderBoxVertices[0].setX(_vertices[i].x());
         }
-        if(m_vertices[i].y() < m_borderBoxVertices[0].y())
+        if(_vertices[i].y() < _borderBoxVertices[0].y())
         {
-            m_borderBoxVertices[0].setY(m_vertices[i].y());
+            _borderBoxVertices[0].setY(_vertices[i].y());
         }
-        if(m_vertices[i].z() < m_borderBoxVertices[0].z())
+        if(_vertices[i].z() < _borderBoxVertices[0].z())
         {
-            m_borderBoxVertices[0].setZ(m_vertices[i].z());
+            _borderBoxVertices[0].setZ(_vertices[i].z());
         }
 
         // Максимальная точка
-        if(m_vertices[i].x() > m_borderBoxVertices[6].x())
+        if(_vertices[i].x() > _borderBoxVertices[6].x())
         {
-            m_borderBoxVertices[6].setX(m_vertices[i].x());
+            _borderBoxVertices[6].setX(_vertices[i].x());
         }
-        if(m_vertices[i].y() > m_borderBoxVertices[6].y())
+        if(_vertices[i].y() > _borderBoxVertices[6].y())
         {
-            m_borderBoxVertices[6].setY(m_vertices[i].y());
+            _borderBoxVertices[6].setY(_vertices[i].y());
         }
-        if(m_vertices[i].z() > m_borderBoxVertices[6].z())
+        if(_vertices[i].z() > _borderBoxVertices[6].z())
         {
-            m_borderBoxVertices[6].setZ(m_vertices[i].z());
+            _borderBoxVertices[6].setZ(_vertices[i].z());
         }
     }
 
-    m_borderBoxVertices[1].setX(m_borderBoxVertices[0].x()); m_borderBoxVertices[1].setY(m_borderBoxVertices[6].y()); m_borderBoxVertices[1].setZ(m_borderBoxVertices[0].z());
-    m_borderBoxVertices[2].setX(m_borderBoxVertices[6].x()); m_borderBoxVertices[2].setY(m_borderBoxVertices[6].y()); m_borderBoxVertices[2].setZ(m_borderBoxVertices[0].z());
-    m_borderBoxVertices[3].setX(m_borderBoxVertices[6].x()); m_borderBoxVertices[3].setY(m_borderBoxVertices[0].y()); m_borderBoxVertices[3].setZ(m_borderBoxVertices[0].z());
+    _borderBoxVertices[1].setX(_borderBoxVertices[0].x()); _borderBoxVertices[1].setY(_borderBoxVertices[6].y()); _borderBoxVertices[1].setZ(_borderBoxVertices[0].z());
+    _borderBoxVertices[2].setX(_borderBoxVertices[6].x()); _borderBoxVertices[2].setY(_borderBoxVertices[6].y()); _borderBoxVertices[2].setZ(_borderBoxVertices[0].z());
+    _borderBoxVertices[3].setX(_borderBoxVertices[6].x()); _borderBoxVertices[3].setY(_borderBoxVertices[0].y()); _borderBoxVertices[3].setZ(_borderBoxVertices[0].z());
 
-    m_borderBoxVertices[4].setX(m_borderBoxVertices[0].x()); m_borderBoxVertices[4].setY(m_borderBoxVertices[0].y()); m_borderBoxVertices[4].setZ(m_borderBoxVertices[6].z());
-    m_borderBoxVertices[5].setX(m_borderBoxVertices[0].x()); m_borderBoxVertices[5].setY(m_borderBoxVertices[6].y()); m_borderBoxVertices[5].setZ(m_borderBoxVertices[6].z());
-    m_borderBoxVertices[7].setX(m_borderBoxVertices[6].x()); m_borderBoxVertices[7].setY(m_borderBoxVertices[0].y()); m_borderBoxVertices[7].setZ(m_borderBoxVertices[6].z());
+    _borderBoxVertices[4].setX(_borderBoxVertices[0].x()); _borderBoxVertices[4].setY(_borderBoxVertices[0].y()); _borderBoxVertices[4].setZ(_borderBoxVertices[6].z());
+    _borderBoxVertices[5].setX(_borderBoxVertices[0].x()); _borderBoxVertices[5].setY(_borderBoxVertices[6].y()); _borderBoxVertices[5].setZ(_borderBoxVertices[6].z());
+    _borderBoxVertices[7].setX(_borderBoxVertices[6].x()); _borderBoxVertices[7].setY(_borderBoxVertices[0].y()); _borderBoxVertices[7].setZ(_borderBoxVertices[6].z());
 
-    m_massCenter.setX((m_borderBoxVertices[0].x() + m_borderBoxVertices[6].x())*0.5f);
-    m_massCenter.setY((m_borderBoxVertices[0].y() + m_borderBoxVertices[6].y())*0.5f);
-    m_massCenter.setZ((m_borderBoxVertices[0].z() + m_borderBoxVertices[6].z())*0.5f);
+    _massCenter.setX((_borderBoxVertices[0].x() + _borderBoxVertices[6].x())*0.5f);
+    _massCenter.setY((_borderBoxVertices[0].y() + _borderBoxVertices[6].y())*0.5f);
+    _massCenter.setZ((_borderBoxVertices[0].z() + _borderBoxVertices[6].z())*0.5f);
 
 
     // Индексы для бокса
-    m_borderBoxIndices[0] = 0;
-    m_borderBoxIndices[1] = 1;
-    m_borderBoxIndices[2] = 1;
-    m_borderBoxIndices[3] = 2;
-    m_borderBoxIndices[4] = 2;
-    m_borderBoxIndices[5] = 3;
-    m_borderBoxIndices[6] = 3;
-    m_borderBoxIndices[7] = 0;
-    m_borderBoxIndices[8] = 4;
-    m_borderBoxIndices[9] = 5;
-    m_borderBoxIndices[10] = 5;
-    m_borderBoxIndices[11] = 6;
-    m_borderBoxIndices[12] = 6;
-    m_borderBoxIndices[13] = 7;
-    m_borderBoxIndices[14] = 7;
-    m_borderBoxIndices[15] = 4;
-    m_borderBoxIndices[16] = 0;
-    m_borderBoxIndices[17] = 4;
-    m_borderBoxIndices[18] = 1;
-    m_borderBoxIndices[19] = 5;
-    m_borderBoxIndices[20] = 2;
-    m_borderBoxIndices[21] = 6;
-    m_borderBoxIndices[22] = 3;
-    m_borderBoxIndices[23] = 7;
+    _borderBoxIndices[0] = 0;
+    _borderBoxIndices[1] = 1;
+    _borderBoxIndices[2] = 1;
+    _borderBoxIndices[3] = 2;
+    _borderBoxIndices[4] = 2;
+    _borderBoxIndices[5] = 3;
+    _borderBoxIndices[6] = 3;
+    _borderBoxIndices[7] = 0;
+    _borderBoxIndices[8] = 4;
+    _borderBoxIndices[9] = 5;
+    _borderBoxIndices[10] = 5;
+    _borderBoxIndices[11] = 6;
+    _borderBoxIndices[12] = 6;
+    _borderBoxIndices[13] = 7;
+    _borderBoxIndices[14] = 7;
+    _borderBoxIndices[15] = 4;
+    _borderBoxIndices[16] = 0;
+    _borderBoxIndices[17] = 4;
+    _borderBoxIndices[18] = 1;
+    _borderBoxIndices[19] = 5;
+    _borderBoxIndices[20] = 2;
+    _borderBoxIndices[21] = 6;
+    _borderBoxIndices[22] = 3;
+    _borderBoxIndices[23] = 7;
+}
+
+GLboolean VasnecovMesh::checkIndices()
+{
+    return false;
 }

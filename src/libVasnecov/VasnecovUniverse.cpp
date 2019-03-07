@@ -236,13 +236,16 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
         // Поиск меша в списке
         mesh = _resourceManager->designerFindMesh(corMeshName);
 
-        if(!mesh)
+        if(mesh == nullptr)
+            mesh = _resourceManager->designerFindMesh(meshName); // Full path
+
+        if(mesh == nullptr)
         {
             // Попытка загрузить насильно
             // Метод загрузки сам управляет мьютексом
             if(!_resourceManager->loadMeshFile(corMeshName))
             {
-                Vasnecov::problem("Mesh is not found");
+                Vasnecov::problem("Mesh can't be loaded: ", corMeshName);
                 return nullptr;
             }
 
@@ -251,7 +254,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
             if(!mesh)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Mesh is not found");
+                Vasnecov::problem("Mesh is not found: ", corMeshName);
                 return nullptr;
             }
         }
@@ -710,15 +713,15 @@ void VasnecovUniverse::loadAll()
     loadMeshes();
     loadTextures();
 }
-GLboolean VasnecovUniverse::loadMesh(const QString& fileName)
+GLboolean VasnecovUniverse::loadMesh(const QString& filePath)
 {
-    if(fileName.isEmpty())
+    if(filePath.isEmpty())
         return false;
 
     LoadingStatus lStatus(&_loading);
     GLboolean res(false);
 
-    res = _resourceManager->loadMeshFile(fileName);
+    res = _resourceManager->loadMeshFileByPath(filePath);
 
     return res;
 }
