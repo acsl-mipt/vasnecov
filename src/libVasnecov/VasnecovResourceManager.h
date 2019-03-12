@@ -25,14 +25,18 @@ public:
     GLboolean loadMeshFile(const QString& fileName);
     GLboolean loadMeshFileByPath(const QString& filePath);
     GLboolean loadTextureFile(const QString& fileName);
+    GLboolean loadTextureFileByPath(const QString& filePath, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
 
     size_t meshesAmount() const;
+    size_t texturesAmount() const;
 
     static GLboolean setDirectory(const QString& newDir, QString& oldDir);
     static GLboolean correctPath(QString& path, QString& fileId, const QString& format); // Добавляет расширение в путь, удаляет его из fileId, проверяет наличие файла
     static QString correctFileId(const QString& fileId, const QString& format); // Удаляет формат из имени
 
 private:
+    GLboolean createTexture(const QString& path, Vasnecov::TextureTypes type, const QString& name = QString());
+
     GLboolean addTexture(VasnecovTexture* texture, const QString& fileId);
     GLboolean addMesh(VasnecovMesh* mesh, const QString& fileId);
 
@@ -51,9 +55,9 @@ private:
 
     bool renderUpdate();
 
-    const QString& texturesDPref() const {return dirTexturesDPref;}
-    const QString& texturesNPref() const {return dirTexturesNPref;}
-    const QString& texturesIPref() const {return dirTexturesIPref;}
+    const QString& texturesDPref() const {return _dirTexturesDPref;}
+    const QString& texturesNPref() const {return _dirTexturesNPref;}
+    const QString& texturesIPref() const {return _dirTexturesIPref;}
 
 private:
     enum Updated
@@ -65,19 +69,19 @@ private:
     Vasnecov::Attributes raw_data;
 
     // Данные, используемые только в потоке управления
-    std::map<QString, VasnecovMesh*>    meshes;
-    std::map<QString, VasnecovTexture*> textures;
+    std::map<QString, VasnecovMesh*>    _meshes;
+    std::map<QString, VasnecovTexture*> _textures;
 
-    QString dirMeshes; // Основная директория мешей
-    QString dirTextures; // Основная директория текстур
-    QString dirTexturesDPref;
-    QString dirTexturesNPref;
-    QString dirTexturesIPref;
+    QString _dirMeshes; // Основная директория мешей
+    QString _dirTextures; // Основная директория текстур
+    QString _dirTexturesDPref;
+    QString _dirTexturesNPref;
+    QString _dirTexturesIPref;
 
     // Списки для загрузки
     // Поскольку используется только один OpenGL контекст (в основном потоке), приходится использовать списки действий.
-    std::vector<VasnecovMesh*>      meshesForLoading;
-    std::vector<VasnecovTexture*>   texturesForLoading;
+    std::vector<VasnecovMesh*>      _meshesForLoading;
+    std::vector<VasnecovTexture*>   _texturesForLoading;
 
     friend class VasnecovUniverse;
 

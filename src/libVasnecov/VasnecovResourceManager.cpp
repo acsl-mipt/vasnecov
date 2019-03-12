@@ -7,28 +7,28 @@
 #include <QFile>
 
 VasnecovResourceManager::VasnecovResourceManager()
-    : meshes()
-    , textures()
-    , dirMeshes(Vasnecov::cfg_dirMeshes)
-    , dirTextures(Vasnecov::cfg_dirTextures)
-    , dirTexturesDPref(Vasnecov::cfg_dirTexturesDPref)
-    , dirTexturesNPref(Vasnecov::cfg_dirTexturesNPref)
-    , dirTexturesIPref(Vasnecov::cfg_dirTexturesIPref)
-    , meshesForLoading()
-    , texturesForLoading()
+    : _meshes()
+    , _textures()
+    , _dirMeshes(Vasnecov::cfg_dirMeshes)
+    , _dirTextures(Vasnecov::cfg_dirTextures)
+    , _dirTexturesDPref(Vasnecov::cfg_dirTexturesDPref)
+    , _dirTexturesNPref(Vasnecov::cfg_dirTexturesNPref)
+    , _dirTexturesIPref(Vasnecov::cfg_dirTexturesIPref)
+    , _meshesForLoading()
+    , _texturesForLoading()
 {
 }
 
 VasnecovResourceManager::~VasnecovResourceManager()
 {
-    for(std::map<QString, VasnecovMesh *>::iterator rit = meshes.begin();
-        rit != meshes.end(); ++rit)
+    for(std::map<QString, VasnecovMesh *>::iterator rit = _meshes.begin();
+        rit != _meshes.end(); ++rit)
     {
         delete (rit->second);
         rit->second = nullptr;
     }
-    for(std::map<QString, VasnecovTexture *>::iterator rit = textures.begin();
-        rit != textures.end(); ++rit)
+    for(std::map<QString, VasnecovTexture *>::iterator rit = _textures.begin();
+        rit != _textures.end(); ++rit)
     {
         delete (rit->second);
         rit->second = nullptr;
@@ -37,22 +37,22 @@ VasnecovResourceManager::~VasnecovResourceManager()
 
 GLboolean VasnecovResourceManager::setTexturesDir(const QString& dir)
 {
-    return setDirectory(dir, dirTextures);
+    return setDirectory(dir, _dirTextures);
 }
 
 GLboolean VasnecovResourceManager::setMeshesDir(const QString& dir)
 {
-    return setDirectory(dir, dirMeshes);
+    return setDirectory(dir, _dirMeshes);
 }
 
 GLboolean VasnecovResourceManager::loadMeshFile(const QString& fileName)
 {
-    QString path = dirMeshes + fileName; // Путь файла с расширением
+    QString path = _dirMeshes + fileName; // Путь файла с расширением
     QString fileId = fileName;
 
     if(correctPath(path, fileId, Vasnecov::cfg_meshFormat))
     {
-        if(!meshes.count(fileId))
+        if(!_meshes.count(fileId))
         {
             VasnecovMesh *mesh = new VasnecovMesh(path, fileId);
             if(mesh->loadModel())
@@ -71,25 +71,28 @@ GLboolean VasnecovResourceManager::loadMeshFile(const QString& fileName)
 
 GLboolean VasnecovResourceManager::loadMeshFileByPath(const QString& filePath)
 {
-    if(!meshes.count(filePath))
+    if(filePath.isEmpty())
+        return false;
+
+    if(_meshes.count(filePath))
+        return false;
+
+    VasnecovMesh *mesh = new VasnecovMesh(filePath, filePath);
+    bool loaded(false);
+
+    if(filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_meshFormat)))
+        loaded = mesh->loadModel();
+    else if(filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_rawMeshFormat)))
+        loaded = mesh->loadRawModel();
+
+    if(loaded)
     {
-        VasnecovMesh *mesh = new VasnecovMesh(filePath, filePath);
-        bool loaded(false);
-
-        if(filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_meshFormat)))
-            loaded = mesh->loadModel();
-        else if(filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_rawMeshFormat)))
-            loaded = mesh->loadRawModel();
-
-        if(loaded)
-        {
-            if(addMesh(mesh, filePath))
-                return true;
-        }
-        delete mesh;
-        mesh = nullptr;
+        if(addMesh(mesh, filePath))
+            return true;
     }
 
+    delete mesh;
+    mesh = nullptr;
     return false;
 }
 
@@ -98,67 +101,48 @@ GLboolean VasnecovResourceManager::loadTextureFile(const QString& fileName)
     // Поиск префикса типа текстуры в адресе
     Vasnecov::TextureTypes type(Vasnecov::TextureTypeUndefined);
 
-    if(fileName.startsWith(dirTexturesDPref))
+    if(fileName.startsWith(_dirTexturesDPref))
         type = Vasnecov::TextureTypeDiffuse;
-    else if(fileName.startsWith(dirTexturesIPref))
+    else if(fileName.startsWith(_dirTexturesIPref))
         type = Vasnecov::TextureTypeInterface;
-    else if(fileName.startsWith(dirTexturesNPref))
+    else if(fileName.startsWith(_dirTexturesNPref))
         type = Vasnecov::TextureTypeNormal;
 
-    QString path = dirTextures + fileName; // Путь файла с расширением
+    QString path = _dirTextures + fileName; // Путь файла с расширением
 
     QString fileId = fileName;
 
     if(correctPath(path, fileId, Vasnecov::cfg_textureFormat))
     {
-        if(!textures.count(fileId)) // Данные
-        {
-            QImage image(path);
-
-            if(!image.isNull())
-            {
-                // Проверка на соотношение сторон (чудо-алгоритм от Мастана)
-                if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
-                {
-                    VasnecovTexture *texture(nullptr);
-
-                    switch(type)
-                    {
-                        case Vasnecov::TextureTypeDiffuse:
-                            texture = new VasnecovTextureDiffuse(image);
-                            break;
-                        case Vasnecov::TextureTypeInterface:
-                            texture = new VasnecovTextureInterface(image);
-                            break;
-                        case Vasnecov::TextureTypeNormal:
-                            texture = new VasnecovTextureNormal(image);
-                            break;
-                        default:
-                            Vasnecov::problem("Incorrent texture type: ", path);
-                            return false;
-                    }
-
-                    if(addTexture(texture, fileId))
-                    {
-                        return true;
-                    }
-
-                    delete texture;
-                    texture = nullptr;
-                }
-                else
-                {
-                    Vasnecov::problem("Incorrect texture size: ", path);
-                }
-            }
-        }
+        if(_textures.find(fileId) == _textures.end())
+            return createTexture(path, type, fileId);
     }
     return false;
 }
 
+GLboolean VasnecovResourceManager::loadTextureFileByPath(const QString& filePath, Vasnecov::TextureTypes type)
+{
+    QFile file(filePath);
+    if(!file.exists())
+        return false;
+
+    if(_textures.find(filePath) != _textures.end())
+        return false;
+
+    if(!filePath.endsWith(QString(".%1").arg(Vasnecov::cfg_textureFormat)))
+        return false;
+
+    return createTexture(filePath, type);
+}
+
 size_t VasnecovResourceManager::meshesAmount() const
 {
-    return meshes.size();
+    return _meshes.size();
+}
+
+size_t VasnecovResourceManager::texturesAmount() const
+{
+    return _textures.size();
 }
 
 GLboolean VasnecovResourceManager::setDirectory(const QString& newDir, QString& oldDir)
@@ -215,20 +199,64 @@ QString VasnecovResourceManager::correctFileId(const QString& fileId, const QStr
     return res;
 }
 
+GLboolean VasnecovResourceManager::createTexture(const QString& path, Vasnecov::TextureTypes type, const QString& name)
+{
+    QImage image(path);
+
+    if(image.isNull())
+        return false;
+
+    // Проверка на соотношение сторон (чудо-алгоритм от Мастана)
+    if((image.width() & (image.width() - 1)) == 0 && (image.height() & (image.height() - 1)) == 0)
+    {
+        VasnecovTexture *texture(nullptr);
+
+        switch(type)
+        {
+            case Vasnecov::TextureTypeDiffuse:
+                texture = new VasnecovTextureDiffuse(image);
+                break;
+            case Vasnecov::TextureTypeInterface:
+                texture = new VasnecovTextureInterface(image);
+                break;
+            case Vasnecov::TextureTypeNormal:
+                texture = new VasnecovTextureNormal(image);
+                break;
+            default:
+                Vasnecov::problem("Incorrent texture type: ", path);
+                return false;
+        }
+
+        if(addTexture(texture, name.isEmpty() ? path : name))
+        {
+            return true;
+        }
+
+        delete texture;
+        texture = nullptr;
+    }
+    else
+    {
+        Vasnecov::problem("Incorrect texture size: ", path);
+    }
+
+    return false;
+}
+
 GLboolean VasnecovResourceManager::addTexture(VasnecovTexture* texture, const QString& fileId)
 {
     if(texture)
     {
         GLboolean added(true);
 
-        if(textures.count(fileId))
+        if(_textures.count(fileId))
         {
             added = false;
         }
         if(added)
         {
-            textures[fileId] = texture;
-            texturesForLoading.push_back(texture);
+            _textures[fileId] = texture;
+            _texturesForLoading.push_back(texture);
             raw_data.setUpdateFlag(Textures);
         }
 
@@ -244,13 +272,13 @@ GLboolean VasnecovResourceManager::addMesh(VasnecovMesh* mesh, const QString& fi
     {
         GLboolean added(true);
 
-        if(meshes.count(fileId))
+        if(_meshes.count(fileId))
         {
             added = false;
         }
         if(added)
         {
-            meshes[fileId] = mesh;
+            _meshes[fileId] = mesh;
 //			meshesForLoading.push_back(texture);
 //			raw_data.setUpdateFlag(Meshes);
         }
@@ -263,40 +291,32 @@ GLboolean VasnecovResourceManager::addMesh(VasnecovMesh* mesh, const QString& fi
 
 VasnecovMesh*VasnecovResourceManager::designerFindMesh(const QString& name)
 {
-    if(meshes.count(name))
-    {
-        return meshes[name];
-    }
-    else
-    {
+    if(_meshes.find(name) == _meshes.end())
         return nullptr;
-    }
+
+    return _meshes[name];
 }
 
 VasnecovTexture*VasnecovResourceManager::designerFindTexture(const QString& name)
 {
-    if(textures.count(name))
-    {
-        return textures[name];
-    }
-    else
-    {
+    if(_textures.find(name) == _textures.end())
         return nullptr;
-    }
+
+    return _textures[name];
 }
 
 bool VasnecovResourceManager::handleMeshesDir(const QString& dirName, GLboolean withSub)
 {
-    return handleFilesInDir(dirMeshes, dirName, Vasnecov::cfg_meshFormat, &VasnecovResourceManager::loadMeshFile, withSub);
+    return handleFilesInDir(_dirMeshes, dirName, Vasnecov::cfg_meshFormat, &VasnecovResourceManager::loadMeshFile, withSub);
 }
 
 bool VasnecovResourceManager::handleTexturesDir(const QString& dirName, GLboolean withSub)
 {
     GLuint res(0);
 
-    res  = handleFilesInDir(dirTextures, dirTexturesDPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
-    res += handleFilesInDir(dirTextures, dirTexturesIPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
-    res += handleFilesInDir(dirTextures, dirTexturesNPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
+    res  = handleFilesInDir(_dirTextures, _dirTexturesDPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
+    res += handleFilesInDir(_dirTextures, _dirTexturesIPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
+    res += handleFilesInDir(_dirTextures, _dirTexturesNPref + dirName, Vasnecov::cfg_textureFormat, &VasnecovResourceManager::loadTextureFile, withSub);
 
     return res;
 }
@@ -346,7 +366,7 @@ bool VasnecovResourceManager::renderUpdate()
         // Всё это делается с захваченным мьютексом, поэтому при больших загрузках стоять будет всё
         if(raw_data.isUpdateFlag(Meshes))
         {
-            if(!meshesForLoading.empty())
+            if(!_meshesForLoading.empty())
             {
 //				for(std::vector<VasnecovMesh *>::iterator mit = raw_data.meshesForLoading.begin();
 //					mit != raw_data.meshesForLoading.end(); ++mit)
@@ -357,17 +377,17 @@ bool VasnecovResourceManager::renderUpdate()
         }
         if(raw_data.isUpdateFlag(Textures))
         {
-            if(!texturesForLoading.empty())
+            if(!_texturesForLoading.empty())
             {
-                for(std::vector<VasnecovTexture *>::iterator tit = texturesForLoading.begin();
-                    tit != texturesForLoading.end(); ++tit)
+                for(std::vector<VasnecovTexture *>::iterator tit = _texturesForLoading.begin();
+                    tit != _texturesForLoading.end(); ++tit)
                 {
                     if(!(*tit)->loadImage())
                     {
                         // TODO: remove wrong textures from raw_data.textures and all objects
                     }
                 }
-                texturesForLoading.clear();
+                _texturesForLoading.clear();
             }
         }
 

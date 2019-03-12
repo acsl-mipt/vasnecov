@@ -316,7 +316,7 @@ VasnecovProduct *VasnecovUniverse::addPart(const QString& name, VasnecovWorld *w
 {
     if(!textureName.isEmpty())
     {
-        return addPart(name, world, meshName, addMaterial(_resourceManager->texturesDPref() + textureName), parent);
+        return addPart(name, world, meshName, addMaterial(textureName), parent);
     }
     else
     {
@@ -532,7 +532,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
             // Метод загрузки сам управляет мьютексом
             if(!_resourceManager->loadTextureFile(_resourceManager->texturesIPref() + corTextureName))
             {
-                Vasnecov::problem("Texture is not found");
+                Vasnecov::problem("Label texture is not found");
                 return nullptr;
             }
 
@@ -540,7 +540,7 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Texture is not found");
+                Vasnecov::problem("Label texture is not found");
                 return nullptr;
             }
         }
@@ -612,9 +612,12 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
     if(!textureName.isEmpty()) // Иначе нулевая текстура
     {
         // Поиск текстуры в списке
-        QString corTextureName = VasnecovResourceManager::correctFileId(textureName, Vasnecov::cfg_textureFormat);
+        QString corTextureName = VasnecovResourceManager::correctFileId(_resourceManager->texturesDPref() + textureName, Vasnecov::cfg_textureFormat);
 
         texture = _resourceManager->designerFindTexture(corTextureName);
+
+        if(texture == nullptr)
+            texture = _resourceManager->designerFindTexture(textureName);
 
         if(!texture)
         {
@@ -622,7 +625,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
             // Метод загрузки сам управляет мьютексом
             if(!_resourceManager->loadTextureFile(corTextureName))
             {
-                Vasnecov::problem("Texture is not found");
+                Vasnecov::problem("Material texture is not found: ", textureName);
                 return nullptr;
             }
 
@@ -631,7 +634,7 @@ VasnecovMaterial *VasnecovUniverse::addMaterial(const QString& textureName)
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Texture is not found");
+                Vasnecov::problem("Material texture is not found yet: ", textureName);
                 return nullptr;
             }
         }
@@ -734,15 +737,15 @@ GLuint VasnecovUniverse::loadMeshes(const QString& dirName, GLboolean withSub)
 
     return res;
 }
-GLboolean VasnecovUniverse::loadTexture(const QString& fileName)
+GLboolean VasnecovUniverse::loadTexture(const QString& filePath)
 {
-    if(fileName.isEmpty())
+    if(filePath.isEmpty())
         return false;
 
     LoadingStatus lStatus(&_loading);
     GLboolean res(false);
 
-    res = _resourceManager->loadTextureFile(fileName);
+    res = _resourceManager->loadTextureFileByPath(filePath);
 
     return res;
 }
