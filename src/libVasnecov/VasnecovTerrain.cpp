@@ -9,14 +9,19 @@
 
 #include "Technologist.h"
 #include "VasnecovTerrain.h"
+#include "VasnecovTexture.h"
 #include <QFile>
 #include <QSize>
+#include <QImage>
+#include <QVector2D>
+
 #include <cmath>
 
 VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name)
     : VasnecovElement(pipeline, name)
     , _type(TypeSurface)
     , _lineSize(0)
+    , _texture(nullptr)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {}
@@ -50,6 +55,7 @@ void VasnecovTerrain::setPoints(std::vector <QVector3D>&& points, std::vector<QV
 
     updateCornerPoints();
     updateNormals();
+    updateTextures();
     updateIndices();
 }
 
@@ -74,7 +80,34 @@ void VasnecovTerrain::setType(VasnecovTerrain::Types type)
 
     updateCornerPoints();
     updateNormals();
+    updateTextures();
     updateIndices();
+}
+
+void VasnecovTerrain::setImage(const QImage& image)
+{
+    if(image.isNull())
+    {
+        Vasnecov::problem("3D: Terrain texture is empty");
+        return;
+    }
+
+    if((image.width() & (image.width() - 1)) != 0 || (image.height() & (image.height() - 1)) != 0)
+    {
+        Vasnecov::problem("3D: Terrain texture has incorrect size");
+        return;
+    }
+
+    delete _texture;
+
+    _texture = new VasnecovTextureDiffuse(image);
+    _texture->loadImage();
+}
+
+void VasnecovTerrain::removeTexture()
+{
+    delete _texture;
+    _texture = nullptr;
 }
 
 void VasnecovTerrain::renderDraw()
@@ -91,12 +124,25 @@ void VasnecovTerrain::renderDraw()
     {
         for(auto& indValue : _indices)
         {
-            pure_pipeline->drawElements(VasnecovPipeline::Triangles,
-                                        &indValue,
-                                        &_points,
-                                        &_normals,
-                                        nullptr,
-                                        &_colors);
+            if(_texture == nullptr)
+                pure_pipeline->drawElements(VasnecovPipeline::Triangles,
+                                            &indValue,
+                                            &_points,
+                                            &_normals,
+                                            nullptr,
+                                            &_colors);
+            else
+            {
+                pure_pipeline->setColor(QColor(255, 255, 255, 255));
+                pure_pipeline->enableTexture2D(_texture->id());
+                pure_pipeline->drawElements(VasnecovPipeline::Triangles,
+                                            &indValue,
+                                            &_points,
+                                            &_normals,
+                                            &_textures,
+                                            nullptr);
+                pure_pipeline->disableTexture2D();
+            }
         }
     }
     else if(_type == TypeMesh)
@@ -288,6 +334,25 @@ void VasnecovTerrain::updateNormals()
         {
             _normals.push_back(QVector3D(0.0f, 1.0f, 0.0f));
             _normals.push_back(_normals.back());
+        }
+    }
+}
+
+void VasnecovTerrain::updateTextures()
+{
+    _textures.clear();
+
+    if(_points.empty())
+        return;
+
+    _textures.reserve(_points.size());
+
+    for (GLuint row = 0; row < _lineSize; ++row)
+    {
+        for (GLuint col = 0; col < _lineSize; ++col)
+        {
+            _textures.push_back(QVector2D(static_cast<float>(row)/_lineSize,
+                                          static_cast<float>(col)/_lineSize));
         }
     }
 }

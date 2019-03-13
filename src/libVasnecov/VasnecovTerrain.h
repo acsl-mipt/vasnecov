@@ -30,12 +30,16 @@ public:
     void setType(Types type);
     Types type() const {return _type;}
 
+    void setImage(const QImage& image);
+    void removeTexture();
+
 protected:
     void renderDraw();
 
 private:
     void updateCornerPoints();
     void updateNormals();
+    void updateTextures();
     void updateIndices();
 
     Types                               _type;
@@ -43,7 +47,10 @@ private:
     std::vector<QVector3D>              _colors;
     std::vector<std::vector<GLuint>>    _indices;
     std::vector<QVector3D>              _normals;
+    std::vector<QVector2D>              _textures;
     GLuint                              _lineSize;
+
+    VasnecovTexture*                    _texture;
 
     enum Updated
     {
