@@ -22,6 +22,7 @@ VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name
     , _type(TypeSurface)
     , _lineSize(0)
     , _texture(nullptr)
+    , _textureZone(0.0, 0.0, 1.0, 1.0)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {}
@@ -102,6 +103,20 @@ void VasnecovTerrain::setImage(const QImage& image)
 
     _texture = new VasnecovTextureDiffuse(image);
     _texture->loadImage();
+
+    updaterSetUpdateFlag(Image);
+}
+
+void VasnecovTerrain::setImageZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+{
+    QRectF rect(x, y, width, height);
+    if(rect == _textureZone)
+        return;
+
+    _textureZone = rect;
+
+    updaterSetUpdateFlag(Zone);
+    updateTextures();
 }
 
 void VasnecovTerrain::removeTexture()
@@ -351,8 +366,8 @@ void VasnecovTerrain::updateTextures()
     {
         for (GLuint col = 0; col < _lineSize; ++col)
         {
-            _textures.push_back(QVector2D(static_cast<float>(row)/_lineSize,
-                                          static_cast<float>(col)/_lineSize));
+            _textures.push_back(QVector2D(static_cast<float>(col)/_lineSize * _textureZone.width()  + _textureZone.x(),
+                                          static_cast<float>(row)/_lineSize * _textureZone.height() + _textureZone.y()));
         }
     }
 }

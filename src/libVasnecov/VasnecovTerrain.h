@@ -31,6 +31,7 @@ public:
     Types type() const {return _type;}
 
     void setImage(const QImage& image);
+    void setImageZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     void removeTexture();
 
 protected:
@@ -51,6 +52,7 @@ private:
     GLuint                              _lineSize;
 
     VasnecovTexture*                    _texture;
+    QRectF                              _textureZone;
 
     enum Updated
     {
@@ -58,7 +60,9 @@ private:
         Points		= 0x0400,
         Thickness	= 0x0800,
         Lighting	= 0x1000,
-        Depth		= 0x2000
+        Depth		= 0x2000,
+        Image       = 0x4000,
+        Zone        = 0x8000,
     };
 
     friend class VasnecovUniverse;
