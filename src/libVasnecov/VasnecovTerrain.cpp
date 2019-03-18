@@ -21,11 +21,13 @@ VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name
     : VasnecovElement(pipeline, name)
     , _type(TypeSurface)
     , _lineSize(0)
-    , _texture(nullptr)
+    , _texture(new VasnecovTextureDiffuse(QImage()))
     , _textureZone(0.0, 0.0, 1.0, 1.0)
 {}
 VasnecovTerrain::~VasnecovTerrain()
-{}
+{
+    delete _texture;
+}
 
 void VasnecovTerrain::setPoints(std::vector <QVector3D>&& points, std::vector<QVector3D>&& colors)
 {
@@ -99,12 +101,14 @@ void VasnecovTerrain::setImage(const QImage& image)
         return;
     }
 
-    delete _texture;
-
-    _texture = new VasnecovTextureDiffuse(image);
-    _texture->loadImage();
+    _texture->setImage(image);
 
     updaterSetUpdateFlag(Image);
+}
+
+void VasnecovTerrain::loadImage()
+{
+    _texture->loadImage();
 }
 
 void VasnecovTerrain::setImageZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
@@ -117,12 +121,6 @@ void VasnecovTerrain::setImageZone(GLfloat x, GLfloat y, GLfloat width, GLfloat 
 
     updaterSetUpdateFlag(Zone);
     updateTextures();
-}
-
-void VasnecovTerrain::removeTexture()
-{
-    delete _texture;
-    _texture = nullptr;
 }
 
 void VasnecovTerrain::renderDraw()

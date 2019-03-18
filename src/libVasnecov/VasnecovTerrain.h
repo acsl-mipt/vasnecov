@@ -31,8 +31,8 @@ public:
     Types type() const {return _type;}
 
     void setImage(const QImage& image);
+    void loadImage();
     void setImageZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-    void removeTexture();
 
 protected:
     void renderDraw();
