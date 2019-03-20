@@ -90,7 +90,8 @@ private:
     class VertexManager
     {
     public:
-        VertexManager(GLenum& wasUpdated, const GLenum flag, GLboolean optimize = true) :
+        friend VasnecovFigure;
+        VertexManager(GLenum& wasUpdated, const GLenum flag, GLboolean optimize = false) :
             m_flag(flag),
             m_wasUpdated(wasUpdated),
             m_optimize(optimize),
@@ -163,146 +164,116 @@ private:
 
         void addLast(const QVector3D& point)
         {
-            // Т.к. рендер только читает чистые данные, то можно их прочитать и из другого потока
-            if(!raw_indices.empty())
+            if(raw_indices.empty())
             {
-//                raw_vertices = pure_vertices;
-//                raw_indices = pure_indices;
+                raw_vertices.push_back(point);
+                raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
+            }
+            else
+            {
+                if(raw_vertices[raw_indices.back()] == point)
+                    return;
 
-                if(raw_vertices[raw_indices.back()] != point)
+                if(m_optimize)
                 {
-                    if(m_optimize)
+                    GLuint fIndex(0);
+                    if(optimizedIndex(point, fIndex))
                     {
-                        GLuint fIndex(0);
-                        if(optimizedIndex(point, fIndex))
-                        {
-                            raw_indices.push_back(fIndex);
-                        }
-                        else
-                        {
-                            raw_vertices.push_back(point);
-                            raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
-                        }
+                        raw_indices.push_back(fIndex);
                     }
                     else
                     {
                         raw_vertices.push_back(point);
                         raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
                     }
-
-                    prepareUpdate();
+                }
+                else
+                {
+                    raw_vertices.push_back(point);
+                    raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
                 }
             }
-            else
-            {
-                raw_vertices.push_back(point);
-                raw_indices.push_back(static_cast<GLuint>(raw_vertices.size()) - 1);
-
-                prepareUpdate();
-            }
+            prepareUpdate();
         }
         void removeLast()
         {
-            if(!raw_indices.empty())
-            {
-//                raw_vertices = pure_vertices;
-//                raw_indices = pure_indices;
+            if(raw_indices.empty())
+                return;
 
-                removeByIndexIterator(raw_indices.end() - 1);
-
-                prepareUpdate();
-            }
+            removeByIndexIterator(raw_indices.end() - 1);
+            prepareUpdate();
         }
         void replaceLast(const QVector3D& point)
         {
-            if(!raw_indices.empty())
-            {
-//                raw_vertices = pure_vertices;
-//                raw_indices = pure_indices;
+            if(raw_indices.empty() || raw_vertices[raw_indices.back()] == point)
+                return;
 
-                if(raw_vertices[raw_indices.back()] != point)
-                {
-                    // TODO: add replace with optimization removing
-                    raw_vertices[raw_indices.back()] = point;
-
-                    prepareUpdate();
-                }
-            }
+            // TODO: add replace with optimization removing
+            raw_vertices[raw_indices.back()] = point;
+            prepareUpdate();
         }
 
         void addFirst(const QVector3D& point)
         {
-            if(!raw_indices.empty())
+            if(raw_indices.empty())
             {
-//                raw_vertices = pure_vertices;
-//                raw_indices = pure_indices;
+                raw_vertices.push_back(point);
+                raw_indices.push_back(0);
+            }
+            else
+            {
+                if(raw_vertices[raw_indices.front()] == point)
+                    return;
 
-                if(raw_vertices[raw_indices.front()] != point)
+                if(m_optimize)
                 {
-                    if(m_optimize)
+                    GLuint fIndex(0);
+                    if(optimizedIndex(point, fIndex))
                     {
-                        GLuint fIndex(0);
-                        if(optimizedIndex(point, fIndex))
-                        {
-                            raw_indices.insert(raw_indices.begin(), fIndex);
-                        }
-                        else
-                        {
-                            raw_vertices.push_back(point);
-                            raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
-                        }
+                        raw_indices.insert(raw_indices.begin(), fIndex);
                     }
                     else
                     {
                         raw_vertices.push_back(point);
                         raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
                     }
-
-                    prepareUpdate();
+                }
+                else
+                {
+                    raw_vertices.push_back(point);
+                    raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
                 }
             }
-            else
-            {
-                raw_vertices.push_back(point);
-                raw_indices.insert(raw_indices.begin(), static_cast<GLuint>(raw_vertices.size()) - 1);
 
-                prepareUpdate();
-            }
+            prepareUpdate();
         }
         void removeFirst()
         {
-            if(!raw_indices.empty())
-            {
-//                raw_vertices = pure_vertices;
-//                raw_indices = pure_indices;
+            if(raw_indices.empty())
+                return;
 
-                removeByIndexIterator(raw_indices.begin());
-
-                prepareUpdate();
-            }
+            removeByIndexIterator(raw_indices.begin());
+            prepareUpdate();
         }
         void replaceFirst(const QVector3D& point)
         {
-            if(!raw_indices.empty())
-            {
-//                raw_vertices = pure_vertices;
-//                raw_indices = pure_indices;
+            if(raw_indices.empty() || raw_vertices[raw_indices.front()] == point)
+                return;
 
-                if(raw_vertices[raw_indices.front()] != point)
-                {
-                    raw_vertices[raw_indices.front()] = point;
-
-                    prepareUpdate();
-                }
-            }
+            raw_vertices[raw_indices.front()] = point;
+            prepareUpdate();
         }
 
         GLenum update()
         {
             if((m_wasUpdated & m_flag) != 0)
             {
-                pure_vertices.swap(raw_vertices);
-                pure_indices.swap(raw_indices);
+//                pure_vertices.swap(raw_vertices);
+//                pure_indices.swap(raw_indices);
+
+                pure_vertices = raw_vertices;
+                pure_indices  = raw_indices;
+
                 pure_cm = raw_cm;
 
                 m_wasUpdated = m_wasUpdated &~ m_flag; // Удаление своего флага из общего

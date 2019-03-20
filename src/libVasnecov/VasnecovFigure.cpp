@@ -534,6 +534,7 @@ GLenum VasnecovFigure::renderUpdateData()
         m_type.update();
         m_points.update();
 
+//        qDebug(" %s: %d; %d", qPrintable(name()), m_points.raw_vertices.size(), m_points.raw_indices.size());
         m_thickness.update();
         m_lighting.update();
         m_depth.update();
