@@ -164,10 +164,10 @@ private:
         void addLast(const QVector3D& point)
         {
             // Т.к. рендер только читает чистые данные, то можно их прочитать и из другого потока
-            if(!pure_indices.empty())
+            if(!raw_indices.empty())
             {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
+//                raw_vertices = pure_vertices;
+//                raw_indices = pure_indices;
 
                 if(raw_vertices[raw_indices.back()] != point)
                 {
@@ -203,10 +203,10 @@ private:
         }
         void removeLast()
         {
-            if(!pure_indices.empty())
+            if(!raw_indices.empty())
             {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
+//                raw_vertices = pure_vertices;
+//                raw_indices = pure_indices;
 
                 removeByIndexIterator(raw_indices.end() - 1);
 
@@ -215,10 +215,10 @@ private:
         }
         void replaceLast(const QVector3D& point)
         {
-            if(!pure_indices.empty())
+            if(!raw_indices.empty())
             {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
+//                raw_vertices = pure_vertices;
+//                raw_indices = pure_indices;
 
                 if(raw_vertices[raw_indices.back()] != point)
                 {
@@ -232,10 +232,10 @@ private:
 
         void addFirst(const QVector3D& point)
         {
-            if(!pure_indices.empty())
+            if(!raw_indices.empty())
             {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
+//                raw_vertices = pure_vertices;
+//                raw_indices = pure_indices;
 
                 if(raw_vertices[raw_indices.front()] != point)
                 {
@@ -271,10 +271,10 @@ private:
         }
         void removeFirst()
         {
-            if(!pure_indices.empty())
+            if(!raw_indices.empty())
             {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
+//                raw_vertices = pure_vertices;
+//                raw_indices = pure_indices;
 
                 removeByIndexIterator(raw_indices.begin());
 
@@ -283,10 +283,10 @@ private:
         }
         void replaceFirst(const QVector3D& point)
         {
-            if(!pure_indices.empty())
+            if(!raw_indices.empty())
             {
-                raw_vertices = pure_vertices;
-                raw_indices = pure_indices;
+//                raw_vertices = pure_vertices;
+//                raw_indices = pure_indices;
 
                 if(raw_vertices[raw_indices.front()] != point)
                 {
