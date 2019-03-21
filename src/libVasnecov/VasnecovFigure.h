@@ -90,15 +90,19 @@ private:
     class VertexManager
     {
     public:
-        friend VasnecovFigure;
         VertexManager(GLenum& wasUpdated, const GLenum flag, GLboolean optimize = false) :
             m_flag(flag),
             m_wasUpdated(wasUpdated),
             m_optimize(optimize),
             raw_vertices(),
             raw_indices(),
+#ifdef SINGLE_THREAD_REALIZATION
+            pure_vertices(raw_vertices),
+            pure_indices(raw_indices),
+#else
             pure_vertices(),
             pure_indices(),
+#endif
             raw_cm(),
             pure_cm()
         {}
@@ -171,9 +175,6 @@ private:
             }
             else
             {
-                if(raw_vertices[raw_indices.back()] == point)
-                    return;
-
                 if(m_optimize)
                 {
                     GLuint fIndex(0);
@@ -222,9 +223,6 @@ private:
             }
             else
             {
-                if(raw_vertices[raw_indices.front()] == point)
-                    return;
-
                 if(m_optimize)
                 {
                     GLuint fIndex(0);
@@ -268,12 +266,13 @@ private:
         {
             if((m_wasUpdated & m_flag) != 0)
             {
+#ifndef SINGLE_THREAD_REALIZATION
 //                pure_vertices.swap(raw_vertices);
 //                pure_indices.swap(raw_indices);
 
                 pure_vertices = raw_vertices;
                 pure_indices  = raw_indices;
-
+#endif
                 pure_cm = raw_cm;
 
                 m_wasUpdated = m_wasUpdated &~ m_flag; // Удаление своего флага из общего
@@ -356,10 +355,13 @@ private:
 
         std::vector<QVector3D> raw_vertices; // Точки сырых данных
         std::vector<GLuint> raw_indices;
-
-        std::vector<QVector3D> pure_vertices; // Уникальные вершины (без дубликатов) для отрисовки
-        std::vector<GLuint> pure_indices; // Индексы отрисовки
-
+#ifdef SINGLE_THREAD_REALIZATION
+        std::vector<QVector3D>& pure_vertices;
+        std::vector<GLuint>& pure_indices;
+#else
+        std::vector<QVector3D> pure_vertices;
+        std::vector<GLuint> pure_indices;
+#endif
         QVector3D raw_cm;
         QVector3D pure_cm;
     };

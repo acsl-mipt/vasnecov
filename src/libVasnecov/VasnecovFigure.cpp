@@ -15,7 +15,7 @@
 VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString& name) :
     VasnecovElement(pipeline, name),
     m_type(raw_wasUpdated, Type, VasnecovPipeline::LoopLine),
-    m_points(raw_wasUpdated, Points, true),
+    m_points(raw_wasUpdated, Points, false),
     m_thickness(raw_wasUpdated, Thickness, 1.0f),
     m_lighting(raw_wasUpdated, Lighting, false),
     m_depth(raw_wasUpdated, Depth, true)
@@ -534,7 +534,6 @@ GLenum VasnecovFigure::renderUpdateData()
         m_type.update();
         m_points.update();
 
-//        qDebug(" %s: %d; %d", qPrintable(name()), m_points.raw_vertices.size(), m_points.raw_indices.size());
         m_thickness.update();
         m_lighting.update();
         m_depth.update();

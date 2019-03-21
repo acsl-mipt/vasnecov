@@ -12,6 +12,8 @@
 #include "Types.h"
 #include "VasnecovPipeline.h"
 
+#define SINGLE_THREAD_REALIZATION 1
+
 namespace Vasnecov
 {
     // Обёртка для данных, используемых в нескольких потоках
