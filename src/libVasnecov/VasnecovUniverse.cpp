@@ -511,7 +511,7 @@ GLboolean VasnecovUniverse::removeTerrain(VasnecovTerrain* terrain)
 
 VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *world, GLfloat width, GLfloat height)
 {
-    return addLabel(name, world, width, height, "");
+    return addLabel(name, world, width, height, QString());
 }
 VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *world, GLfloat width, GLfloat height, const QString& textureName)
 {
@@ -527,25 +527,28 @@ VasnecovLabel *VasnecovUniverse::addLabel(const QString& name, VasnecovWorld *wo
     // Проверка на наличие текстуры и её догрузка при необходимости
     if(!textureName.isEmpty()) // Иначе нулевая текстура
     {
-        QString corTextureName = VasnecovResourceManager::correctFileId(textureName, Vasnecov::cfg_textureFormat);
+        QString corTextureName = VasnecovResourceManager::correctFileId(_resourceManager->texturesIPref() + textureName, Vasnecov::cfg_textureFormat);
 
-        texture = _resourceManager->designerFindTexture(_resourceManager->texturesIPref() + corTextureName);
+        texture = _resourceManager->designerFindTexture(corTextureName);
+
+        if(texture == nullptr)
+            texture = _resourceManager->designerFindTexture(textureName);
 
         if(!texture)
         {
             // Попытка загрузить насильно
             // Метод загрузки сам управляет мьютексом
-            if(!_resourceManager->loadTextureFile(_resourceManager->texturesIPref() + corTextureName))
+            if(!_resourceManager->loadTextureFile(corTextureName))
             {
-                Vasnecov::problem("Label texture is not found");
+                Vasnecov::problem("Label texture is not found: ", corTextureName);
                 return nullptr;
             }
 
-            texture = _resourceManager->designerFindTexture(_resourceManager->texturesIPref() + corTextureName);
+            texture = _resourceManager->designerFindTexture(corTextureName);
             if(!texture)
             {
                 // Условие невозможное после попытки загрузки, но для надёжности оставим :)
-                Vasnecov::problem("Label texture is not found");
+                Vasnecov::problem("Label texture is not found yet: ", textureName);
                 return nullptr;
             }
         }
@@ -742,7 +745,7 @@ GLuint VasnecovUniverse::loadMeshes(const QString& dirName, GLboolean withSub)
 
     return res;
 }
-GLboolean VasnecovUniverse::loadTexture(const QString& filePath)
+GLboolean VasnecovUniverse::loadTexture(const QString& filePath, Vasnecov::TextureTypes type)
 {
     if(filePath.isEmpty())
         return false;
@@ -750,7 +753,7 @@ GLboolean VasnecovUniverse::loadTexture(const QString& filePath)
     LoadingStatus lStatus(&_loading);
     GLboolean res(false);
 
-    res = _resourceManager->loadTextureFileByPath(filePath);
+    res = _resourceManager->loadTextureFileByPath(filePath, type);
 
     return res;
 }

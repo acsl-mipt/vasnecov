@@ -218,7 +218,7 @@ public:
 
     GLboolean loadMesh(const QString& filePath); // Загрузка конкретного меша
     GLuint loadMeshes(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех мешей
-    GLboolean loadTexture(const QString& filePath);
+    GLboolean loadTexture(const QString& filePath, Vasnecov::TextureTypes type = Vasnecov::TextureTypeDiffuse);
     GLuint loadTextures(const QString& dirName = "", GLboolean withSub = true); // Загрузка всех текстур
 
     QString info(GLuint type = 0);
