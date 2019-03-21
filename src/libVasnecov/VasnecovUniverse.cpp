@@ -164,6 +164,11 @@ VasnecovLamp *VasnecovUniverse::referLampToWorld(VasnecovLamp *lamp, VasnecovWor
         return nullptr;
     }
 }
+
+GLboolean VasnecovUniverse::removeLamp(VasnecovLamp* lamp)
+{
+    return designerRemoveSimpleElement(lamp);
+}
 VasnecovProduct *VasnecovUniverse::addAssembly(const QString& name, VasnecovWorld *world, VasnecovProduct *parent)
 {
     if(!world)

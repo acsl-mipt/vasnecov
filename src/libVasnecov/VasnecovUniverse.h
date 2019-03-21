@@ -147,6 +147,7 @@ public:
                           VasnecovWorld* world,
                           Vasnecov::LampTypes type = Vasnecov::LampTypeCelestial);
     VasnecovLamp* referLampToWorld(VasnecovLamp* lamp, VasnecovWorld* world);
+    GLboolean removeLamp(VasnecovLamp* lamp);
 
     // Добавление новых продуктов
     VasnecovProduct* addAssembly(const QString& name,
