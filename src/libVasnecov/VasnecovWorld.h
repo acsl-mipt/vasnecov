@@ -97,6 +97,10 @@ public:
     void setCameraRoll(GLfloat roll);
     void tiltCamera(GLfloat roll);
 
+    QVector3D cameraPosition() const;
+    QVector3D cameraTarget() const;
+    float cameraRoll() const;
+
     Vasnecov::Camera camera() const;
 
     Vasnecov::Line unprojectPointToLine(const QPointF& point);

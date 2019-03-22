@@ -263,6 +263,21 @@ void VasnecovWorld::tiltCamera(GLfloat roll)
         designerUpdateOrtho();
     }
 }
+
+QVector3D VasnecovWorld::cameraPosition() const
+{
+    return _camera.raw().position();
+}
+
+QVector3D VasnecovWorld::cameraTarget() const
+{
+    return _camera.raw().target();
+}
+
+float VasnecovWorld::cameraRoll() const
+{
+    return _camera.raw().roll();
+}
 GLenum VasnecovWorld::renderUpdateData()
 {
     GLenum updated(0);
