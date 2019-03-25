@@ -30,6 +30,10 @@ public:
     void setType(Types type);
     Types type() const {return _type;}
 
+    void enableImage(bool enable = true);
+    void disableImage(bool disable = true);
+    bool isImageEnabled() const {return _isTextureEnabled;}
+
     void setImage(const QImage& image);
     void loadImage();
     void setImageZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
@@ -53,6 +57,7 @@ private:
 
     VasnecovTexture*                    _texture;
     QRectF                              _textureZone;
+    bool                                _isTextureEnabled;
 
     enum Updated
     {

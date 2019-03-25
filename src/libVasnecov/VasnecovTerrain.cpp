@@ -23,6 +23,7 @@ VasnecovTerrain::VasnecovTerrain(VasnecovPipeline *pipeline, const QString& name
     , _lineSize(0)
     , _texture(new VasnecovTextureDiffuse(QImage()))
     , _textureZone(0.0, 0.0, 1.0, 1.0)
+    , _isTextureEnabled(false)
 {}
 VasnecovTerrain::~VasnecovTerrain()
 {
@@ -87,6 +88,21 @@ void VasnecovTerrain::setType(VasnecovTerrain::Types type)
     updateIndices();
 }
 
+void VasnecovTerrain::enableImage(bool enable)
+{
+    if(_isTextureEnabled == enable)
+        return;
+
+    _isTextureEnabled = enable;
+
+    updaterSetUpdateFlag(Image);
+}
+
+void VasnecovTerrain::disableImage(bool disable)
+{
+    enableImage(!disable);
+}
+
 void VasnecovTerrain::setImage(const QImage& image)
 {
     if(image.isNull())
@@ -135,27 +151,39 @@ void VasnecovTerrain::renderDraw()
 
     if(_type == TypeSurface)
     {
+        bool textured = _isTextureEnabled && _texture != nullptr;
+        if(textured)
+        {
+            pure_pipeline->setColor(QColor(255, 255, 255, 255));
+            pure_pipeline->enableTexture2D(_texture->id());
+        }
+
         for(auto& indValue : _indices)
         {
-            if(_texture == nullptr)
-                pure_pipeline->drawElements(VasnecovPipeline::Triangles,
-                                            &indValue,
-                                            &_points,
-                                            &_normals,
-                                            nullptr,
-                                            &_colors);
-            else
+            if(textured)
             {
-                pure_pipeline->setColor(QColor(255, 255, 255, 255));
-                pure_pipeline->enableTexture2D(_texture->id());
                 pure_pipeline->drawElements(VasnecovPipeline::Triangles,
                                             &indValue,
                                             &_points,
                                             &_normals,
                                             &_textures,
                                             nullptr);
-                pure_pipeline->disableTexture2D();
             }
+            else
+            {
+                pure_pipeline->disableTexture2D();
+                pure_pipeline->drawElements(VasnecovPipeline::Triangles,
+                                            &indValue,
+                                            &_points,
+                                            &_normals,
+                                            nullptr,
+                                            &_colors);
+            }
+        }
+
+        if(textured)
+        {
+            pure_pipeline->disableTexture2D();
         }
     }
     else if(_type == TypeMesh)
