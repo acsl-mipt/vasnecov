@@ -210,14 +210,46 @@ VasnecovFigure::Types VasnecovFigure::type() const
 
 GLboolean VasnecovFigure::setLineStyle(VasnecovFigure::LineStyles style)
 {
-    m_lineStyle.set(style);
+    switch (style)
+    {
+    case StyleSolid:
+        m_lineStyle.set(0);
+        break;
+    case StyleDashed:
+        m_lineStyle.set(0x00FF);
+        break;
+    case StyleDotDash:
+        m_lineStyle.set(0xFF18);
+        break;
+    case StyleDotDotDash:
+        m_lineStyle.set(0xFCCC);
+        break;
+    case StyleDotted:
+        m_lineStyle.set(0x1818);
+        break;
+    }
+
+    return true;
 }
 
 VasnecovFigure::LineStyles VasnecovFigure::style() const
 {
-    return m_lineStyle.raw();
+    switch(m_lineStyle.raw())
+    {
+    case 0:
+        return StyleSolid;
+    case 0x00FF:
+        return StyleDashed;
+    case 0xFF18:
+        return StyleDotDash;
+    case 0xFCCC:
+        return StyleDotDotDash;
+    case 0x1818:
+        return StyleDotted;
+    default:
+        return StyleSolid;
+    }
 }
-
 
 GLint VasnecovFigure::setThickness(GLfloat thick)
 {
@@ -543,6 +575,7 @@ GLenum VasnecovFigure::renderUpdateData()
 
         // Копирование сырых данных в основные
         m_type.update();
+        m_lineStyle.update();
         m_points.update();
 
         m_thickness.update();
@@ -567,9 +600,18 @@ void VasnecovFigure::renderDraw()
         pure_pipeline->setLineWidth(m_thickness.pure());
         pure_pipeline->setPointSize(m_thickness.pure());
 
+        if(renderLineStyle())
+        {
+            pure_pipeline->enableLineStipple(1, renderLineStyle());
+        }
+
         pure_pipeline->drawElements(m_type.pure(),
                                     m_points.pureIndices(),
                                     m_points.pureVertices());
+        if(renderLineStyle())
+        {
+            pure_pipeline->disableLineStipple();
+        }
     }
 }
 

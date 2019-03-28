@@ -133,6 +133,9 @@ public:
     void disableConcreteLamp(GLuint lamp, GLboolean strong = false);
     void disableAllConcreteLamps(GLboolean strong = false);
 
+    void enableLineStipple(GLint factor, GLushort pattern, GLboolean strong = false);
+    void disableLineStipple(GLboolean strong = false);
+
     void setMaterialColors(const QColor& ambient,
                            const QColor& diffuse,
                            const QColor& specular,
@@ -193,6 +196,7 @@ protected:
     GLboolean m_backFaces; // Отображение задних граней
     GLboolean m_blending; // Смещивание (для прозрачности)
     GLboolean m_smoothShading; // Плавное смещивание
+    GLboolean m_lineStipple;
 
     QColor m_ambientColor;
     MaterialColoringTypes m_materialColoringType;
@@ -205,6 +209,9 @@ protected:
 
     GLfloat m_lineWidth;
     GLfloat m_pointSize;
+
+    GLint       m_lineStippleFactor;
+    GLushort    m_lineStipplePattern;
 
     bool m_wasSomethingUpdated;
 
@@ -467,6 +474,15 @@ inline void VasnecovPipeline::disableConcreteLamp(GLuint lamp, GLboolean strong)
     else if(strong)
     {
         glDisable(lamp);
+    }
+}
+
+inline void VasnecovPipeline::disableLineStipple(GLboolean strong)
+{
+    if(m_lineStipple || strong)
+    {
+        m_lineStipple = false;
+        glDisable(GL_LINE_STIPPLE);
     }
 }
 

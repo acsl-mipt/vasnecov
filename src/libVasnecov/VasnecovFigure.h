@@ -93,7 +93,7 @@ protected:
     GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
     GLenum renderType() const;
-    GLenum renderLineSyle() const;
+    GLushort renderLineStyle() const;
     QVector3D renderCm() const;
     GLboolean renderLighting() const;
 
@@ -379,7 +379,7 @@ private:
     };
 
     Vasnecov::MutualData<VasnecovPipeline::ElementDrawingMethods> m_type; // Тип отрисовки
-    Vasnecov::MutualData<LineStyles> m_lineStyle;
+    Vasnecov::MutualData<GLushort> m_lineStyle;
     VertexManager m_points;
 
     Vasnecov::MutualData<GLfloat> m_thickness; // Толщина линий
@@ -436,7 +436,7 @@ inline GLenum VasnecovFigure::renderType() const
 {
     return m_type.pure();
 }
-GLenum VasnecovFigure::renderLineSyle() const
+inline GLushort VasnecovFigure::renderLineStyle() const
 {
     return m_lineStyle.pure();
 }

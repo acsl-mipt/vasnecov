@@ -32,6 +32,7 @@ VasnecovPipeline::VasnecovPipeline(QGLContext* context) :
     m_backFaces(false),
     m_blending(true),
     m_smoothShading(true),
+    m_lineStipple(false),
 
     m_ambientColor(51, 51, 51, 255),
     m_materialColoringType(AmbientAndDiffuse),
@@ -222,6 +223,23 @@ void VasnecovPipeline::disableAllConcreteLamps(GLboolean strong)
         }
     }
 }
+
+void VasnecovPipeline::enableLineStipple(GLint factor, GLushort pattern, GLboolean strong)
+{
+    if(!m_lineStipple || strong)
+    {
+        m_lineStipple = true;
+        glEnable(GL_LINE_STIPPLE);
+    }
+    if(m_lineStippleFactor != factor || m_lineStipplePattern != pattern || strong)
+    {
+        m_lineStippleFactor = factor;
+        m_lineStipplePattern = pattern;
+        glLineStipple(m_lineStippleFactor, m_lineStipplePattern);
+    }
+}
+
+
 void VasnecovPipeline::setMaterialColors(const QColor &ambient, const QColor &diffuse, const QColor &specular, const QColor &emission, GLfloat shininess)
 {
     if(m_materialColoring)
