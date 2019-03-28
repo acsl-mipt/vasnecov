@@ -26,6 +26,14 @@ public:
         TypePoints  = 5, // Точки GL_POINTS
         TypeTriangles  = 6 // Треугольники GL_TRIANGLES
     };
+    enum LineStyles
+    {
+        StyleSolid = 0,
+        StyleDashed,
+        StyleDotDash,
+        StyleDotDotDash,
+        StyleDotted,
+    };
 
     VasnecovFigure(VasnecovPipeline* pipeline, const QString& name = QString());
     ~VasnecovFigure();
@@ -46,6 +54,9 @@ public:
 
     GLboolean setType(VasnecovFigure::Types type);
     VasnecovFigure::Types type() const;
+
+    GLboolean setLineStyle(VasnecovFigure::LineStyles style);
+    VasnecovFigure::LineStyles style() const;
 
     void enableLighting();
     void disableLighting();
@@ -82,6 +93,7 @@ protected:
     GLfloat renderCalculateDistanceToPlane(const QVector3D& planePoint, const QVector3D& normal);
 
     GLenum renderType() const;
+    GLenum renderLineSyle() const;
     QVector3D renderCm() const;
     GLboolean renderLighting() const;
 
@@ -367,6 +379,7 @@ private:
     };
 
     Vasnecov::MutualData<VasnecovPipeline::ElementDrawingMethods> m_type; // Тип отрисовки
+    Vasnecov::MutualData<LineStyles> m_lineStyle;
     VertexManager m_points;
 
     Vasnecov::MutualData<GLfloat> m_thickness; // Толщина линий
@@ -379,7 +392,8 @@ private:
         Points		= 0x0400,
         Thickness	= 0x0800,
         Lighting	= 0x1000,
-        Depth		= 0x2000
+        Depth		= 0x2000,
+        LineStyle   = 0x4000,
     };
 
     friend class VasnecovUniverse;
@@ -421,6 +435,10 @@ inline GLboolean VasnecovFigure::depth() const
 inline GLenum VasnecovFigure::renderType() const
 {
     return m_type.pure();
+}
+GLenum VasnecovFigure::renderLineSyle() const
+{
+    return m_lineStyle.pure();
 }
 inline QVector3D VasnecovFigure::renderCm() const
 {

@@ -15,6 +15,7 @@
 VasnecovFigure::VasnecovFigure(VasnecovPipeline *pipeline, const QString& name) :
     VasnecovElement(pipeline, name),
     m_type(raw_wasUpdated, Type, VasnecovPipeline::LoopLine),
+    m_lineStyle(raw_wasUpdated, LineStyle, StyleSolid),
     m_points(raw_wasUpdated, Points, false),
     m_thickness(raw_wasUpdated, Thickness, 1.0f),
     m_lighting(raw_wasUpdated, Lighting, false),
@@ -205,6 +206,16 @@ VasnecovFigure::Types VasnecovFigure::type() const
         default:
             return TypeUnknown;
     }
+}
+
+GLboolean VasnecovFigure::setLineStyle(VasnecovFigure::LineStyles style)
+{
+    m_lineStyle.set(style);
+}
+
+VasnecovFigure::LineStyles VasnecovFigure::style() const
+{
+    return m_lineStyle.raw();
 }
 
 
