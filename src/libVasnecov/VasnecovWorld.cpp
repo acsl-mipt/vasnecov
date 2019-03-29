@@ -303,195 +303,84 @@ GLenum VasnecovWorld::renderUpdateData()
 }
 void VasnecovWorld::renderDraw()
 {
-    if(!m_isHidden.pure())
+    if(m_isHidden.pure())
+        return;
+
+    pure_pipeline->clearZBuffer();
+
+    // Задание характеристик мира
+    pure_pipeline->activateDepth(_parameters.pure().depth());
+    pure_pipeline->setDrawingType(_parameters.pure().drawingType());
+    pure_pipeline->setColor(QColor(255, 255, 255, 255));
+
+    // Проецирование и установка камеры
+    pure_pipeline->setViewport(_parameters.pure().x(), _parameters.pure().y(), _parameters.pure().width(), _parameters.pure().height());
+
+    if(_parameters.pure().projection() == Vasnecov::WorldTypePerspective) // Перспективная проекция
     {
-        pure_pipeline->clearZBuffer();
+        pure_pipeline->setPerspective(_perspective.pure(), renderCalculateCamera());
+    }
+    else // Ортогональная
+    {
+        pure_pipeline->setOrtho(_ortho.pure(), renderCalculateCamera());
+    }
 
-        // Задание характеристик мира
-        pure_pipeline->activateDepth(_parameters.pure().depth());
-        pure_pipeline->setDrawingType(_parameters.pure().drawingType());
-        pure_pipeline->setColor(QColor(255, 255, 255, 255));
+    _projectionMatrix.editablePure() = pure_pipeline->matrixP();
 
-        // Проецирование и установка камеры
-        pure_pipeline->setViewport(_parameters.pure().x(), _parameters.pure().y(), _parameters.pure().width(), _parameters.pure().height());
+    // Моделирование
+    // Обработка источников света
+    pure_pipeline->disableAllConcreteLamps(); // Выключение ламп, которые могли быть задействованы
+    pure_pipeline->disableLamps();
 
-        if(_parameters.pure().projection() == Vasnecov::WorldTypePerspective) // Перспективная проекция
-        {
-            pure_pipeline->setPerspective(_perspective.pure(), renderCalculateCamera());
-        }
-        else // Ортогональная
-        {
-            pure_pipeline->setOrtho(_ortho.pure(), renderCalculateCamera());
-        }
+    GLboolean lampsWork(false);
+    if(_elements.hasPureLamps() && _parameters.pure().light())
+    {
+        pure_pipeline->setAmbientColor(_lightModel.ambientColor());
+        pure_pipeline->enableLamps();
+        lampsWork = true;
 
-        _projectionMatrix.editablePure() = pure_pipeline->matrixP();
+        _elements.forEachPureLamp(renderDrawElement<VasnecovLamp>);
+    }
 
-        // Моделирование
-        // Обработка источников света
-        pure_pipeline->disableAllConcreteLamps(); // Выключение ламп, которые могли быть задействованы
+    // Draw terrains
+    if(_elements.hasPureTerrains())
+    {
+        pure_pipeline->enableDepth();
+
+        // Задание материала по умолчанию
+        VasnecovMaterial mat(pure_pipeline);
+        mat.renderDraw();
+
+        for(auto terrain : _elements.pureTerrains())
+            terrain->renderDraw();
+    }
+
+    // Рисование фигур (непрозрачных)
+    std::vector<VasnecovFigure *> transFigures;
+
+    if(_elements.hasPureFigures())
+    {
+        // Задание материала по умолчанию
+        VasnecovMaterial mat(pure_pipeline);
+        mat.renderDraw();
+
         pure_pipeline->disableLamps();
+        pure_pipeline->enableBackFaces();
+        pure_pipeline->disableTexture2D();
+        pure_pipeline->disableSmoothShading();
 
-        GLboolean lampsWork(false);
-        if(_elements.hasPureLamps() && _parameters.pure().light())
+        transFigures.reserve(_elements.pureFigures().size());
+        for(std::vector<VasnecovFigure *>::const_iterator fit = _elements.pureFigures().begin();
+            fit != _elements.pureFigures().end(); ++fit)
         {
-            pure_pipeline->setAmbientColor(_lightModel.ambientColor());
-            pure_pipeline->enableLamps();
-            lampsWork = true;
-
-            _elements.forEachPureLamp(renderDrawElement<VasnecovLamp>);
-        }
-
-        // Draw terrains
-        if(_elements.hasPureTerrains())
-        {
-            pure_pipeline->enableDepth();
-
-            // Задание материала по умолчанию
-            VasnecovMaterial mat(pure_pipeline);
-            mat.renderDraw();
-
-            for(auto terrain : _elements.pureTerrains())
-                terrain->renderDraw();
-        }
-
-        // Рисование фигур (непрозрачных)
-        std::vector<VasnecovFigure *> transFigures;
-
-        if(_elements.hasPureFigures())
-        {
-            // Задание материала по умолчанию
-            VasnecovMaterial mat(pure_pipeline);
-            mat.renderDraw();
-
-            pure_pipeline->disableLamps();
-            pure_pipeline->enableBackFaces();
-            pure_pipeline->disableTexture2D();
-            pure_pipeline->disableSmoothShading();
-
-            transFigures.reserve(_elements.pureFigures().size());
-            for(std::vector<VasnecovFigure *>::const_iterator fit = _elements.pureFigures().begin();
-                fit != _elements.pureFigures().end(); ++fit)
+            VasnecovFigure *fig(*fit);
+            if(fig)
             {
-                VasnecovFigure *fig(*fit);
-                if(fig)
+                if(fig->renderIsTransparency())
                 {
-                    if(fig->renderIsTransparency())
-                    {
-                        transFigures.push_back(fig);
-                    }
-                    else
-                    {
-                        if(fig->renderLighting() && lampsWork)
-                        {
-                            pure_pipeline->enableLamps();
-                        }
-                        else
-                        {
-                            pure_pipeline->disableLamps();
-                        }
-                        fig->renderDraw();
-                    }
+                    transFigures.push_back(fig);
                 }
-            }
-
-            pure_pipeline->setLineWidth(1.0f);
-            pure_pipeline->setPointSize(1.0f);
-            pure_pipeline->disableBackFaces();
-            pure_pipeline->enableSmoothShading();
-            renderSwitchLamps();
-        }
-
-        // Отрисовка непрозрачных изделий (деталей)
-        std::vector<VasnecovProduct *> transProducts;
-
-        if(_elements.hasPureProducts())
-        {
-            transProducts.reserve(_elements.pureProducts().size());
-            for(std::vector<VasnecovProduct *>::const_iterator pit = _elements.pureProducts().begin();
-                pit != _elements.pureProducts().end(); ++pit)
-            {
-                VasnecovProduct *prod(*pit);
-                if(prod)
-                {
-                    if(prod->renderIsTransparency())
-                    {
-                        transProducts.push_back(prod);
-                    }
-                    else
-                    {
-                        prod->renderDraw();
-                    }
-                }
-            }
-        }
-
-        // Прозрачные и полупрозрачные изделия (детали)
-        if(!transProducts.empty())
-        {
-            if(Vasnecov::cfg_sortTransparency)
-            {
-                QVector3D viewVector = (_camera.pure().target() - _camera.pure().position()).normalized();
-                QVector3D viewPoint = _camera.pure().position();
-
-                for(std::vector<VasnecovProduct *>::const_iterator pit = transProducts.begin();
-                    pit != transProducts.end(); ++pit)
-                {
-                    VasnecovProduct *prod(*pit);
-                    if(prod)
-                    {
-                        prod->renderCalculateDistanceToPlane(viewPoint, viewVector);
-                    }
-                }
-
-                std::sort(transProducts.begin(), transProducts.end(), VasnecovElement::renderCompareByReverseDistance);
-            }
-
-            for(std::vector<VasnecovProduct *>::const_iterator pit = transProducts.begin();
-                pit != transProducts.end(); ++pit)
-            {
-                VasnecovProduct *prod(*pit);
-                if(prod)
-                {
-                    prod->renderDraw();
-                }
-            }
-        }
-
-        // Рисование фигур (прозрачных)
-        if(!transFigures.empty())
-        {
-            if(Vasnecov::cfg_sortTransparency)
-            {
-                QVector3D viewVector = (_camera.pure().target() - _camera.pure().position()).normalized();
-                QVector3D viewPoint = _camera.pure().position();
-
-                for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
-                    fit != transFigures.end(); ++fit)
-                {
-                    VasnecovFigure *fig(*fit);
-                    if(fig)
-                    {
-                        fig->renderCalculateDistanceToPlane(viewPoint, viewVector);
-                    }
-                }
-
-                std::sort(transFigures.begin(), transFigures.end(), VasnecovElement::renderCompareByReverseDistance);
-            }
-
-            // Задание материала по умолчанию
-            VasnecovMaterial mat(pure_pipeline);
-            mat.renderDraw();
-
-            pure_pipeline->disableLamps();
-            pure_pipeline->enableBackFaces();
-            pure_pipeline->disableTexture2D();
-            pure_pipeline->disableSmoothShading();
-
-            for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
-                fit != transFigures.end(); ++fit)
-            {
-                VasnecovFigure *fig(*fit);
-                if(fig)
+                else
                 {
                     if(fig->renderLighting() && lampsWork)
                     {
@@ -504,26 +393,137 @@ void VasnecovWorld::renderDraw()
                     fig->renderDraw();
                 }
             }
-
-            pure_pipeline->setLineWidth(1.0f);
-            pure_pipeline->setPointSize(1.0f);
-            pure_pipeline->disableBackFaces();
-            pure_pipeline->enableSmoothShading();
-            renderSwitchLamps();
         }
 
-        // Отрисовка меток
-        if(_elements.hasPureLabels())
+        pure_pipeline->setLineWidth(1.0f);
+        pure_pipeline->setPointSize(1.0f);
+        pure_pipeline->disableBackFaces();
+        pure_pipeline->enableSmoothShading();
+        renderSwitchLamps();
+    }
+
+    // Отрисовка непрозрачных изделий (деталей)
+    std::vector<VasnecovProduct *> transProducts;
+
+    if(_elements.hasPureProducts())
+    {
+        transProducts.reserve(_elements.pureProducts().size());
+        for(std::vector<VasnecovProduct *>::const_iterator pit = _elements.pureProducts().begin();
+            pit != _elements.pureProducts().end(); ++pit)
         {
-            pure_pipeline->disableDepth();
-            pure_pipeline->clearZBuffer();
-            pure_pipeline->disableLamps();
-            pure_pipeline->disableBackFaces();
-
-            pure_pipeline->setOrtho2D();
-                _elements.forEachPureLabel(renderDrawElement<VasnecovLabel>);
-            pure_pipeline->unsetOrtho2D();
+            VasnecovProduct *prod(*pit);
+            if(prod)
+            {
+                if(prod->renderIsTransparency())
+                {
+                    transProducts.push_back(prod);
+                }
+                else
+                {
+                    prod->renderDraw();
+                }
+            }
         }
+    }
+
+    // Прозрачные и полупрозрачные изделия (детали)
+    if(!transProducts.empty())
+    {
+        if(Vasnecov::cfg_sortTransparency)
+        {
+            QVector3D viewVector = (_camera.pure().target() - _camera.pure().position()).normalized();
+            QVector3D viewPoint = _camera.pure().position();
+
+            for(std::vector<VasnecovProduct *>::const_iterator pit = transProducts.begin();
+                pit != transProducts.end(); ++pit)
+            {
+                VasnecovProduct *prod(*pit);
+                if(prod)
+                {
+                    prod->renderCalculateDistanceToPlane(viewPoint, viewVector);
+                }
+            }
+
+            std::sort(transProducts.begin(), transProducts.end(), VasnecovElement::renderCompareByReverseDistance);
+        }
+
+        for(std::vector<VasnecovProduct *>::const_iterator pit = transProducts.begin();
+            pit != transProducts.end(); ++pit)
+        {
+            VasnecovProduct *prod(*pit);
+            if(prod)
+            {
+                prod->renderDraw();
+            }
+        }
+    }
+
+    // Рисование фигур (прозрачных)
+    if(!transFigures.empty())
+    {
+        if(Vasnecov::cfg_sortTransparency)
+        {
+            QVector3D viewVector = (_camera.pure().target() - _camera.pure().position()).normalized();
+            QVector3D viewPoint = _camera.pure().position();
+
+            for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
+                fit != transFigures.end(); ++fit)
+            {
+                VasnecovFigure *fig(*fit);
+                if(fig)
+                {
+                    fig->renderCalculateDistanceToPlane(viewPoint, viewVector);
+                }
+            }
+
+            std::sort(transFigures.begin(), transFigures.end(), VasnecovElement::renderCompareByReverseDistance);
+        }
+
+        // Задание материала по умолчанию
+        VasnecovMaterial mat(pure_pipeline);
+        mat.renderDraw();
+
+        pure_pipeline->disableLamps();
+        pure_pipeline->enableBackFaces();
+        pure_pipeline->disableTexture2D();
+        pure_pipeline->disableSmoothShading();
+
+        for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
+            fit != transFigures.end(); ++fit)
+        {
+            VasnecovFigure *fig(*fit);
+            if(fig)
+            {
+                if(fig->renderLighting() && lampsWork)
+                {
+                    pure_pipeline->enableLamps();
+                }
+                else
+                {
+                    pure_pipeline->disableLamps();
+                }
+                fig->renderDraw();
+            }
+        }
+
+        pure_pipeline->setLineWidth(1.0f);
+        pure_pipeline->setPointSize(1.0f);
+        pure_pipeline->disableBackFaces();
+        pure_pipeline->enableSmoothShading();
+        renderSwitchLamps();
+    }
+
+    // Отрисовка меток
+    if(_elements.hasPureLabels())
+    {
+        pure_pipeline->disableDepth();
+        pure_pipeline->clearZBuffer();
+        pure_pipeline->disableLamps();
+        pure_pipeline->disableBackFaces();
+
+        pure_pipeline->setOrtho2D();
+            _elements.forEachPureLabel(renderDrawElement<VasnecovLabel>);
+        pure_pipeline->unsetOrtho2D();
     }
 }
 Vasnecov::WorldParameters VasnecovWorld::worldParameters() const
@@ -650,6 +650,12 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
     }
 
     return Vasnecov::Line();
+}
+
+QPointF VasnecovWorld::projectVectorToPoint(const QVector3D& vector)
+{
+    QVector3D point = _projectionMatrix.raw() * vector;
+    return QPointF(point.x(), point.y());
 }
 
 Vasnecov::Perspective VasnecovWorld::perspective() const
