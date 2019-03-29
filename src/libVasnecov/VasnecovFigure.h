@@ -84,6 +84,8 @@ public:
     void createMeshFromFile(const QString& fileName, const QColor& color = QColor());
     void createMeshFromPoints(const std::vector<QVector3D>& points, const QColor& color = QColor());
 
+    const std::vector<QVector3D>& vertices() const {return m_points.vertices();}
+
 protected:
     GLboolean designerSetType(VasnecovFigure::Types type);
 
@@ -131,6 +133,7 @@ private:
         {
             return static_cast<GLuint>(raw_vertices.size());
         }
+        const std::vector<QVector3D>& vertices() const {return raw_vertices;}
 
         void set(const std::vector<QVector3D>& points)
         {
