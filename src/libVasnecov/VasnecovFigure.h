@@ -85,6 +85,10 @@ public:
     void createMeshFromPoints(const std::vector<QVector3D>& points, const QColor& color = QColor());
 
     const std::vector<QVector3D>& vertices() const {return m_points.vertices();}
+    QVector3D firstVertex() const;
+    QVector3D lastVertex() const;
+    QVector3D vertex(size_t index) const;
+    size_t verticesAmount() const;
 
 protected:
     GLboolean designerSetType(VasnecovFigure::Types type);

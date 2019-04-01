@@ -523,6 +523,32 @@ void VasnecovFigure::createMeshFromPoints(const std::vector<QVector3D> &points, 
     m_points.set(points);
 }
 
+QVector3D VasnecovFigure::firstVertex() const
+{
+    if(m_points.vertices().empty())
+        return QVector3D(INFINITY, INFINITY, INFINITY);
+    return  m_points.vertices().front();
+}
+
+QVector3D VasnecovFigure::lastVertex() const
+{
+    if(m_points.vertices().empty())
+        return QVector3D(INFINITY, INFINITY, INFINITY);
+    return  m_points.vertices().back();
+}
+
+QVector3D VasnecovFigure::vertex(size_t index) const
+{
+    if(index >= m_points.vertices().size())
+        return QVector3D(INFINITY, INFINITY, INFINITY);
+    return m_points.vertices()[index];
+}
+
+size_t VasnecovFigure::verticesAmount() const
+{
+    return m_points.vertices().size();
+}
+
 GLboolean VasnecovFigure::designerSetType(VasnecovFigure::Types type)
 {
     switch(type)
