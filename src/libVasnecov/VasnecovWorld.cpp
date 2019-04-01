@@ -654,8 +654,12 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 
 QPointF VasnecovWorld::projectVectorToPoint(const QVector3D& vector)
 {
+    if(_parameters.raw().width() <= 0.0f || _parameters.raw().height() <= 0.0f)
+        return QPointF();
+
     QVector3D point = _projectionMatrix.raw() * vector;
-    return QPointF(point.x(), point.y());
+    return QPointF((point.x() + 1.0f) * _parameters.raw().width() * 0.5f + _parameters.raw().x(),
+                   (point.y() + 1.0f) * _parameters.raw().height() * 0.5f + _parameters.raw().y());
 }
 
 Vasnecov::Perspective VasnecovWorld::perspective() const
