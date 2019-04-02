@@ -636,13 +636,13 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
                              1.0f);
 
         QVector4D point1 = matInverted * viewVector;
-        if(qFuzzyIsNull(point1.w()))
+        if(qFuzzyIsNull(static_cast<double>(point1.w())))
             point1.setW(1.0f);
         point1 /= point1.w();
 
         viewVector.setZ(1.0f);
         QVector4D point2 = matInverted * viewVector;
-        if(qFuzzyIsNull(point2.w()))
+        if(qFuzzyIsNull(static_cast<double>(point2.w())))
             point2.setW(1.0f);
         point2 /= point2.w();
 
