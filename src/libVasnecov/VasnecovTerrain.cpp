@@ -461,9 +461,9 @@ void VasnecovTerrain::updateIndices()
             #pragma omp parallel
             {
                 #pragma omp for
-                for (GLint row = 0; row < _lineSize - 1; ++row)
+                for (GLint row = 0; row < GLint(_lineSize - 1); ++row)
                 {
-                    for (GLint col = 0; col < _lineSize - 1; ++col)
+                    for (GLint col = 0; col < GLint(_lineSize - 1); ++col)
                     {
                         GLuint v1 = row * _lineSize + col;
                         GLuint v2 = v1 + _lineSize;

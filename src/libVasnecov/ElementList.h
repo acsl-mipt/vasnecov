@@ -11,6 +11,11 @@
 
 #include <vector>
 #include "Technologist.h"
+#include "VasnecovLamp.h"
+#include "VasnecovProduct.h"
+#include "VasnecovFigure.h"
+#include "VasnecovTerrain.h"
+#include "VasnecovLabel.h"
 
 class VasnecovLamp;
 class VasnecovProduct;
