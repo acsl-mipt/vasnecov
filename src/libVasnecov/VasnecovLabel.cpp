@@ -22,7 +22,8 @@ VasnecovLabel::VasnecovLabel(VasnecovPipeline *pipeline, const QString& name, co
 
     m_texture(texture),
     m_personalTexture(false),
-    raw_dataLabel(m_texture, size)
+    raw_dataLabel(m_texture, size),
+    m_offset(raw_wasUpdated, Offset, QVector2D())
 {
     if(m_texture)
     {
@@ -110,6 +111,26 @@ GLboolean VasnecovLabel::setImage(const QImage &image, GLfloat x, GLfloat y, GLf
         return true;
     }
     return false;
+}
+
+void VasnecovLabel::setOffset(const QVector2D& offset)
+{
+    m_offset.set(offset);
+}
+
+void VasnecovLabel::setOffset(const QPointF& offset)
+{
+    m_offset.set(QVector2D(offset));
+}
+
+void VasnecovLabel::setOffset(GLfloat x, GLfloat y)
+{
+    m_offset.set(QVector2D(x, y));
+}
+
+QVector2D VasnecovLabel::offset() const
+{
+    return m_offset.raw();
 }
 bool VasnecovLabel::updaterCalculateTexturePosition()
 {
@@ -201,10 +222,12 @@ GLenum VasnecovLabel::renderUpdateData()
         }
         if(updaterIsUpdateFlag(Zone))
         {
-            ok =updaterCalculateTexturePosition();
+            ok = updaterCalculateTexturePosition();
 
             updated |= Zone;
         }
+
+        updated |= m_offset.update();
 
         updated |= VasnecovElement::renderUpdateData();
     }
@@ -223,11 +246,11 @@ void VasnecovLabel::renderDraw()
         // Позиционирование
         if(m_alienMs.pure())
         {
-            pure_pipeline->setMatrixOrtho2D(m_Ms.pure() * (*m_alienMs.pure()));
+            pure_pipeline->setMatrixOrtho2D(m_Ms.pure() * (*m_alienMs.pure()), m_offset.pure());
         }
         else
         {
-            pure_pipeline->setMatrixOrtho2D(m_Ms.pure());
+            pure_pipeline->setMatrixOrtho2D(m_Ms.pure(), m_offset.pure());
         }
 
         // Растровая часть

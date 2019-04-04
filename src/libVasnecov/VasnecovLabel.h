@@ -52,6 +52,10 @@ public:
     GLboolean setTexture(VasnecovTexture* texture, GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
     GLboolean setImage(const QImage& image);
     GLboolean setImage(const QImage& image, GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
+    void setOffset(const QVector2D& offset);
+    void setOffset(const QPointF& offset);
+    void setOffset(GLfloat x, GLfloat y);
+    QVector2D offset() const;
 
 protected:
     VasnecovTexture* designerTexture() const {return raw_dataLabel.texture;}
@@ -79,13 +83,15 @@ protected:
     bool m_personalTexture; // Текстура создается Меткой сама только для себя
 
     Vasnecov::LabelAttributes raw_dataLabel;
+    Vasnecov::MutualData<QVector2D> m_offset;
 
     enum Updated// Изменение данных
     {
         Image		= 0x0200,
         Texture		= 0x0400,
         Size		= 0x0800,
-        Zone		= 0x1000
+        Zone		= 0x1000,
+        Offset      = 0x2000,
     };
 
     friend class VasnecovWorld;

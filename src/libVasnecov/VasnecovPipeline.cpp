@@ -156,10 +156,13 @@ void VasnecovPipeline::setViewport(GLint x, GLint y, GLsizei width, GLsizei heig
     m_viewHeight = height;
     glViewport(m_viewX, m_viewY, m_viewWidth, m_viewHeight);
 }
-void VasnecovPipeline::setMatrixOrtho2D(const QMatrix4x4 &MV)
+void VasnecovPipeline::setMatrixOrtho2D(const QMatrix4x4 &MV, const QVector2D& offset)
 {
     QMatrix4x4 matrix;
     matrix.setColumn(3, projectPoint(MV));
+
+    if(!offset.isNull())
+        matrix.translate(offset.x(), offset.y());
 
     glLoadMatrixf(matrix.constData());
 }

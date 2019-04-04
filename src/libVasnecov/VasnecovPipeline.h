@@ -13,6 +13,7 @@
 #include <vector>
 #include <QColor>
 #include <QMatrix4x4>
+#include <QVector2D>
 #include "Types.h"
 
 class QGLContext;
@@ -99,7 +100,7 @@ public:
     void setMatrixMV(const QMatrix4x4* MV);
     void addMatrixMV(const QMatrix4x4& MV);
     void addMatrixMV(const QMatrix4x4* MV);
-    void setMatrixOrtho2D(const QMatrix4x4& MV);
+    void setMatrixOrtho2D(const QMatrix4x4& MV, const QVector2D& offset = QVector2D());
     QVector4D projectPoint(const QMatrix4x4& MV, const QVector3D& point = QVector3D());
 
     void setBackgroundColor(const QColor& color = QColor(0, 0, 0, 0));
