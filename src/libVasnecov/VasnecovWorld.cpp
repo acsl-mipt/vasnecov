@@ -356,9 +356,7 @@ void VasnecovWorld::renderDraw()
     }
 
     // Рисование фигур (непрозрачных)
-    std::vector<VasnecovFigure *> transFigures;
-
-    if(_elements.hasPureFigures())
+    auto startDrawFigures = [this]()
     {
         // Задание материала по умолчанию
         VasnecovMaterial mat(pure_pipeline);
@@ -368,38 +366,53 @@ void VasnecovWorld::renderDraw()
         pure_pipeline->enableBackFaces();
         pure_pipeline->disableTexture2D();
         pure_pipeline->disableSmoothShading();
-
-        transFigures.reserve(_elements.pureFigures().size());
-        for(std::vector<VasnecovFigure *>::const_iterator fit = _elements.pureFigures().begin();
-            fit != _elements.pureFigures().end(); ++fit)
-        {
-            VasnecovFigure *fig(*fit);
-            if(fig)
-            {
-                if(fig->renderIsTransparency())
-                {
-                    transFigures.push_back(fig);
-                }
-                else
-                {
-                    if(fig->renderLighting() && lampsWork)
-                    {
-                        pure_pipeline->enableLamps();
-                    }
-                    else
-                    {
-                        pure_pipeline->disableLamps();
-                    }
-                    fig->renderDraw();
-                }
-            }
-        }
-
+    };
+    auto stopDrawFigures = [this]()
+    {
         pure_pipeline->setLineWidth(1.0f);
         pure_pipeline->setPointSize(1.0f);
+        pure_pipeline->disableLineStipple();
         pure_pipeline->disableBackFaces();
         pure_pipeline->enableSmoothShading();
         renderSwitchLamps();
+    };
+
+    auto checkLighting = [this, lampsWork](const VasnecovFigure* figure)
+    {
+        if(figure->renderLighting() && lampsWork)
+            pure_pipeline->enableLamps();
+        else
+            pure_pipeline->disableLamps();
+    };
+
+    std::vector<VasnecovFigure *> transFigures;
+    size_t withoutDepthAmount(0);
+
+    if(_elements.hasPureFigures())
+    {
+        startDrawFigures();
+
+        transFigures.reserve(_elements.pureFigures().size());
+        for(auto figure : _elements.pureFigures())
+        {
+            if(!figure->renderHasDepth())
+            {
+                ++withoutDepthAmount;
+                continue;
+            }
+
+            if(figure->renderIsTransparency())
+            {
+                transFigures.push_back(figure);
+            }
+            else
+            {
+                checkLighting(figure);
+                figure->renderDraw();
+            }
+        }
+
+        stopDrawFigures();
     }
 
     // Отрисовка непрозрачных изделий (деталей)
@@ -479,38 +492,31 @@ void VasnecovWorld::renderDraw()
             std::sort(transFigures.begin(), transFigures.end(), VasnecovElement::renderCompareByReverseDistance);
         }
 
-        // Задание материала по умолчанию
-        VasnecovMaterial mat(pure_pipeline);
-        mat.renderDraw();
+        startDrawFigures();
 
-        pure_pipeline->disableLamps();
-        pure_pipeline->enableBackFaces();
-        pure_pipeline->disableTexture2D();
-        pure_pipeline->disableSmoothShading();
-
-        for(std::vector<VasnecovFigure *>::iterator fit = transFigures.begin();
-            fit != transFigures.end(); ++fit)
+        for(auto figure : transFigures)
         {
-            VasnecovFigure *fig(*fit);
-            if(fig)
-            {
-                if(fig->renderLighting() && lampsWork)
-                {
-                    pure_pipeline->enableLamps();
-                }
-                else
-                {
-                    pure_pipeline->disableLamps();
-                }
-                fig->renderDraw();
-            }
+            checkLighting(figure);
+            figure->renderDraw();
+        }
+        stopDrawFigures();
+    }
+
+    // Draw figures without depth
+    if(withoutDepthAmount)
+    {
+        startDrawFigures();
+
+        for(auto figure : _elements.pureFigures())
+        {
+            if(figure->renderHasDepth())
+                continue;
+
+            checkLighting(figure);
+            figure->renderDraw();
         }
 
-        pure_pipeline->setLineWidth(1.0f);
-        pure_pipeline->setPointSize(1.0f);
-        pure_pipeline->disableBackFaces();
-        pure_pipeline->enableSmoothShading();
-        renderSwitchLamps();
+        stopDrawFigures();
     }
 
     // Отрисовка меток

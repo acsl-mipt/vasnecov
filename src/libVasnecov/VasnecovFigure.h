@@ -102,6 +102,7 @@ protected:
     GLushort renderLineStyle() const;
     QVector3D renderCm() const;
     GLboolean renderLighting() const;
+    GLboolean renderHasDepth() const;
 
 private:
     // Класс для управления массивами вершин и индексов
@@ -455,4 +456,9 @@ inline QVector3D VasnecovFigure::renderCm() const
 inline GLboolean VasnecovFigure::renderLighting() const
 {
     return m_lighting.pure();
+}
+
+inline GLboolean VasnecovFigure::renderHasDepth() const
+{
+    return m_depth.pure();
 }
