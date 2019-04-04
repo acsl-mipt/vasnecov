@@ -627,17 +627,24 @@ void VasnecovFigure::renderDraw()
         pure_pipeline->setPointSize(m_thickness.pure());
 
         if(renderLineStyle())
-        {
             pure_pipeline->enableLineStipple(1, renderLineStyle());
-        }
+
+        bool normalize = (m_scale.pure() != 1.0f) &&
+                         (m_type.pure() == VasnecovPipeline::Triangles ||
+                          m_type.pure() == VasnecovPipeline::FanTriangle ||
+                          m_type.pure() == VasnecovPipeline::StripTriangle);
+
+        if(normalize)
+            pure_pipeline->enableNormalization();
 
         pure_pipeline->drawElements(m_type.pure(),
                                     m_points.pureIndices(),
                                     m_points.pureVertices());
+
+        if(normalize)
+            pure_pipeline->disableNormalization();
         if(renderLineStyle())
-        {
             pure_pipeline->disableLineStipple();
-        }
     }
 }
 

@@ -158,6 +158,9 @@ void VasnecovTerrain::renderDraw()
             pure_pipeline->enableTexture2D(_texture->id());
         }
 
+        if(m_scale.pure() != 1.0f)
+            pure_pipeline->enableNormalization();
+
         for(auto& indValue : _indices)
         {
             if(textured)
@@ -181,6 +184,8 @@ void VasnecovTerrain::renderDraw()
             }
         }
 
+        if(m_scale.pure() != 1.0f)
+            pure_pipeline->disableNormalization();
         if(textured)
         {
             pure_pipeline->disableTexture2D();

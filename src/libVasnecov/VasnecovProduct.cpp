@@ -242,11 +242,17 @@ void VasnecovProduct::renderDraw()
             pure_pipeline->setColor(m_color.pure());
         }
 
+        if(m_scale.pure() != 1.0f)
+            pure_pipeline->enableNormalization();
+
         if(m_drawingBox.pure())
         {
             m_mesh.pure()->drawBorderBox(pure_pipeline);
         }
         m_mesh.pure()->drawModel(pure_pipeline);
+
+        if(m_scale.pure() != 1.0f)
+            pure_pipeline->disableNormalization();
     }
 }
 GLboolean VasnecovProduct::designerAddChild(VasnecovProduct *child)

@@ -128,6 +128,8 @@ public:
     void disableBlending(GLboolean strong = false);
     void enableSmoothShading(GLboolean strong = false);
     void disableSmoothShading(GLboolean strong = false);
+    void enableNormalization(GLboolean strong = false);
+    void disableNormalization(GLboolean strong = false);
 
     void enableConcreteLamp(GLuint lamp, GLboolean strong = false);
     void disableConcreteLamp(GLuint lamp, GLboolean strong = false);
@@ -195,6 +197,7 @@ protected:
     GLboolean m_materialColoring; // Раскраска по цвету
     GLboolean m_backFaces; // Отображение задних граней
     GLboolean m_blending; // Смещивание (для прозрачности)
+    GLboolean m_normalizing;
     GLboolean m_smoothShading; // Плавное смещивание
     GLboolean m_lineStipple;
 
@@ -446,6 +449,24 @@ inline void VasnecovPipeline::disableSmoothShading(GLboolean strong)
     {
         m_smoothShading = false;
         glShadeModel(GL_FLAT);
+    }
+}
+
+inline void VasnecovPipeline::enableNormalization(GLboolean strong)
+{
+    if(!m_normalizing || strong)
+    {
+        m_normalizing = true;
+        glEnable(GL_NORMALIZE);
+    }
+}
+
+inline void VasnecovPipeline::disableNormalization(GLboolean strong)
+{
+    if(m_normalizing || strong)
+    {
+        m_normalizing = false;
+        glDisable(GL_NORMALIZE);
     }
 }
 

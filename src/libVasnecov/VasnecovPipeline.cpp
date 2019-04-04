@@ -31,6 +31,7 @@ VasnecovPipeline::VasnecovPipeline(QGLContext* context) :
     m_materialColoring(true),
     m_backFaces(false),
     m_blending(true),
+    m_normalizing(false),
     m_smoothShading(true),
     m_lineStipple(false),
 
@@ -204,6 +205,7 @@ void VasnecovPipeline::setAmbientColor(const QColor &color)
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
     }
 }
+
 void VasnecovPipeline::disableAllConcreteLamps(GLboolean strong)
 {
     if(!strong)
