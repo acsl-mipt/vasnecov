@@ -45,6 +45,7 @@ public:
     ~VasnecovLabel();
 
     void setSize(GLfloat width, GLfloat height);
+    QSizeF size() const;
     // Задаёт позицию метки на текстуре. Для случаев, когда от текстуры используется только кусочек
     void setTextureZone(GLfloat x, GLfloat y, GLfloat width = 0.0, GLfloat height = 0.0);
 

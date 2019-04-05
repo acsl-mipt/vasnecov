@@ -44,6 +44,11 @@ VasnecovLabel::~VasnecovLabel()
 {
     updaterRemoveOldPersonalTexture();
 }
+
+QSizeF VasnecovLabel::size() const
+{
+    return QSize(raw_dataLabel.size.x(), raw_dataLabel.size.y());
+}
 void VasnecovLabel::setTextureZone(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
     if(raw_dataLabel.texturePoint != QVector2D(x ,y) ||
