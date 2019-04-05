@@ -70,6 +70,11 @@ void VasnecovTerrain::clearPoints()
     _indices.clear();
 }
 
+bool VasnecovTerrain::isEmpty() const
+{
+    return _points.empty();
+}
+
 GLuint VasnecovTerrain::pointsAmount() const
 {
     return _points.size();

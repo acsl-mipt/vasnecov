@@ -25,6 +25,7 @@ public:
 
     void setPoints(std::vector<QVector3D>&& points, std::vector<QVector3D>&& colors = std::vector<QVector3D>());
     void clearPoints();
+    bool isEmpty() const;
     GLuint pointsAmount() const;
 
     void setType(Types type);
