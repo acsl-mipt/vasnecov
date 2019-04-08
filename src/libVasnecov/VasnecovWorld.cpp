@@ -623,6 +623,11 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QPointF &point)
     return unprojectPointToLine(point.x(), point.y());
 }
 
+Vasnecov::Line VasnecovWorld::unprojectPointToLine(const QVector2D& point)
+{
+    return unprojectPointToLine(point.x(), point.y());
+}
+
 Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
 {
     if(x >= _parameters.raw().x() &&
@@ -658,14 +663,14 @@ Vasnecov::Line VasnecovWorld::unprojectPointToLine(GLfloat x, GLfloat y)
     return Vasnecov::Line();
 }
 
-QPointF VasnecovWorld::projectVectorToPoint(const QVector3D& vector)
+QVector2D VasnecovWorld::projectVectorToPoint(const QVector3D& vector)
 {
     if(_parameters.raw().width() <= 0.0f || _parameters.raw().height() <= 0.0f)
-        return QPointF();
+        return QVector2D();
 
     QVector3D point = _projectionMatrix.raw() * vector;
-    return QPointF((point.x() + 1.0f) * _parameters.raw().width() * 0.5f + _parameters.raw().x(),
-                   (point.y() + 1.0f) * _parameters.raw().height() * 0.5f + _parameters.raw().y());
+    return QVector2D((point.x() + 1.0f) * _parameters.raw().width() * 0.5f + _parameters.raw().x(),
+                     (point.y() + 1.0f) * _parameters.raw().height() * 0.5f + _parameters.raw().y());
 }
 
 Vasnecov::Perspective VasnecovWorld::perspective() const

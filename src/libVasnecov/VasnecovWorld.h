@@ -104,8 +104,9 @@ public:
     Vasnecov::Camera camera() const;
 
     Vasnecov::Line unprojectPointToLine(const QPointF& point);
+    Vasnecov::Line unprojectPointToLine(const QVector2D& point);
     Vasnecov::Line unprojectPointToLine(GLfloat x, GLfloat y);
-    QPointF projectVectorToPoint(const QVector3D& vector); // Vector from 3D to screen position
+    QVector2D projectVectorToPoint(const QVector3D& vector); // Vector from 3D to screen position
 
 protected:
     // Списки содержимого
