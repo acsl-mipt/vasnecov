@@ -14,7 +14,7 @@
     #define _USE_MATH_DEFINES
     #include <math.h>
 #endif
-#include <GL/gl.h>
+#include <QtOpenGL>
 #include <QString>
 #include <QVector3D>
 #include <QtGlobal>
