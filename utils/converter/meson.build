@@ -1,14 +1,14 @@
 cnv_moc_headers = [
-  'MainWidget.h',
+  'ConverterWidget.h',
 ]
 
 cnv_ui_files = [
-  'MainWidget.ui',
+  'ConverterWidget.ui',
 ]
 
 cnv_src = [
+  'ConverterWidget.cpp',
   'converter.cpp',
-  'MainWidget.cpp',
 ]
 
 cnv_processed = qt5_mod.preprocess(

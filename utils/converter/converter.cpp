@@ -2,13 +2,13 @@
 #include <QGLWidget>
 #include <QOpenGLWidget>
 #include <QGraphicsView>
-#include "MainWidget.h"
+#include "ConverterWidget.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    MainWidget *view = new MainWidget();
+    ConverterWidget *view = new ConverterWidget();
 
     view->setWindowTitle("Vasnecov mesh converter");
     view->show();
