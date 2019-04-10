@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
 
     ConverterWidget *view = new ConverterWidget();
 
-    view->setWindowTitle("Vasnecov mesh converter");
     view->show();
 
     int res = app.exec();
