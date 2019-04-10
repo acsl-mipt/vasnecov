@@ -73,3 +73,4 @@ vasnecov_dep = declare_dependency(
 
 subdir('examples/bomber')
 subdir('examples/dronesformation')
+subdir('utils/converter')
