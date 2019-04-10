@@ -226,7 +226,13 @@ private:
         }
         void replaceLast(const QVector3D& point)
         {
-            if(raw_indices.empty() || raw_vertices[raw_indices.back()] == point)
+            if(raw_indices.empty())
+            {
+                addLast(point);
+                return;
+            }
+
+            if(raw_vertices[raw_indices.back()] == point)
                 return;
 
             // TODO: add replace with optimization removing
@@ -275,7 +281,13 @@ private:
         }
         void replaceFirst(const QVector3D& point)
         {
-            if(raw_indices.empty() || raw_vertices[raw_indices.front()] == point)
+            if(raw_indices.empty())
+            {
+                addFirst(point);
+                return;
+            }
+
+            if(raw_vertices[raw_indices.front()] == point)
                 return;
 
             raw_vertices[raw_indices.front()] = point;
