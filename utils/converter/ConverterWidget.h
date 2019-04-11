@@ -35,6 +35,7 @@ private:
 
     Ui::ConverterWidget*    _ui;
     VasnecovMesh*           _mesh;
+    QString                 _lastPath;
 
     enum Status
     {
@@ -44,7 +45,8 @@ private:
         Written,
     };
     Status                  _status;
-    QString                 _newPath;
+    QString                 _objFilePath;
+    QString                 _vmfFilePath;
 
     Q_DISABLE_COPY(ConverterWidget)
 };

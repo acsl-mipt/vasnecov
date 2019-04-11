@@ -2,6 +2,7 @@
 #include "ui_ConverterWidget.h"
 
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -47,15 +48,23 @@ void ConverterWidget::on_selectButton_clicked()
 {
     setWindowTitle(widnowTitleText);
 
-    QString filePath = QFileDialog::getOpenFileName(this, "Open model", QDir::homePath(), "OBJ files (*.obj)");
+    QString dirPath = _lastPath.isEmpty() ? QDir::homePath() : _lastPath;
+    QString filePath = QFileDialog::getOpenFileName(this, "Open model", dirPath, "OBJ files (*.obj)");
     if(filePath.isEmpty())
     {
         _ui->labelResult->setText("File is not selected");
         _ui->path->setText(QString());
+
+        _objFilePath.clear();
+        _lastPath.clear();
     }
     else
     {
         _ui->path->setText(filePath);
+        _objFilePath = _ui->path->text();
+
+        QFileInfo fileInfo(_objFilePath);
+        _lastPath = fileInfo.absolutePath();
     }
 }
 
@@ -64,22 +73,22 @@ void ConverterWidget::on_convertButton_clicked()
     _status = Nothing;
     setWindowTitle(widnowTitleText);
 
-    if(_ui->path->text().isEmpty())
+    if(_objFilePath.isEmpty())
     {
         _ui->labelResult->setText("File is not selected");
         return;
     }
 
-    _newPath = _ui->path->text();
+    _vmfFilePath = _objFilePath;
     const QString objFormat = ".obj";
     const QString vmfFormat = ".vmf";
-    if(!_newPath.endsWith(objFormat, Qt::CaseInsensitive) || _newPath.length() < (objFormat.size() + 1))
+    if(!_vmfFilePath.endsWith(objFormat, Qt::CaseInsensitive) || _vmfFilePath.length() < (objFormat.size() + 1))
     {
         _ui->labelResult->setText("File is not selected");
-        _newPath.clear();
+        _vmfFilePath.clear();
         return;
     }
-    _newPath.replace(_newPath.size() - objFormat.size(), objFormat.size(), vmfFormat);
+    _vmfFilePath.replace(_vmfFilePath.size() - objFormat.size(), objFormat.size(), vmfFormat);
 
     _ui->labelResult->setText("Start reading...");
     setWindowTitle(QString("%1. Working...").arg(widnowTitleText));
@@ -103,7 +112,7 @@ void ConverterWidget::prepareFile()
     {
         delete _mesh;
     }
-    _mesh = new VasnecovMesh(_ui->path->text());
+    _mesh = new VasnecovMesh(_objFilePath);
 }
 
 void ConverterWidget::readFile()
@@ -126,14 +135,14 @@ void ConverterWidget::readFile()
 
 void ConverterWidget::writeFile()
 {
-    if(!_mesh->writeRawModel(_newPath))
+    if(!_mesh->writeRawModel(_vmfFilePath))
     {
         _ui->labelResult->setText("Can't convert model");
         setWindowTitle(QString("%1. Failed").arg(widnowTitleText));
         return;
     }
 
-    _ui->labelResult->setText(QString("Model saved to:\n%1").arg(_newPath));
+    _ui->labelResult->setText(QString("Model saved to:\n%1").arg(_vmfFilePath));
     _status = Written;
     setWindowTitle(QString("%1. Converted").arg(widnowTitleText));
 }
