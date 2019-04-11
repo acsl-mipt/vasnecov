@@ -388,10 +388,13 @@ std::vector<VasnecovProduct *> VasnecovProduct::children() const
 }
 void VasnecovProduct::setColor(const QColor &color)
 {
-    if(m_color.raw() != color)
-    {
-        designerSetColorRecursively(color);
-    }
+    if(m_material.raw() == nullptr && m_color.raw() == color)
+        return;
+    if(m_material.raw() != nullptr &&
+       (m_material.raw()->ambientColor() == color && m_material.raw()->diffuseColor() == color))
+       return;
+
+    designerSetColorRecursively(color);
 }
 void VasnecovProduct::setCoordinates(const QVector3D &coordinates)
 {
