@@ -18,7 +18,7 @@ VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
     , m_textureD(raw_wasUpdated, TextureD, textureD)
     , m_textureN(raw_wasUpdated, TextureN, textureN)
 
-    , m_ambientColor(raw_wasUpdated, Ambient, QColor(Qt::gray))
+    , m_ambientColor(raw_wasUpdated, Ambient, QColor(Qt::lightGray))
     , m_diffuseColor(raw_wasUpdated, Diffuse, textureD == nullptr ? QColor(204, 204, 204, 255) : QColor(Qt::white))
     , m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255))
     , m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255))

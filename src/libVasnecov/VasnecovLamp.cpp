@@ -13,7 +13,7 @@ VasnecovLamp::VasnecovLamp(VasnecovPipeline* pipeline, const QString& name, Vasn
     VasnecovAbstractElement(pipeline, name),
     m_type(raw_wasUpdated, Type, type),
 
-    m_ambientColor(raw_wasUpdated, Ambient, QColor(0, 0, 0, 255)),
+    m_ambientColor(raw_wasUpdated, Ambient, QColor(32, 32, 32, 255)),
     m_diffuseColor(raw_wasUpdated, Diffuse, QColor(255, 255, 255, 255)),
     m_specularColor(raw_wasUpdated, Specular, QColor(255, 255, 255, 255)),
 
