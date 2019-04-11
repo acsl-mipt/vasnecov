@@ -11,45 +11,31 @@
 #include "VasnecovPipeline.h"
 
 VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
-                                   const QString &name) :
-    Vasnecov::CoreObject(pipeline, name),
-    m_textureD(raw_wasUpdated, TextureD, nullptr),
-    m_textureN(raw_wasUpdated, TextureN, nullptr),
+                                   VasnecovTexture *textureD,
+                                   VasnecovTexture *textureN,
+                                   const QString &name)
+    : Vasnecov::CoreObject(pipeline, name)
+    , m_textureD(raw_wasUpdated, TextureD, textureD)
+    , m_textureN(raw_wasUpdated, TextureN, textureN)
 
-    m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
-    m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
-    m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
-    m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
-    m_shininess(raw_wasUpdated, Shininess, 0)
+    , m_ambientColor(raw_wasUpdated, Ambient, QColor(Qt::gray))
+    , m_diffuseColor(raw_wasUpdated, Diffuse, textureD == nullptr ? QColor(204, 204, 204, 255) : QColor(Qt::white))
+    , m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255))
+    , m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255))
+    , m_shininess(raw_wasUpdated, Shininess, 0)
 {
-//	QColor c;
-
-//	c.setRgbF(0.2f, 0.2f, 0.2f, 1.0f);
-//	m_ambientColor.set(c);
-
-//	c.setRgbF(0.8f, 0.8f, 0.8f, 1.0f);
-//	m_diffuseColor.set(c);
 }
 
 VasnecovMaterial::VasnecovMaterial(VasnecovPipeline *pipeline,
-                                   VasnecovTexture *textureD,
-                                   VasnecovTexture *textureN,
-                                   const QString &name) :
-    Vasnecov::CoreObject(pipeline, name),
-    m_textureD(raw_wasUpdated, TextureD, textureD),
-    m_textureN(raw_wasUpdated, TextureN, textureN),
-
-    m_ambientColor(raw_wasUpdated, Ambient, QColor(51, 51, 51, 255)),
-    m_diffuseColor(raw_wasUpdated, Diffuse, QColor(204, 204, 204, 255)),
-    m_specularColor(raw_wasUpdated, Specular, QColor(0, 0, 0, 255)),
-    m_emissionColor(raw_wasUpdated, Emission, QColor(0, 0, 0, 255)),
-    m_shininess(raw_wasUpdated, Shininess, 0)
+                                   const QString &name)
+    : VasnecovMaterial(pipeline, nullptr, nullptr, name)
 {
 }
 
 void VasnecovMaterial::setTextureD(VasnecovTexture *textureD)
 {
     m_textureD.set(textureD);
+    m_diffuseColor.set(textureD == nullptr ? QColor(204, 204, 204, 255) : QColor(Qt::white));
 }
 
 VasnecovTexture *VasnecovMaterial::textureD() const
