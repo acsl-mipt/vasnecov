@@ -107,6 +107,11 @@ void VasnecovProduct::setPositionFromElement(const VasnecovAbstractElement *elem
     }
 }
 
+void VasnecovProduct::showDrawingBox(bool show)
+{
+    m_drawingBox.set(show);
+}
+
 void VasnecovProduct::switchDrawingBox()
 {
     m_drawingBox.set(!m_drawingBox.raw());

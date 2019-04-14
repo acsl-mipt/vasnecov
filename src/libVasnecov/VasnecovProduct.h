@@ -85,6 +85,7 @@ public:
     void setScale(GLfloat scale = 1.0f);
     virtual void setPositionFromElement(const VasnecovAbstractElement* element);
 
+    void showDrawingBox(bool show = true);
     void switchDrawingBox();
 
 protected:
