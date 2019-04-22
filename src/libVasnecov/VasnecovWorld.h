@@ -27,8 +27,8 @@ namespace Vasnecov
 {
     const GLsizei cfg_worldWidthMin = 16;
     const GLsizei cfg_worldHeightMin = 16;
-    const GLsizei cfg_worldWidthMax = 2048;
-    const GLsizei cfg_worldHeightMax = 2048;
+    const GLsizei cfg_worldWidthMax = 4096;
+    const GLsizei cfg_worldHeightMax = 4096;
 }
 
 class VasnecovWorld : public Vasnecov::CoreObject

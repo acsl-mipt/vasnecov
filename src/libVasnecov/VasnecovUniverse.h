@@ -151,25 +151,25 @@ public:
 
     // Добавление новых продуктов
     VasnecovProduct* addAssembly(const QString& name,
-                                  VasnecovWorld* world,
-                                  VasnecovProduct* parent = nullptr);
+                                 VasnecovWorld* world,
+                                 VasnecovProduct* parent = nullptr);
 
     VasnecovProduct* addPart(const QString& name,
-                              VasnecovWorld* world,
-                              const QString& meshName,
-                              VasnecovProduct* parent = nullptr); // Материал по умолчанию
+                             VasnecovWorld* world,
+                             const QString& meshName,
+                             VasnecovProduct* parent = nullptr); // Материал по умолчанию
 
     VasnecovProduct* addPart(const QString& name,
-                              VasnecovWorld* world,
-                              const QString& meshName,
-                              VasnecovMaterial* material,
-                              VasnecovProduct* parent = nullptr);
+                             VasnecovWorld* world,
+                             const QString& meshName,
+                             VasnecovMaterial* material,
+                             VasnecovProduct* parent = nullptr);
 
     VasnecovProduct* addPart(const QString& name,
-                              VasnecovWorld* world,
-                              const QString& meshName,
-                              const QString& textureName,
-                              VasnecovProduct* parent = nullptr); // Материал по умолчанию с указанной текстурой
+                             VasnecovWorld* world,
+                             const QString& meshName,
+                             const QString& textureName,
+                             VasnecovProduct* parent = nullptr); // Материал по умолчанию с указанной текстурой
     VasnecovProduct* referProductToWorld(VasnecovProduct* product, VasnecovWorld* world); // Сделать дубликат изделия в заданный мир
     GLboolean removeProduct(VasnecovProduct* product);
 
