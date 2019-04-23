@@ -24,8 +24,8 @@ void VasnecovScene::drawBackground(QPainter *painter, const QRectF &)
     m_width = painter->device()->width() * painter->device()->devicePixelRatioF();
     m_height = painter->device()->height() * painter->device()->devicePixelRatioF();
 #else
-    m_width = painter->device()->width() * painter->device()->devicePixelRatioF();
-    m_height = painter->device()->height() * painter->device()->devicePixelRatioF();
+    m_width = painter->device()->width() * painter->device()->devicePixelRatio();
+    m_height = painter->device()->height() * painter->device()->devicePixelRatio();
 #endif
 
     painter->beginNativePainting();
