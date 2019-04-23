@@ -20,8 +20,8 @@ VasnecovScene::VasnecovScene(QObject *parent) :
 }
 void VasnecovScene::drawBackground(QPainter *painter, const QRectF &)
 {
-    m_width = painter->device()->width();
-    m_height = painter->device()->height();
+    m_width = painter->device()->width() * painter->device()->devicePixelRatioF();
+    m_height = painter->device()->height() * painter->device()->devicePixelRatioF();
     painter->beginNativePainting();
     if(m_universe)
     {
